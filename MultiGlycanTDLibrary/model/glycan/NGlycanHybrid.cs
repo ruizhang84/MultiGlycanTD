@@ -216,7 +216,6 @@ namespace MultiGlycanTDLibrary.model.glycan
             g.table_[1] = g.table_[1] + 1;
             g.SetComposition(composite);
             g.AddMonosaccharide(Monosaccharide.Man);
-            glycans.Add(g);
             return g;
         }
 

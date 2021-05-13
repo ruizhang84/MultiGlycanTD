@@ -34,8 +34,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             table[i + 16] != subTable[i + 16] ||
                             table[i + 20] != subTable[i + 20])
                             diff++;
-                        // fuc count as additional
-                        if (table[i + 12] != subTable[i + 12])
+                        // fucose only missing
+                        if (table[i + 4] == subTable[i + 4] &&
+                            table[i + 12] != subTable[i + 12])
                             diff++;
                         if (diff > limit)
                             break;
@@ -49,9 +50,10 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             table[i + 12] != subTable[i + 12] ||
                             table[i + 14] != subTable[i + 14])
                             diff++;
-                        if (table[i + 4] != subTable[i + 4])
+                        if (table[i + 6] == subTable[i + 6] &&
+                            table[i + 10] != subTable[i + 10])
                             diff++;
-                        if (table[i + 10] != subTable[i + 11])
+                        if (table[i + 4] != subTable[i + 4])
                             diff++;
                         if (diff > limit)
                             break;
@@ -117,18 +119,13 @@ namespace MultiGlycanTDLibrary.engine.glycan
                         break;
                     // compose
                     compose = new SortedDictionary<Monosaccharide, int>();
-                    compose[Monosaccharide.GlcNAc] = table[0] + table[3] + table[4];
+                    compose[Monosaccharide.GlcNAc] = table[4];
                     compose[Monosaccharide.Gal] = table[8];
-                    compose[Monosaccharide.Man] = table[1];
-                    compose[Monosaccharide.Fuc] = table[2] + table[12];
+                    compose[Monosaccharide.Fuc] = table[12];
                     compose[Monosaccharide.NeuAc] = table[16];
                     compose[Monosaccharide.NeuGc] = table[20];
                     // core
                     subTable = new int[table.Length];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        subTable[i] = table[i];
-                    }
                     // longest branch
                     subTable[4] = table[4];
                     subTable[8] = table[8];
@@ -146,16 +143,11 @@ namespace MultiGlycanTDLibrary.engine.glycan
                         break;
                     // core
                     subTable = new int[table.Length];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        subTable[i] = table[i];
-                    }
                     // compose
                     compose = new SortedDictionary<Monosaccharide, int>();
-                    compose[Monosaccharide.GlcNAc] = table[0] + table[3] + table[6];
+                    compose[Monosaccharide.GlcNAc] = table[6];
                     compose[Monosaccharide.Gal] = table[8];
-                    compose[Monosaccharide.Man] = table[1];
-                    compose[Monosaccharide.Fuc] = table[2] + table[10];
+                    compose[Monosaccharide.Fuc] = table[10];
                     compose[Monosaccharide.NeuAc] = table[12];
                     compose[Monosaccharide.NeuGc] = table[14];
                     // longest branch
@@ -176,13 +168,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                         break;
                     subTable = new int[table.Length];
                     compose = new SortedDictionary<Monosaccharide, int>();
-                    compose[Monosaccharide.GlcNAc] = table[0];
-                    compose[Monosaccharide.Man] = table[1] + table[3];
-                    compose[Monosaccharide.Fuc] = table[2];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        subTable[i] = table[i];
-                    }
+                    compose[Monosaccharide.Man] = table[3];
                     newGlycan = glycan.Clone();
                     newGlycan.SetTable(subTable);
                     newGlycan.SetComposition(compose);

@@ -109,13 +109,13 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             string id = g.ID();
                             if (!glycans_map_.ContainsKey(id))
                             {
-                                node.Add(g);
+                                g.Add(node);
                                 glycans_map_[id] = g;
                                 queue.Enqueue(glycans_map_[id]);
                             }
                             else
                             {
-                                node.Add(glycans_map_[id]);
+                                glycans_map_[id].Add(node);
                             }
                         }
                     }

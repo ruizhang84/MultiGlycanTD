@@ -9,7 +9,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 {
     public abstract class BaseNGlycan : IGlycan
     {
-        protected List<IGlycan> glycans = new List<IGlycan>();
+        protected Dictionary<string, IGlycan> glycans = new Dictionary<string, IGlycan>();
         protected SortedDictionary<Monosaccharide, int> composite
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
@@ -25,12 +25,16 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         public void Add(IGlycan glycan)
         {
-            glycans.Add(glycan);
+            glycans[glycan.ID()] = glycan;
+            foreach (IGlycan g in glycan.Children())
+            {
+                glycans[g.ID()] = g;
+            }
         }
 
         public List<IGlycan> Children()
         {
-            return glycans;
+            return glycans.Values.ToList();
         }
 
         public SortedDictionary<Monosaccharide, int> Composition()

@@ -131,12 +131,12 @@ namespace MultiGlycanClassLibrary.util.mass
             return NativeGlycanMass(glycan.Composition());
         }
 
-        //public double ComputeFragment(IGlycan glycan)
-        //{
-        //    if (permethylation)
-        //        return PermethylatedGlycanMass(glycan.Composition());
-        //    return NativeGlycanMass(glycan.Composition());
-        //}
+        public double ComputeFragment(IGlycan glycan)
+        {
+            if (permethylation)
+                return PermethylatedGlycanMass(glycan.Composition());
+            return NativeGlycanMass(glycan.Composition());
+        }
 
     }
 }

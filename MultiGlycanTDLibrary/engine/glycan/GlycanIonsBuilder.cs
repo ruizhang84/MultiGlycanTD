@@ -1,4 +1,5 @@
-﻿using MultiGlycanTDLibrary.model.glycan;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.model.glycan;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,61 +55,61 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<double> Yions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YionsLikeFragments(glycan)
-                .Select(m => m.Mass() + kHydrogen).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced + kHydrogen).Distinct().ToList();
         }
 
         public List<double> Zions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YionsLikeFragments(glycan)
-                .Select(m => m.Mass() - kHydroxyl).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kHydroxyl).Distinct().ToList();
         }
 
         public List<double> Bions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.BionsLikeFragments(glycan)
-                .Select(m => m.Mass() + kCarbon + kHydrogen * 2).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kCarbon + kHydrogen * 2).Distinct().ToList();
         }
 
         public List<double> Cions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.BionsLikeFragments(glycan)
-                .Select(m => m.Mass() + kCarbon + kHydrogen * 4 + kOxygen).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kCarbon + kHydrogen * 4 + kOxygen).Distinct().ToList();
         }
 
         public List<double> YYions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan)
-                .Select(m => m.Mass() - kCarbon - kHydrogen).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kCarbon - kHydrogen).Distinct().ToList();
         }
 
         public List<double> YZions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan)
-                .Select(m => m.Mass() - kOxygen - kCarbon - kHydrogen * 3).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kOxygen - kCarbon - kHydrogen * 3).Distinct().ToList();
         }
 
         public List<double> ZZions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan)
-                .Select(m => m.Mass() - kReduced - kHydrogen * 2).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kReduced - kHydrogen * 2).Distinct().ToList();
         }
 
         public List<double> BYions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan)
-                .Select(m => m.Mass()).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
         }
 
         public List<double> BZions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan)
-                .Select(m => m.Mass() - kWater).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) - kWater).Distinct().ToList();
         }
 
         public List<double> CYions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan)
-                .Select(m => m.Mass() + kWater).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kWater).Distinct().ToList();
         }
 
         public List<double> CZions(IGlycan glycan)
