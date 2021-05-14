@@ -116,7 +116,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                         NGlycanComplex ptr = CreateByAddFucCore();
                         glycans.Add(ptr);
                     }
-                    else if (ValidAddFucTerminal())
+                    if (ValidAddFucTerminal())
                     {
                         List<NGlycanComplex> gs = CreateByAddFucTerminal();
                         glycans.AddRange(gs);
@@ -153,7 +153,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddGlcNAc()
         {
-            return (table_[0] == 2 && table_[4] == 1);
+            return table_[0] == 2 && (table_[4] == 1 || table_[5] == 1);
         }
 
         NGlycanComplex CreateByAddGlcNAcCore()
@@ -169,7 +169,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         bool ValidAddGlcNAcBisect()
         {
             //bisect 0, not extanding on GlcNAc
-            return table_[1] == 1 && table_[3] == 0 && table_[4] == 0;
+            return table_[1] == 1 && table_[3] == 0;
         }
 
         NGlycanComplex CreateByAddGlcNAcBisect()
@@ -395,7 +395,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     {
                         if (j == 0 || table_[i * 2 + j + 18] < table_[i + 17]) // make it order
                         {
-                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i + 16] == 0 && table_[i * 2 + j + 22] == 0)
+                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
                             {
                                 return true;
                             }

@@ -123,7 +123,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                         NGlycanHybrid ptr = CreateByAddFucCore();
                         glycans.Add(ptr);
                     }
-                    else if (ValidAddFucTerminal())
+                    if (ValidAddFucTerminal())
                     {
                         List<NGlycanHybrid> gs = CreateByAddFucTerminal();
                         glycans.AddRange(gs);

@@ -1,4 +1,5 @@
 using MultiGlycanTDLibrary.engine.glycan;
+using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,9 @@ namespace NUnitTestProject
                     {
                         //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
                         var glycan = map[id];
-                        List<string> massList = GlycanIonsBuilder.Build.BYions(glycan)
+                        if (!glycan.IsValid())
+                            continue;
+                        List<string> massList = GlycanIonsBuilder.Build.Yions(glycan)
                                                 .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
                         string output = id + "," + string.Join(" ", massList);
                         writer.WriteLine(output);

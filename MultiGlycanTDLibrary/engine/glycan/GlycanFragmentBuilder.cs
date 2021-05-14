@@ -30,7 +30,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanYFragment;
         }
-
         public List<IGlycan> YYionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();
@@ -55,7 +54,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanBFragment;
         }
-
         public List<IGlycan> BYionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanBYFragment = new List<IGlycan>();
