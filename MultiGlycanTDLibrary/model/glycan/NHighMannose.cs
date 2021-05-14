@@ -157,18 +157,14 @@ namespace MultiGlycanTDLibrary.model.glycan
             List<NHighMannose> glycans = new List<NHighMannose>();
             for (int i = 0; i < 3; i++)
             {
-                if (i == 0 || i == 2 || table_[i + 5] < table_[i + 4]) // make it order
-                {
-                    if (i == 2 && table_[4] == 0)
-                        continue;
-                    var g = new NHighMannose();
-                    g.SetTable(table_);
-                    g.table_[i + 5] = g.table_[i + 5] + 1;
-                    g.SetComposition(composite);
-                    g.AddMonosaccharide(Monosaccharide.Man);
-                    glycans.Add(g);
-
-                }
+                if (i == 2 && table_[4] == 0)
+                    continue;
+                var g = new NHighMannose();
+                g.SetTable(table_);
+                g.table_[i + 5] = g.table_[i + 5] + 1;
+                g.SetComposition(composite);
+                g.AddMonosaccharide(Monosaccharide.Man);
+                glycans.Add(g);  
             }
             return glycans;
         }
