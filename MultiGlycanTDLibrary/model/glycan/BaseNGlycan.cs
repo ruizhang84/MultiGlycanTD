@@ -104,9 +104,9 @@ namespace MultiGlycanTDLibrary.model.glycan
         public abstract IGlycan Clone();
 
         public virtual bool IsValid()
-        {
-            int[] table = Table();
-            return (table[0] >= 2 && table[1] >= 3);
+        {  
+            return composite[Monosaccharide.GlcNAc] >= 2
+                && composite[Monosaccharide.Man] >= 3;
         }
 
         public Compound Formula()

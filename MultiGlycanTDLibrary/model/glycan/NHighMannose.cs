@@ -8,9 +8,11 @@ namespace MultiGlycanTDLibrary.model.glycan
 {
     public class NHighMannose : BaseNGlycan, IGlycan
     {
-        //GlcNAc(2) - Man(3) - Fuc - [Man(branch1) - Man(branch2) - Man(branch3)] 0 1 2 3 4 5
+        //GlcNAc(2) - Man(1) - Fuc - 0, 1, 2,
+        // [Man(antenna1) - Man(antenna2)] - 3, 4,
+        // [Man(branch1) - Man(branch2) - Man(branch3)]  5 6 7
 
-        private int[] table_ = new int[6];
+        private int[] table_ = new int[8];
 
         public override IGlycan Clone()
         {
@@ -19,7 +21,19 @@ namespace MultiGlycanTDLibrary.model.glycan
             glycan.SetComposition(composite);
             return glycan;
         }
-
+        public override bool IsValid()
+        {
+            // at least two chains
+            if (table_[5] == 0 || table_[7] == 0)
+                return false;
+            // maksure sorted
+            for (int i = 1; i < 3; i++)
+            {
+                if (table_[i + 4] < table_[i + 5])
+                    return false;
+            }
+            return base.IsValid();
+        }
         public override int[] Table() { return table_; }
         public override void SetTable(int[] table)
         {
@@ -55,8 +69,8 @@ namespace MultiGlycanTDLibrary.model.glycan
                 case Monosaccharide.Man:
                     if (ValidAddManCore())
                     {
-                        NHighMannose ptr = CreateByAddManCore();
-                        glycans.Add(ptr);
+                        List<NHighMannose> gs = CreateByAddManCore();
+                        glycans.AddRange(gs);
                     }
                     else if (ValidAddManBranch())
                     {
@@ -100,26 +114,42 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddManCore()
         {
-            return (table_[0] == 2 && table_[1] < 3);
+            return table_[0] == 2 && (table_[3] == 0 || table_[4] == 0);
         }
 
-        NHighMannose CreateByAddManCore()
+        List<NHighMannose> CreateByAddManCore()
         {
-            var g = new NHighMannose();
-            g.SetTable(table_);
-            g.table_[1] = g.table_[1] + 1;
-            g.SetComposition(composite);
-            g.AddMonosaccharide(Monosaccharide.Man);
-            return g;
+            List<NHighMannose> glycans = new List<NHighMannose>();
+            if (table_[1] == 0)
+            {
+                var g = new NHighMannose();
+                g.SetTable(table_);
+                g.SetComposition(composite);
+                g.table_[1] = 1;
+                g.AddMonosaccharide(Monosaccharide.Man);
+                glycans.Add(g);
+            }
+            else
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    if (table_[3 + i] == 0)
+                    {
+                        var g = new NHighMannose();
+                        g.SetTable(table_);
+                        g.SetComposition(composite);
+                        g.table_[3 + i] = 1;
+                        g.AddMonosaccharide(Monosaccharide.Man);
+                        glycans.Add(g);
+                    }
+                }
+            }
+            return glycans;
         }
 
         bool ValidAddManBranch()
         {
-            if (table_[0] == 2 && table_[1] == 3)
-            {
-                return true;
-            }
-            return false;
+            return table_[3] > 0;
         }
 
         List<NHighMannose> CreateByAddManBranch()
@@ -127,12 +157,13 @@ namespace MultiGlycanTDLibrary.model.glycan
             List<NHighMannose> glycans = new List<NHighMannose>();
             for (int i = 0; i < 3; i++)
             {
-                if (i == 0 || table_[i + 3] < table_[i + 2]) // make it order
+                if (i == 0 || i == 2 || table_[i + 5] < table_[i + 4]) // make it order
                 {
-
+                    if (i == 2 && table_[4] == 0)
+                        continue;
                     var g = new NHighMannose();
                     g.SetTable(table_);
-                    g.table_[i + 3] = g.table_[i + 3] + 1;
+                    g.table_[i + 5] = g.table_[i + 5] + 1;
                     g.SetComposition(composite);
                     g.AddMonosaccharide(Monosaccharide.Man);
                     glycans.Add(g);
@@ -144,7 +175,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddFucCore()
         {
-            return table_[1] == 0 && table_[2] == 0;  //core
+            return table_[0] >= 1 && table_[2] == 0;  //core
         }
 
         NHighMannose CreateByAddFucCore()
