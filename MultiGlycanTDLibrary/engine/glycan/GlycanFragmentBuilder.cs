@@ -61,8 +61,15 @@ namespace MultiGlycanTDLibrary.engine.glycan
             List<IGlycan> YionsFragments = YionsLikeFragments(glycan);
             foreach(IGlycan sub in YionsFragments)
             {
-                glycanBYFragment.AddRange(BionsLikeFragments(sub));
-
+                List<IGlycan> subYionsFragments = YionsLikeFragments(sub);
+                foreach(IGlycan subSub in subYionsFragments)
+                {
+                    if(GlycanFragmentBuilderHelper.ContainsCut(glycan, sub, subSub))
+                    {
+                        glycanBYFragment.Add(
+                            GlycanFragmentBuilderHelper.ComplementaryFragment(subSub, sub));
+                    }
+                }
             }
             return glycanBYFragment;
         }

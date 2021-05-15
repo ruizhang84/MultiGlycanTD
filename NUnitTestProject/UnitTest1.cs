@@ -38,7 +38,7 @@ namespace NUnitTestProject
                         var glycan = map[id];
                         if (!glycan.IsValid())
                             continue;
-                        List<string> massList = GlycanIonsBuilder.Build.Yions(glycan)
+                        List<string> massList = GlycanIonsBuilder.Build.BYions(glycan)
                                                 .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
                         string output = id + "," + string.Join(" ", massList);
                         writer.WriteLine(output);

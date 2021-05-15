@@ -234,5 +234,14 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return newGlycan;
         }
 
+
+        public static bool ContainsCut(IGlycan glycan, IGlycan sub, IGlycan subSub)
+        {
+            int diff1 = CountYCut(sub, glycan, 1);
+            int diff2 = CountYCut(subSub, glycan, 1);
+
+            return diff1 == diff2; 
+        }
+
     }
 }
