@@ -160,7 +160,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddGlcNAc()
         {
-            return table_[0] == 2 && table_[4] > 0;
+            return table_[0] == 2 && table_[5] > 0;
         }
 
         NGlycanHybrid CreateByAddGlcNAcCore()
@@ -177,7 +177,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         bool ValidAddGlcNAcBisect()
         {
             //bisect 0, not extanding on GlcNAc
-            return table_[1] == 1 && table_[3] == 0 && table_[4] == 0;
+            return table_[1] == 1 && table_[3] == 0 && table_[8] == 0;
         }
 
         NGlycanHybrid CreateByAddGlcNAcBisect()
@@ -204,7 +204,6 @@ namespace MultiGlycanTDLibrary.model.glycan
                 }
             }
             return false;
-
         }
 
         List<NGlycanHybrid> CreateByAddGlcNAcBranch()
@@ -220,7 +219,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     g.SetComposition(composite);
                     g.AddMonosaccharide(Monosaccharide.GlcNAc);
                     glycans.Add(g);
-                } 
+                }
             }
             return glycans;
         }

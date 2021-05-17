@@ -23,8 +23,8 @@ namespace MultiGlycanTDLibrary.model.glycan
         }
         public override bool IsValid()
         {
-            // at least two chains
-            if (table_[5] == 0 || table_[7] == 0)
+            // at least three chains
+            if (table_[5] == 0 || table_[6] == 0 || table_[7] == 0)
                 return false;
             // maksure sorted
             for (int i = 1; i < 3; i++)
@@ -72,7 +72,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                         List<NHighMannose> gs = CreateByAddManCore();
                         glycans.AddRange(gs);
                     }
-                    else if (ValidAddManBranch())
+                    if (ValidAddManBranch())
                     {
                         List<NHighMannose> gs = CreateByAddManBranch();
                         glycans.AddRange(gs);
@@ -149,7 +149,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddManBranch()
         {
-            return table_[3] > 0;
+            return table_[3] > 0 || table_[4] > 0;
         }
 
         List<NHighMannose> CreateByAddManBranch()
@@ -158,6 +158,8 @@ namespace MultiGlycanTDLibrary.model.glycan
             for (int i = 0; i < 3; i++)
             {
                 if (i == 2 && table_[4] == 0)
+                    continue;
+                else if (i < 2 && table_[3] == 0)
                     continue;
                 var g = new NHighMannose();
                 g.SetTable(table_);

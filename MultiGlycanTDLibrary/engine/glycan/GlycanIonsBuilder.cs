@@ -35,6 +35,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             List<double> fragments = new List<double>();
             fragments.AddRange(Bions(glycan));
             fragments.AddRange(Cions(glycan));
+            fragments.AddRange(Yions(glycan));
             fragments.AddRange(Zions(glycan));
             fragments.AddRange(BYions(glycan));
             fragments.AddRange(BZions(glycan));
@@ -91,7 +92,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<double> ZZions(IGlycan glycan)
         {
             return GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan)
-                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kReduced - kHydrogen * 2).Distinct().ToList();
+                .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5).Distinct().ToList();
         }
 
         public List<double> BYions(IGlycan glycan)
@@ -116,10 +117,5 @@ namespace MultiGlycanTDLibrary.engine.glycan
         {
             return BYions(glycan);
         }
-
-
-       
-
-
     }
 }

@@ -19,7 +19,7 @@ namespace NUnitTestProject
         public void Test1()
         {
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(6, 6, 5, 4, 0, true, false, false);
+                new GlycanBuilder(6, 6, 5, 4, 0, false, false, true);
             glycanBuilder.Build();
 
             var map = glycanBuilder.GlycanMaps();
@@ -35,6 +35,7 @@ namespace NUnitTestProject
                     foreach (var id in map.Keys)
                     {
                         //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
+                        //2 1 0 0 1 1 2 0 1 1 0 0 1 1 0 0 0 0
                         var glycan = map[id];
                         if (!glycan.IsValid())
                             continue;
