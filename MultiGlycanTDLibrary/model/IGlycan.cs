@@ -24,6 +24,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         IGlycan Clone();
         GlycanType Type();
         List<IGlycan> Children();
+        List<IGlycan> Fragments();
         void Add(IGlycan glycan);
         string Name();
         string ID();

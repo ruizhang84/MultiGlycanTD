@@ -20,7 +20,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();
 
-            foreach (IGlycan sub in glycan.Children())
+            foreach (IGlycan sub in glycan.Fragments())
             {
                 int diff = GlycanFragmentBuilderHelper.CountYCut(sub, glycan, 1);
                 if (diff == 1)
@@ -34,7 +34,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();
 
-            foreach (IGlycan sub in glycan.Children())
+            foreach (IGlycan sub in glycan.Fragments())
             {
                 int diff = GlycanFragmentBuilderHelper.CountYCut(sub, glycan, 2);
                 if (diff == 2)

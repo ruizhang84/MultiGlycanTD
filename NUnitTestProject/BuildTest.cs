@@ -16,7 +16,7 @@ namespace NUnitTestProject
         public void TestBuild()
         {
             GlycanBuilder glycanBuilder =
-               new GlycanBuilder(6, 6, 5, 4, 0, true, false, false);
+               new GlycanBuilder(12, 12, 5, 4, 0, true, false, false);
             glycanBuilder.Build();
 
             var map = glycanBuilder.GlycanMaps();
@@ -33,7 +33,7 @@ namespace NUnitTestProject
                     if (map.ContainsKey(id))
                     {
                         var glycan = map[id];
-                        foreach (var g in glycan.Children())
+                        foreach (var g in glycan.Fragments())
                         {
                             int diff = GlycanFragmentBuilderHelper.CountYCut(g, glycan, 10);
                             //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0

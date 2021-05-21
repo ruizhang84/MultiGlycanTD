@@ -19,7 +19,7 @@ namespace NUnitTestProject
         public void Test1()
         {
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(6, 6, 5, 4, 0, false, false, true);
+                new GlycanBuilder(12, 12, 5, 4, 0, true, true, false);
             glycanBuilder.Build();
 
             var map = glycanBuilder.GlycanMaps();
@@ -39,7 +39,7 @@ namespace NUnitTestProject
                         var glycan = map[id];
                         if (!glycan.IsValid())
                             continue;
-                        List<string> massList = GlycanIonsBuilder.Build.BYions(glycan)
+                        List<string> massList = GlycanIonsBuilder.Build.Yions(glycan)
                                                 .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
                         string output = id + "," + string.Join(" ", massList);
                         writer.WriteLine(output);

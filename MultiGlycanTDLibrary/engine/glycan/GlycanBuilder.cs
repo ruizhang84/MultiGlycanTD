@@ -113,7 +113,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             if (!glycans_map_.ContainsKey(id))
                             {
                                 g.Add(node);
-                                glycans_map_[id] = BuildDistribution(g);
+                                glycans_map_[id] = g; // BuildDistribution(g);
                                 queue.Enqueue(glycans_map_[id]);
                             }
                             else
