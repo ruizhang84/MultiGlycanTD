@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using MultiGlycanTDLibrary.util.brain;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
@@ -22,9 +22,13 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         protected Dictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
         protected List<Monosaccharide> candidates_;
+        protected bool permethylated = true;
+        protected int order = 10;
+        protected Dictionary<string, List<double>> mem_distr_;
+        protected Dictionary<string, List<double>> mem_mass_;
 
         public GlycanBuilder(int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
-            bool complex = true, bool hybrid = false, bool highMannose = false)
+            bool complex = true, bool hybrid = false, bool highMannose = false, bool permethylated = true)
         {
             hexNAc_ = hexNAc;
             hex_ = hex;
@@ -34,6 +38,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
             ComplexInclude = complex;
             HybridInclude = hybrid;
             HighMannoseInclude = highMannose;
+            this.permethylated = permethylated;
+            mem_distr_ = new Dictionary<string, List<double>>();
+            mem_mass_ = new Dictionary<string, List<double>>();
 
             glycans_map_ = new Dictionary<string, IGlycan>();
             candidates_ = new List<Monosaccharide>()
@@ -93,10 +100,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 IGlycan node = queue.Peek();
                 queue.Dequeue();
 
-                // update table id
-                double mass = Glycan.To.Compute(node);
-                node.SetMass(mass);
-
                 // next
                 foreach (var it in candidates_)
                 {
@@ -110,7 +113,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             if (!glycans_map_.ContainsKey(id))
                             {
                                 g.Add(node);
-                                glycans_map_[id] = g;
+                                glycans_map_[id] = BuildDistribution(g);
                                 queue.Enqueue(glycans_map_[id]);
                             }
                             else
@@ -158,6 +161,45 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     && neuAc <= neuAc_ && neuGc <= neuGc_);
         }
 
+        protected Compound BuildCompound(IGlycan glycan)
+        {
+            Dictionary<Element, int> formulaComposition = new Dictionary<Element, int>();
+            var compose = glycan.Composition();
+            foreach (var sugar in compose.Keys)
+            {
+                Dictionary<Element, int> tempCompose = NMonosaccharideCreator.Get.SubCompositions(
+                    sugar, permethylated);
+                foreach (Element elm in tempCompose.Keys)
+                {
+                    if (!formulaComposition.ContainsKey(elm))
+                    {
+                        formulaComposition[elm] = 0;
+                    }
+                    formulaComposition[elm] += tempCompose[elm] * compose[sugar];
+                }
+            }
+            Compound formula = new Compound(formulaComposition);
+            return formula;
+        }
+
+        protected IGlycan BuildDistribution(IGlycan glycan)
+        {
+            Compound formula = BuildCompound(glycan);
+            glycan.SetFormula(formula);
+
+            if (!mem_mass_.ContainsKey(formula.Name))
+            {
+                mem_distr_[formula.Name] = Brain.Run.Distribute(glycan.Formula(), order);
+                mem_mass_[formula.Name] = Brain.Run.CenterMass(glycan.Formula(), order);
+            }
+            List<double> distrib = mem_distr_[formula.Name];
+            List<double> massDistr = mem_mass_[formula.Name];
+
+            glycan.SetDistrib(distrib);
+            glycan.SetMass(massDistr);
+
+            return glycan;
+        }
 
     }
 }

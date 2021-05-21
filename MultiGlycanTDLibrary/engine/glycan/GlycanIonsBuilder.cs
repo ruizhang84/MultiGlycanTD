@@ -46,13 +46,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return fragments.Distinct().ToList();
         }
 
-        public List<double> ExtraFragments(IGlycan glycan)
-        {
-            List<double> fragments = new List<double>();
-            fragments.AddRange(Yions(glycan));
-            return fragments.Distinct().ToList();
-        }
-
         public List<double> Yions(IGlycan glycan)
         {
             if (Reduced)

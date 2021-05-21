@@ -13,12 +13,10 @@ namespace MultiGlycanTDLibrary.model.glycan
         protected SortedDictionary<Monosaccharide, int> composite
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
-        protected double mass;
 
-        // get distribution of isotope cluster
         protected Compound formula;
+        protected List<double> massDistr;
         protected List<double> distrib;
-        protected double peak = 0;
 
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
@@ -49,9 +47,9 @@ namespace MultiGlycanTDLibrary.model.glycan
             return string.Join(" ", Table()); ;
         }
 
-        public double Mass()
+        public List<double> Mass()
         {
-            return mass;
+            return massDistr;
         }
 
         public string Name()
@@ -95,9 +93,9 @@ namespace MultiGlycanTDLibrary.model.glycan
             }
         }
 
-        public void SetMass(double mass)
+        public void SetMass(List<double> massDistr)
         {
-            this.mass = mass;
+            this.massDistr = massDistr;
         }
 
         public abstract GlycanType Type();
@@ -127,15 +125,6 @@ namespace MultiGlycanTDLibrary.model.glycan
         public void SetDistrib(List<double> distrib)
         {
             this.distrib = distrib;
-        }
-
-        public double HighestPeak()
-        {
-            return peak;
-        }
-        public void SetHighestPeak(double peak)
-        {
-            this.peak = peak;
         }
 
     }

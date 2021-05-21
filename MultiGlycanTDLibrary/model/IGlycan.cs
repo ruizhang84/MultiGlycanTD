@@ -17,8 +17,10 @@ namespace MultiGlycanTDLibrary.model.glycan
 
     public interface IGlycan
     {
-        double Mass();
-        void SetMass(double mass);
+        List<double> Mass();
+        void SetMass(List<double> massDistr);
+        List<double> GetDistrib();
+        void SetDistrib(List<double> distrib);
         IGlycan Clone();
         GlycanType Type();
         List<IGlycan> Children();
@@ -33,10 +35,5 @@ namespace MultiGlycanTDLibrary.model.glycan
         bool IsValid();
         Compound Formula();
         void SetFormula(Compound formula);
-        List<double> GetDistrib();
-        void SetDistrib(List<double> distrib);
-        // mass of glycan corresponding to most aboundant peak
-        double HighestPeak();
-        void SetHighestPeak(double peak);
     }
 }
