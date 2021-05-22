@@ -35,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.search
             searcher_.Init(points);
         }
 
-        public List<IGlycan> Search(List<IPeak> peaks, int precursorCharge,
+        public Tuple<double, List<IGlycan>> Search(List<IPeak> peaks, int precursorCharge,
             List<IGlycan> candidates)
         {
             Init(peaks, precursorCharge);
@@ -68,7 +68,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
             }
 
-            return results;
+            return new Tuple<double, List<IGlycan>>(bestScore, results);
         }
 
     }

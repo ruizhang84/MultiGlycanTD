@@ -16,33 +16,31 @@ namespace SpectrumProcess
             this.precision = precision;
         }
 
-        protected virtual List<IPeak> InsertPeaks(ISpectrum spectrum)
+        protected virtual List<IPeak> InsertPeaks(List<IPeak> origPeaks)
         {
             List<IPeak> peaks = new List<IPeak>();
-            double mz = spectrum.GetPeaks().First().GetMZ();
-            peaks.Add(new GeneralPeak(mz - precision, 0));
-            foreach (IPeak peak in spectrum.GetPeaks())
+            double last = origPeaks.First().GetMZ();
+            peaks.Add(new GeneralPeak(last - precision, 0));
+            foreach (IPeak peak in origPeaks)
             {
-                if (peak.GetMZ() - mz > precision)
+                if (peak.GetMZ() - last > precision)
                 {
-                    double middle = (mz + peak.GetMZ()) / 2;
-                    peaks.Add(new GeneralPeak(middle, 0));
+                    peaks.Add(new GeneralPeak(last + precision / 2, 0));
+                    peaks.Add(new GeneralPeak(peak.GetMZ() - precision / 2, 0));
                 }
                 peaks.Add(peak);
-                mz = peak.GetMZ();
+                last = peak.GetMZ();
             }
-            peaks.Add(new GeneralPeak(mz + precision, 0));
+            peaks.Add(new GeneralPeak(last + precision, 0));
             return peaks;
         }
 
-        public ISpectrum Process(ISpectrum spectrum)
+        public List<IPeak> Process(List<IPeak> peaks)
         {
-            if (spectrum.GetPeaks().Count == 0)
-                return spectrum;
             // insert pseudo peaks for large gap
-            List<IPeak> peaks = InsertPeaks(spectrum);
+            peaks = InsertPeaks(peaks);
             List<IPeak> processedPeaks = new List<IPeak>();
-           
+
             int index = 1;
             int end = peaks.Count - 1;
             int head = index + 1;
@@ -67,6 +65,17 @@ namespace SpectrumProcess
                 index++;
 
             }
+            return processedPeaks;
+        }
+
+
+        public ISpectrum Process(ISpectrum spectrum)
+        {
+            if (spectrum.GetPeaks().Count == 0)
+                return spectrum;
+            // insert pseudo peaks for large gap
+            List<IPeak> peaks = InsertPeaks(spectrum.GetPeaks());
+            List<IPeak> processedPeaks = Process(peaks);
 
             ISpectrum newSpectrum = spectrum.Clone();
             newSpectrum.SetPeaks(processedPeaks);

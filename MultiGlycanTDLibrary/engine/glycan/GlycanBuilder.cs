@@ -77,7 +77,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public Dictionary<string, List<double>> GlycanMasMaps()
         { return mass_map_.ToDictionary(entry => entry.Key, entry => entry.Value);  }
 
-        public void Build()
+        public void Build() 
         {
             Queue<IGlycan> queue = new Queue<IGlycan>();
             IGlycan root;

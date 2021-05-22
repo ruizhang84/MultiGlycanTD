@@ -12,14 +12,17 @@ namespace MultiGlycanTDLibrary.engine.analysis
         double retention_;
         double mz_;
         string glycan_;
+        List<string> isomer_ = new List<string>();
         double score_;
 
         public int Scan() { return scan_; }
         public string Glycan() { return glycan_; }
         public double Score() { return score_; }
+        public List<string> Isomers() { return isomer_; }
         public double MZ() { return mz_; }
         public double Retention() { return retention_; }
         public void set_scan(int scan) { scan_ = scan; }
+        public void Add(string match) { isomer_.Add(match); }
         public void set_glycan(string glycan) { glycan_ = glycan; }
         public void set_score(double score) { score_ = score; }
         public void set_retention(double retention) { retention_ = retention; }
