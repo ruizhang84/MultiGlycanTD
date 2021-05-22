@@ -22,7 +22,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public bool HighMannoseInclude { get; set; }
         public bool Permethylated { get; set; } = true;
         public int Order { get; set; } = 10;
-
+        public bool SpeedUp { get; set; } = false;
         public bool Reduced { get; set; } = true;
 
         protected Dictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
@@ -35,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public GlycanBuilder(int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true, bool reduced = true)
+            bool permethylated = true, bool reduced = true, bool speedUp = false)
         {
             hexNAc_ = hexNAc;
             hex_ = hex;
@@ -48,6 +48,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             Permethylated = permethylated;
             Order = order;
             Reduced = reduced;
+            SpeedUp = speedUp;
             compound_map_ = new Dictionary<string, Compound>();
             glycan_compound_map_ = new Dictionary<string, List<IGlycan>>();
             distr_map_ = new ConcurrentDictionary<string, List<double>>();
@@ -85,18 +86,21 @@ namespace MultiGlycanTDLibrary.engine.glycan
             if (ComplexInclude)
             {
                 root = new NGlycanComplex();
+                root.SetSorted(SpeedUp);
                 queue.Enqueue(root);
             }
 
             if (HybridInclude)
             {
                 root = new NGlycanHybrid();
+                root.SetSorted(SpeedUp);
                 queue.Enqueue(root);
             }
 
             if (HighMannoseInclude)
             {
                 root = new NHighMannose();
+                root.SetSorted(SpeedUp);
                 queue.Enqueue(root);
             }
 

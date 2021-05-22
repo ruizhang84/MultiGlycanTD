@@ -19,6 +19,7 @@ namespace MultiGlycanTDLibrary.model.glycan
     {
         IGlycan Clone();
         bool IsValid();
+        bool Sorted();
         GlycanType Type();
         List<IGlycan> Children();
         List<IGlycan> Fragments();
@@ -27,6 +28,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         string ID();
         int[] Table();
         void SetTable(int[] table);
+        void SetSorted(bool sorted);
         SortedDictionary<Monosaccharide, int> Composition();
         void SetComposition(SortedDictionary<Monosaccharide, int> composition);
         List<IGlycan> Grow(Monosaccharide monosaccharide);

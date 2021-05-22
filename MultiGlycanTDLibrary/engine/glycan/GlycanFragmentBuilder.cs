@@ -19,7 +19,8 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<IGlycan> YionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();
-
+            // To do: if glycan is sorted (glycan.sorted => true)
+            // permuated the branches, so that all fragments included
             foreach (IGlycan sub in glycan.Fragments())
             {
                 int diff = GlycanFragmentBuilderHelper.CountYCut(sub, glycan, 1);

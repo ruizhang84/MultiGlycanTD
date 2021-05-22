@@ -13,9 +13,15 @@ namespace MultiGlycanTDLibrary.model.glycan
         protected SortedDictionary<Monosaccharide, int> composite
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
+        protected bool sorted = false;
 
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
+
+        public void SetSorted(bool sorted)
+        { this.sorted = sorted; }
+        public bool Sorted()
+        { return sorted; }
 
         public void Add(IGlycan glycan)
         {

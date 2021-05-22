@@ -16,11 +16,17 @@ namespace MultiGlycanTDLibrary.model.glycan
         //[NeuAc(branch1) - NeuAc(branch2) - NeuAc(branch3) - NeuAc(branch4)] -18,19,20,21
         //[NeuGc(branch1) - NeuGc(branch2) - NeuGc(branch3) - NeuGc(branch4)] -22,23,24,25
 
+        // 1) make it order based on observation that
+        // a. fragments are not distinguish the bond linkage e.g. Y fragment
+        // b. terminal position of fuc/neuAC/neuGc are ambiguous
+        // 2) remove the sorting order if needed (recommend for small sugar).
+
         private int[] table_ = new int[26];
 
         public override IGlycan Clone()
         {
             IGlycan glycan = new NGlycanComplex();
+            glycan.SetSorted(sorted);
             glycan.SetTable(table_);
             glycan.SetComposition(composite);
             return glycan;
@@ -31,20 +37,6 @@ namespace MultiGlycanTDLibrary.model.glycan
             // at least two chains
             if (table_[6] == 0 || table_[7] == 0)
                 return false;
-            // maksure sorted
-            for(int i = 1; i < 4; i++)
-            {
-                if (table_[i + 5] < table_[i + 6])
-                    return false;
-                if (table_[i + 9] < table_[i + 10])
-                    return false;
-                if (table_[i + 13] < table_[i + 14])
-                    return false;
-                if (table_[i + 17] < table_[i + 18])
-                    return false;
-                if (table_[i + 21] < table_[i + 22])
-                    return false;
-            }
 
             return base.IsValid();
         }
@@ -191,10 +183,13 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
-                        //equal GlcNAc Gal, no Fucose attached at terminal, no terminal NeuAc, NeuGc
+                        if (!sorted || j == 0 || table_[i * 2 + j + 6] < table_[i * 2 + j + 5]) // make it order
                         {
-                            return true;
+                            if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            //equal GlcNAc Gal, no Fucose attached at terminal, no terminal NeuAc, NeuGc
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -213,15 +208,18 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
-                        //equal GlcNAc Gal, no Fucose attached at terminal, no terminal NeuAc, NeuGc
+                        if (!sorted || j == 0 || table_[i * 2 + j + 6] < table_[i * 2 + j + 5]) // make it order
                         {
-                            var g = new NGlycanComplex();
-                            g.SetTable(table_);
-                            g.table_[i * 2 + j + 6] = g.table_[i * 2 + j + 6] + 1;
-                            g.SetComposition(composite);
-                            g.AddMonosaccharide(Monosaccharide.GlcNAc);
-                            glycans.Add(g);
+                            if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            //equal GlcNAc Gal, no Fucose attached at terminal, no terminal NeuAc, NeuGc
+                            {
+                                var g = new NGlycanComplex();
+                                g.SetTable(table_);
+                                g.table_[i * 2 + j + 6] = g.table_[i * 2 + j + 6] + 1;
+                                g.SetComposition(composite);
+                                g.AddMonosaccharide(Monosaccharide.GlcNAc);
+                                glycans.Add(g);
+                            }
                         }
                     }
                 }
@@ -248,18 +246,20 @@ namespace MultiGlycanTDLibrary.model.glycan
             }
             else
             {
-                for (int i = 0; i < 2; i++)
+                var g = new NGlycanComplex();
+                g.SetTable(table_);
+                g.SetComposition(composite);
+                if (table_[4] == 0)
                 {
-                    if (table_[4 + i] == 0)
-                    {
-                        var g = new NGlycanComplex();
-                        g.SetTable(table_);
-                        g.SetComposition(composite);
-                        g.table_[4 + i] = 1;
-                        g.AddMonosaccharide(Monosaccharide.Man);
-                        glycans.Add(g);
-                    }
+                    g.table_[4] = 1;
                 }
+                else if (table_[5] == 0)
+                {
+                    g.table_[5] = 1;
+                }
+                g.AddMonosaccharide(Monosaccharide.Man);
+                glycans.Add(g);
+
             }
             return glycans;
         }
@@ -272,10 +272,13 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] + 1)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 10] < table_[i * 2 + j + 9]) // make it order
                         {
-                            return true;
-                        } 
+                            if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] + 1)
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -292,14 +295,17 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] + 1)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 10] < table_[i * 2 + j + 9]) // make it order
                         {
-                            var g = new NGlycanComplex();
-                            g.SetTable(table_);
-                            g.table_[i * 2 + j + 10] = g.table_[i * 2 + j + 10] + 1;
-                            g.SetComposition(composite);
-                            g.AddMonosaccharide(Monosaccharide.Gal);
-                            glycans.Add(g);
+                            if (table_[i * 2 + j + 6] == table_[i * 2 + j + 10] + 1)
+                            {
+                                var g = new NGlycanComplex();
+                                g.SetTable(table_);
+                                g.table_[i * 2 + j + 10] = g.table_[i * 2 + j + 10] + 1;
+                                g.SetComposition(composite);
+                                g.AddMonosaccharide(Monosaccharide.Gal);
+                                glycans.Add(g);
+                            }
                         }
                     }
                 }
@@ -328,12 +334,14 @@ namespace MultiGlycanTDLibrary.model.glycan
             {
                 if (table_[i + 4] > 0)
                 {
-
                     for(int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 6] > 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 14] < table_[i * 2 + j + 13]) // make it order
                         {
-                            return true;
+                            if (table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 6] > 0)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -351,14 +359,17 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 6] > 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 14] < table_[i * 2 + j + 13]) // make it order
                         {
-                            var g = new NGlycanComplex();
-                            g.SetTable(table_);
-                            g.table_[i * 2 + j + 14] = 1;
-                            g.SetComposition(composite);
-                            g.AddMonosaccharide(Monosaccharide.Fuc);
-                            glycans.Add(g);
+                            if (table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 6] > 0)
+                            {
+                                var g = new NGlycanComplex();
+                                g.SetTable(table_);
+                                g.table_[i * 2 + j + 14] = 1;
+                                g.SetComposition(composite);
+                                g.AddMonosaccharide(Monosaccharide.Fuc);
+                                glycans.Add(g);
+                            }
                         }
                     }
                 }
@@ -375,11 +386,13 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 18] < table_[i + 17]) // make it order
                         {
-                            return true;
+                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            {
+                                return true;
+                            }
                         }
-                        
                     }
                 }
             }
@@ -395,14 +408,17 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 18] < table_[i + 17]) // make it order
                         {
-                            var g = new NGlycanComplex();
-                            g.SetTable(table_);
-                            g.table_[i * 2 + j + 18] = 1;
-                            g.SetComposition(composite);
-                            g.AddMonosaccharide(Monosaccharide.NeuAc);
-                            glycans.Add(g);
+                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            {
+                                var g = new NGlycanComplex();
+                                g.SetTable(table_);
+                                g.table_[i * 2 + j + 18] = 1;
+                                g.SetComposition(composite);
+                                g.AddMonosaccharide(Monosaccharide.NeuAc);
+                                glycans.Add(g);
+                            }
                         }
                     }
                 }
@@ -418,9 +434,12 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 22] < table_[i + 21]) // make it order
                         {
-                            return true;
+                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            {
+                                return true;
+                            }
                         }
                         
                     }
@@ -438,15 +457,18 @@ namespace MultiGlycanTDLibrary.model.glycan
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                        if (!sorted || j == 0 || table_[i * 2 + j + 22] < table_[i + 21]) // make it order
                         {
-                            var g = new NGlycanComplex();
-                            g.SetTable(table_);
-                            g.table_[i + 22] = 1;
-                            g.SetComposition(composite);
-                            g.AddMonosaccharide(Monosaccharide.NeuGc);
-                            glycans.Add(g);
-                        }                       
+                            if (table_[i * 2 + j + 6] > 0 && table_[i * 2 + j + 6] == table_[i * 2 + j + 10] && table_[i * 2 + j + 18] == 0 && table_[i * 2 + j + 22] == 0)
+                            {
+                                var g = new NGlycanComplex();
+                                g.SetTable(table_);
+                                g.table_[i + 22] = 1;
+                                g.SetComposition(composite);
+                                g.AddMonosaccharide(Monosaccharide.NeuGc);
+                                glycans.Add(g);
+                            }
+                        }
                     }
                 }
             }

@@ -13,7 +13,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         // [Man(branch1) - Man(branch2) - Man(branch3)]  5 6 7
 
         private int[] table_ = new int[8];
-
+        
         public override IGlycan Clone()
         {
             IGlycan glycan = new NHighMannose();
