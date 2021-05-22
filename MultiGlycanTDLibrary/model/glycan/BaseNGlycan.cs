@@ -14,10 +14,6 @@ namespace MultiGlycanTDLibrary.model.glycan
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
 
-        protected Compound formula;
-        protected List<double> massDistr;
-        protected List<double> distrib;
-
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
 
@@ -66,11 +62,6 @@ namespace MultiGlycanTDLibrary.model.glycan
             return string.Join(" ", Table()); ;
         }
 
-        public List<double> Mass()
-        {
-            return massDistr;
-        }
-
         public string Name()
         {
             string name = "";
@@ -112,11 +103,6 @@ namespace MultiGlycanTDLibrary.model.glycan
             }
         }
 
-        public void SetMass(List<double> massDistr)
-        {
-            this.massDistr = massDistr;
-        }
-
         public abstract GlycanType Type();
         public abstract IGlycan Clone();
 
@@ -124,26 +110,6 @@ namespace MultiGlycanTDLibrary.model.glycan
         {  
             return composite[Monosaccharide.GlcNAc] >= 2
                 && composite[Monosaccharide.Man] >= 3;
-        }
-
-        public Compound Formula()
-        {
-            return formula;
-        }
-
-        public void SetFormula(Compound formula)
-        {
-            this.formula = formula;
-        }
-
-        public List<double> GetDistrib()
-        {
-            return distrib;
-        }
-
-        public void SetDistrib(List<double> distrib)
-        {
-            this.distrib = distrib;
         }
 
     }

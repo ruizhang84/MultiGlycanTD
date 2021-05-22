@@ -29,7 +29,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 {
                     double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
                        util.mass.Spectrum.Proton, charge);
-                    Point<int> point = new Point<int>(mass, i);
+                    points.Add(new Point<int>(mass, i));
                 }
             }
             searcher_.Init(points);

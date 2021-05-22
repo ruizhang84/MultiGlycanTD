@@ -13,8 +13,8 @@ namespace NUnitTestProject
         [Test]
         public void Test()
         {
-            Dictionary<Element, int> composition = new Dictionary<Element, int>()
-                { { new C(), 50}, { new H(), 71}, { new N(), 13}, { new O(), 12} };
+            Dictionary<ElementType, int> composition = new Dictionary<ElementType, int>()
+                { { ElementType.C, 50}, { ElementType.H, 71}, { ElementType.N, 13}, { ElementType.O, 12} };
             //{ { new C(), 8}, { new H(), 15}, { new N(), 1}, { new O(), 6} };
 
 

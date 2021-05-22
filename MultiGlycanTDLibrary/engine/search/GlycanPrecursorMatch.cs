@@ -10,25 +10,25 @@ namespace MultiGlycanTDLibrary.engine.search
 {
     public class GlycanPrecursorMatch
     {
-        ISearch<IGlycan> searcher_;
+        ISearch<string> searcher_;
+        Dictionary<string, List<IGlycan>> glycan_compound_map_;
+        Dictionary<string, List<double>> mass_map_;
 
-        public GlycanPrecursorMatch(ISearch<IGlycan> searcher)
+        public GlycanPrecursorMatch(ISearch<string> searcher,
+            Dictionary<string, List<IGlycan>> glycan_compound_map,
+            Dictionary<string, List<double>> mass_map)
         {
             searcher_ = searcher;
-        }
+            glycan_compound_map_ = glycan_compound_map;
+            mass_map_ = mass_map;
 
-        public void Init(Dictionary<string, IGlycan> glycan_map)
-        {
-            List<Point<IGlycan>> glycans_ = new List<Point<IGlycan>>();
-            foreach (string id in glycan_map.Keys)
+            List<Point<string>> glycans_ = new List<Point<string>>();
+            foreach (string compose in glycan_compound_map_.Keys)
             {
-                if (glycan_map[id].IsValid())
+                foreach (double mass in mass_map_[compose])
                 {
-                    foreach(double mass in glycan_map[id].Mass())
-                    {
-                        Point<IGlycan> glycan = new Point<IGlycan>(mass, glycan_map[id]);
-                        glycans_.Add(glycan);
-                    }
+                    Point<string> glycan = new Point<string>(mass, compose);
+                    glycans_.Add(glycan);
                 }
             }
             searcher_.Init(glycans_);
@@ -38,7 +38,10 @@ namespace MultiGlycanTDLibrary.engine.search
         {
             double mass = util.mass.Spectrum.To.Compute(precursor,
                 util.mass.Spectrum.Proton, charge);
-            return searcher_.Search(mass).Distinct().ToList();
+            return searcher_.Search(mass).Distinct()
+                .SelectMany(compose => glycan_compound_map_[compose])
+                .Where(g => g.IsValid())
+                .ToList();
         }
     }
 }

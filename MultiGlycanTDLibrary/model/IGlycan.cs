@@ -17,11 +17,8 @@ namespace MultiGlycanTDLibrary.model.glycan
 
     public interface IGlycan
     {
-        List<double> Mass();
-        void SetMass(List<double> massDistr);
-        List<double> GetDistrib();
-        void SetDistrib(List<double> distrib);
         IGlycan Clone();
+        bool IsValid();
         GlycanType Type();
         List<IGlycan> Children();
         List<IGlycan> Fragments();
@@ -33,8 +30,6 @@ namespace MultiGlycanTDLibrary.model.glycan
         SortedDictionary<Monosaccharide, int> Composition();
         void SetComposition(SortedDictionary<Monosaccharide, int> composition);
         List<IGlycan> Grow(Monosaccharide monosaccharide);
-        bool IsValid();
-        Compound Formula();
-        void SetFormula(Compound formula);
+
     }
 }

@@ -13,14 +13,32 @@ namespace MultiGlycanTDLibrary.util.brain
         public static Brain Run { get { return lazy.Value; } }
         protected Brain(){}
 
+        public Element ElementConv(ElementType type)
+        {
+            switch(type)
+            {
+                case ElementType.C:
+                    return new C();
+                case ElementType.H:
+                    return new H();
+                case ElementType.N:
+                    return new N();
+                case ElementType.O:
+                    return new O();
+                case ElementType.S:
+                    return new S();
+            }
+            return new H();
+        }
+
         private double PsiFunc(Compound compound, int order)
         {
             Complex psi = 0;
             foreach(var item in compound.Composition)
             {
                 int num = item.Value;
-                Element element = item.Key;
-                foreach(Complex root in element.Root())
+                Element element = ElementConv(item.Key);
+                foreach (Complex root in element.Root())
                 {
                     psi += num * Complex.Pow(root, -order);
                 }
@@ -46,7 +64,7 @@ namespace MultiGlycanTDLibrary.util.brain
             foreach(var item in compound.Composition)
             {
                 int num = item.Value;
-                Element element = item.Key;
+                Element element = ElementConv(item.Key);
                 q0 *= Math.Pow(element.Abundance[element.Abundance.Keys.Min()], num);
             }
             coeff.Add(q0);
@@ -68,82 +86,65 @@ namespace MultiGlycanTDLibrary.util.brain
        public List<double> CenterMass(Compound compound, int order)
        {
             double[] variant = new double[order];
-            Dictionary<Element, int> formular = compound.Composition;
-            Element C = new C();
-            Element H = new H();
-            Element N = new N();
-            Element O = new O();
-            Element S = new S();
+            Dictionary<ElementType, int> formular = compound.Composition;
 
-            foreach(Element element in formular.Keys)
+            foreach (ElementType element in formular.Keys)
             {
                 int count = formular[element];
-                if (element.Name == "Carbon")
+                formular[element] -= 1;
+                Element e = ElementConv(element);
+                List<double> coeff = Distribute(new Compound(formular), order);
+
+                switch (element)
                 {
-                    formular[element] -= 1;
-                    List<double> coeff = Distribute(new Compound(formular), order);
-                    for(int i = 0; i < coeff.Count; i++)
-                    {
-                        variant[i] += coeff[i] * count * C.Abundance[12] * C.Mass[12];
-                        if (i < coeff.Count - 1)
-                            variant[i + 1] += coeff[i] * count * C.Abundance[13] * C.Mass[13];
-                    }
-                    formular[element] += 1;
+                    case ElementType.C:
+                        for (int i = 0; i < coeff.Count; i++)
+                        {
+                            variant[i] += coeff[i] * count * e.Abundance[12] * e.Mass[12];
+                            if (i < coeff.Count - 1)
+                                variant[i + 1] += coeff[i] * count * e.Abundance[13] * e.Mass[13];
+                        }
+                        break;
+                    case ElementType.H:
+                        for (int i = 0; i < coeff.Count; i++)
+                        {
+                            variant[i] += coeff[i] * count * e.Abundance[1] * e.Mass[1];
+                            if (i < coeff.Count - 1)
+                                variant[i + 1] += coeff[i] * count * e.Abundance[2] * e.Mass[2];
+                        }
+                        break;
+                    case ElementType.O:
+                        for (int i = 0; i < coeff.Count; i++)
+                        {
+                            variant[i] += coeff[i] * count * e.Abundance[16] * e.Mass[16];
+                            if (i < coeff.Count - 1)
+                                variant[i + 1] += coeff[i] * count * e.Abundance[17] * e.Mass[17];
+                            if (i < coeff.Count - 2)
+                                variant[i + 2] += coeff[i] * count * e.Abundance[18] * e.Mass[18];
+                        }
+                        break;
+                    case ElementType.N:
+                        for (int i = 0; i < coeff.Count; i++)
+                        {
+                            variant[i] += coeff[i] * count * e.Abundance[14] * e.Mass[14];
+                            if (i < coeff.Count - 1)
+                                variant[i + 1] += coeff[i] * count * e.Abundance[15] * e.Mass[15];
+                        }
+                        break;
+                    case ElementType.S:
+                        for (int i = 0; i < coeff.Count; i++)
+                        {
+                            variant[i] += coeff[i] * count * e.Abundance[32] * e.Mass[32];
+                            if (i < coeff.Count - 1)
+                                variant[i + 1] += coeff[i] * count * e.Abundance[33] * e.Mass[33];
+                            if (i < coeff.Count - 2)
+                                variant[i + 2] += coeff[i] * count * e.Abundance[34] * e.Mass[34];
+                            if (i < coeff.Count - 4)
+                                variant[i + 4] += coeff[i] * count * e.Abundance[36] * e.Mass[36];
+                        }
+                        break;
                 }
-                else if (element.Name == "Hydrogen")
-                {
-                    formular[element] -= 1;
-                    List<double> coeff = Distribute(new Compound(formular), order);
-                    for (int i = 0; i < coeff.Count; i++)
-                    {
-                        variant[i] += coeff[i] * count * H.Abundance[1] * H.Mass[1];
-                        if (i < coeff.Count - 1)
-                            variant[i + 1] += coeff[i] * count * H.Abundance[2] * H.Mass[2];
-                    }
-                    formular[element] += 1;
-                }
-                else if (element.Name == "Nitrogen")
-                {
-                    formular[element] -= 1;
-                    List<double> coeff = Distribute(new Compound(formular), order);
-                    for (int i = 0; i < coeff.Count; i++)
-                    {
-                        variant[i] += coeff[i] * count * N.Abundance[14] * N.Mass[14];
-                        if (i < coeff.Count - 1)
-                            variant[i + 1] += coeff[i] * count * N.Abundance[15] * N.Mass[15];
-                    }
-                    formular[element] += 1;
-                }
-                else if (element.Name == "Oxygen")
-                {
-                    formular[element] -= 1;
-                    List<double> coeff = Distribute(new Compound(formular), order);
-                    for (int i = 0; i < coeff.Count; i++)
-                    {
-                        variant[i] += coeff[i] * count * O.Abundance[16] * O.Mass[16];
-                        if (i < coeff.Count - 1)
-                            variant[i + 1] += coeff[i] * count * O.Abundance[17] * O.Mass[17];
-                        if (i < coeff.Count - 2)
-                            variant[i + 2] += coeff[i] * count * O.Abundance[18] * O.Mass[18];
-                    }
-                    formular[element] += 1;
-                }
-                else if (element.Name == "Sulfur")
-                {
-                    formular[element] -= 1;
-                    List<double> coeff = Distribute(new Compound(formular), order);
-                    for (int i = 0; i < coeff.Count; i++)
-                    {
-                        variant[i] += coeff[i] * count * S.Abundance[32] * S.Mass[32];
-                        if (i < coeff.Count - 1)
-                            variant[i + 1] += coeff[i] * count * S.Abundance[33] * S.Mass[33];
-                        if (i < coeff.Count - 2)
-                            variant[i + 2] += coeff[i] * count * S.Abundance[34] * S.Mass[34];
-                        if (i < coeff.Count - 4)
-                            variant[i + 4] += coeff[i] * count * S.Abundance[36] * S.Mass[36];
-                    }
-                    formular[element] += 1;
-                }
+                formular[element] += 1;
             }
             List<double> coefficient = Distribute(new Compound(formular), order);
             for(int i = 0; i < order; i ++)

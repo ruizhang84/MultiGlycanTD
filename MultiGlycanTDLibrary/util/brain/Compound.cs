@@ -6,6 +6,9 @@ using System.Text;
 
 namespace MultiGlycanTDLibrary.util.brain
 {
+    public enum ElementType 
+    { C, H, O, N, S }
+
     public abstract class Element
     {
         public int Atomic { get; set; }
@@ -113,20 +116,40 @@ namespace MultiGlycanTDLibrary.util.brain
 
     public class Compound
     {
-        public List<Element> Elements { get; set; }
-        public Dictionary<Element, int> Composition { get; set; }
+
+        public Dictionary<ElementType, int> Composition { get; set; }
         public double Mass { get; set; }
         public string Name { get; set; }
 
-        public Compound(Dictionary<Element, int> compos)
+        public Compound(Dictionary<ElementType, int> compos)
         {
-            Elements = compos.Select(c => c.Key).OrderBy(c => c.Atomic).ToList();
             Composition = compos;
             Mass = 0;
-            foreach (Element elem in Composition.Keys)
+            foreach (ElementType elem in Composition.Keys)
             {
-                Mass += elem.MonoMass * Composition[elem];
-                Name += elem.Name + Composition[elem].ToString() + ",";
+                switch (elem)
+                {
+                    case ElementType.C:
+                        Mass += new C().MonoMass * Composition[elem];
+                        Name += new C().Name + Composition[elem].ToString() + ",";
+                        break;
+                    case ElementType.H:
+                        Mass += new H().MonoMass * Composition[elem];
+                        Name += new H().Name + Composition[elem].ToString() + ",";
+                        break;
+                    case ElementType.N:
+                        Mass += new N().MonoMass * Composition[elem];
+                        Name += new N().Name + Composition[elem].ToString() + ",";
+                        break;
+                    case ElementType.O:
+                        Mass += new O().MonoMass * Composition[elem];
+                        Name += new O().Name + Composition[elem].ToString() + ",";
+                        break;
+                    case ElementType.S:
+                        Mass += new S().MonoMass * Composition[elem];
+                        Name += new S().Name + Composition[elem].ToString() + ",";
+                        break;
+                }
             }
         }
     }
