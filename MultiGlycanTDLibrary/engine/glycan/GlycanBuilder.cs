@@ -117,13 +117,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                             {
                                 g.Add(node);
                                 glycans_map_[id] = g;
-                                string name = g.Name();
-                                if (!compound_map_.ContainsKey(name))
-                                {
-                                    compound_map_[name] = BuildCompound(g);
-                                    glycan_compound_map_[name] = new List<IGlycan>();
-                                }
-                                glycan_compound_map_[name].Add(g);
                                 queue.Enqueue(glycans_map_[id]);
                             }
                             else
@@ -133,8 +126,20 @@ namespace MultiGlycanTDLibrary.engine.glycan
                         }
                     }
                 }
-
             }
+
+
+            foreach (var pair in glycans_map_)
+            {
+                IGlycan g = pair.Value;
+                string name = g.Name();
+                if (!compound_map_.ContainsKey(name))
+                {
+                    compound_map_[name] = BuildCompound(g);
+                    glycan_compound_map_[name] = new List<IGlycan>();
+                }
+                glycan_compound_map_[name].Add(g);
+            };
 
             Parallel.ForEach(compound_map_, pair =>
             {

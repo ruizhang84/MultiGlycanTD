@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
@@ -28,16 +29,23 @@ namespace NUnitTestProject
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             string output = "";
-            foreach (var id in map.Keys)
+            Object obj = new Object();
+            //foreach (var id in map.Keys)
+            Parallel.ForEach(map, pair =>
             {
+                var id = pair.Key;
                 //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
-                var glycan = map[id];
-                if (!glycan.IsValid())
-                    continue;
-                List<string> massList = GlycanIonsBuilder.Build.Fragments(glycan)
+                var glycan = pair.Value;
+                if (glycan.IsValid())
+                {
+                    List<string> massList = GlycanIonsBuilder.Build.Fragments(glycan)
                                         .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
-                output += id + "," + string.Join(" ", massList) + "\n";
-            }
+                    lock(obj)
+                    {
+                        output += id + "," + string.Join(" ", massList) + "\n";
+                    }
+                }
+            });
             watch.Stop();
             Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
 
