@@ -26,7 +26,15 @@ namespace MultiGlycanTDLibrary.model.glycan
         public void Add(IGlycan glycan)
         {
             glycans.Add(glycan);
+            if (sorted)
+                glycans.UnionWith(glycan.ChildrenHashSet());
         }
+
+        public HashSet<IGlycan> ChildrenHashSet()
+        { 
+            return glycans; 
+        }
+
         public List<IGlycan> Children()
         {
             return glycans.ToList();
@@ -34,6 +42,9 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         public List<IGlycan> Fragments()
         {
+            if (sorted)
+                return Children();
+
             List<IGlycan> children = new List<IGlycan>();
             Stack<IGlycan> stack = new Stack<IGlycan>(glycans);
             HashSet<string> visited = new HashSet<string>();

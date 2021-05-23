@@ -32,7 +32,24 @@ namespace MultiGlycanTDLibrary.model.glycan
             // at least two chains
             if (table_[6] == 0 || table_[8] == 0)
                 return false;
-
+            if (!sorted)
+            {
+                // maksure sorted
+                if (table_[4] < table_[5])
+                    return false;
+                if (table_[6] < table_[7])
+                    return false;
+                if (table_[8] < table_[8])
+                    return false;
+                if (table_[10] < table_[11])
+                    return false;
+                if (table_[12] < table_[13])
+                    return false;
+                if (table_[14] < table_[15])
+                    return false;
+                if (table_[16] < table_[17])
+                    return false;
+            }
             return base.IsValid();
         }
 
@@ -152,6 +169,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         NGlycanHybrid CreateByAddGlcNAcCore()
         {
             var g = new NGlycanHybrid();
+            g.SetSorted(sorted);
             g.SetTable(table_);
             g.table_[0] = g.table_[0] + 1;
             g.SetComposition(composite);
@@ -169,6 +187,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         NGlycanHybrid CreateByAddGlcNAcBisect()
         {
             var g = new NGlycanHybrid();
+            g.SetSorted(sorted);
             g.SetTable(table_);
             g.table_[3] = 1;
             g.SetComposition(composite);
@@ -205,6 +224,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[i + 8] == table_[i + 10] && table_[i + 12] == 0 && table_[i + 14] == 0 && table_[i + 16] == 0)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.table_[i + 8] = g.table_[i + 8] + 1;
                         g.SetComposition(composite);
@@ -227,6 +247,7 @@ namespace MultiGlycanTDLibrary.model.glycan
             if (table_[1] == 0)
             {
                 var g = new NGlycanHybrid();
+                g.SetSorted(sorted);
                 g.SetTable(table_);
                 g.SetComposition(composite);
                 g.table_[1] = 1;
@@ -240,6 +261,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[4 + i] == 0)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.SetComposition(composite);
                         g.table_[4 + i] = 1;
@@ -300,6 +322,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[i + 6] == table_[i + 8] + 1)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.table_[i + 8] = g.table_[i + 8] + 1;
                         g.SetComposition(composite);
@@ -319,6 +342,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         NGlycanHybrid CreateByAddFucCore()
         {
             var g = new NGlycanHybrid();
+            g.SetSorted(sorted);
             g.SetTable(table_);
             g.table_[2] = 1;
             g.SetComposition(composite);
@@ -354,6 +378,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[i + 12] == 0 && table_[i + 8] > 0)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.table_[i + 12] = 1;
                         g.SetComposition(composite);
@@ -393,6 +418,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[i + 8] > 0 && table_[i + 8] == table_[i + 10] && table_[i + 14] == 0 && table_[i + 16] == 0)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.table_[i + 14] = 1;
                         g.SetComposition(composite);
@@ -433,6 +459,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     if (table_[i + 8] > 0 && table_[i + 8] == table_[i + 10] && table_[i + 14] == 0 && table_[i + 16] == 0)
                     {
                         var g = new NGlycanHybrid();
+                        g.SetSorted(sorted);
                         g.SetTable(table_);
                         g.table_[i + 16] = 1;
                         g.SetComposition(composite);

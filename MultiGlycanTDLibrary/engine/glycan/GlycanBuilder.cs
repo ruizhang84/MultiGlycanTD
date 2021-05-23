@@ -62,7 +62,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 Monosaccharide.Gal,
                 Monosaccharide.Fuc,
                 Monosaccharide.NeuAc,
-                Monosaccharide.NeuGc
+                //Monosaccharide.NeuGc
             };
         }
 
@@ -100,7 +100,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
             if (HighMannoseInclude)
             {
                 root = new NHighMannose();
-                root.SetSorted(SpeedUp);
                 queue.Enqueue(root);
             }
 
@@ -113,7 +112,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 foreach (var it in candidates_)
                 {
                     List<IGlycan> res = node.Grow(it);
-
                     foreach (var g in res)
                     {
                         if (SatisfyCriteria(g))
@@ -153,7 +151,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         }
 
-        bool SatisfyCriteria(IGlycan glycan)
+        public bool SatisfyCriteria(IGlycan glycan)
         {
             int hexNAc = 0, hex = 0, fuc = 0, neuAc = 0, neuGc = 0;
             SortedDictionary<Monosaccharide, int> composite = glycan.Composition();

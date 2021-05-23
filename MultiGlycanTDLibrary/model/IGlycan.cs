@@ -21,6 +21,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         bool IsValid();
         bool Sorted();
         GlycanType Type();
+        HashSet<IGlycan> ChildrenHashSet();
         List<IGlycan> Children();
         List<IGlycan> Fragments();
         void Add(IGlycan glycan);

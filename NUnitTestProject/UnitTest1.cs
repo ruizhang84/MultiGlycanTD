@@ -19,11 +19,28 @@ namespace NUnitTestProject
         public void Test1()
         {
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(12, 12, 5, 4, 0, true, true, false);
+                new GlycanBuilder(12, 12, 5, 4, 0, true, false, false);
+            glycanBuilder.SpeedUp = true;
             glycanBuilder.Build();
 
             var map = glycanBuilder.GlycanMaps();
             Console.WriteLine(map.Count);
+
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+            string output = "";
+            foreach (var id in map.Keys)
+            {
+                //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
+                var glycan = map[id];
+                if (!glycan.IsValid())
+                    continue;
+                List<string> massList = GlycanIonsBuilder.Build.Yions(glycan)
+                                        .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
+                output += id + "," + string.Join(" ", massList) + "\n";
+            }
+            watch.Stop();
+            Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
 
             string path = @"C:\Users\Rui Zhang\Downloads\fragments.csv";
             MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
@@ -32,18 +49,7 @@ namespace NUnitTestProject
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
                     writer.WriteLine("glycan_id,fragments");
-                    foreach (var id in map.Keys)
-                    {
-                        //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
-                        //2 1 0 0 1 1 2 0 1 1 0 0 1 1 0 0 0 0
-                        var glycan = map[id];
-                        if (!glycan.IsValid())
-                            continue;
-                        List<string> massList = GlycanIonsBuilder.Build.Yions(glycan)
-                                                .OrderBy(m => m).Select(m => Math.Round(m, 4).ToString()).ToList();
-                        string output = id + "," + string.Join(" ", massList);
-                        writer.WriteLine(output);
-                    }
+                    writer.WriteLine(output);
                     writer.Flush();
                 }
             }
