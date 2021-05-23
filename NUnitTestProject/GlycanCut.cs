@@ -16,7 +16,6 @@ namespace NUnitTestProject
         {
             GlycanBuilder glycanBuilder =
                 new GlycanBuilder(12, 12, 5, 4, 0, true, false, false);
-            glycanBuilder.SpeedUp = true;
             glycanBuilder.Build();
 
             var map = glycanBuilder.GlycanMaps();

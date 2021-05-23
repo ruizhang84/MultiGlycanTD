@@ -22,7 +22,6 @@ namespace NUnitTestProject
 
             IGlycan glycan = new NGlycanComplex();
             glycan.SetTable(table);
-            glycan.SetSorted(true);
             List<IGlycan> gs = glycan.Grow(Monosaccharide.Fuc);
             //2 1 0 0 1 1 2 2 2 0 2 2 2 0 1 1 1 0 1 1 0 0 0 0 0 0
             // 2 1 0 0 1 1 2 2 2 0 2 2 2 0 1 1 1 0 1 0 1 0 0 0 0 0

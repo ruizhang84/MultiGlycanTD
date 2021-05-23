@@ -13,26 +13,13 @@ namespace MultiGlycanTDLibrary.model.glycan
         protected SortedDictionary<Monosaccharide, int> composite
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
-        protected bool sorted = false;
 
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
 
-        public void SetSorted(bool sorted)
-        { this.sorted = sorted; }
-        public bool Sorted()
-        { return sorted; }
-
         public void Add(IGlycan glycan)
         {
             glycans.Add(glycan);
-            if (sorted)
-                glycans.UnionWith(glycan.ChildrenHashSet());
-        }
-
-        public HashSet<IGlycan> ChildrenHashSet()
-        { 
-            return glycans; 
         }
 
         public List<IGlycan> Children()
@@ -42,9 +29,6 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         public List<IGlycan> Fragments()
         {
-            if (sorted)
-                return Children();
-
             List<IGlycan> children = new List<IGlycan>();
             Stack<IGlycan> stack = new Stack<IGlycan>(glycans);
             HashSet<string> visited = new HashSet<string>();
