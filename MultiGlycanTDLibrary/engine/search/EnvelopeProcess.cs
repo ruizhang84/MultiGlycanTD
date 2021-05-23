@@ -17,9 +17,9 @@ namespace MultiGlycanTDLibrary.engine.search
             searcher = new BucketSearch<IPeak>(by, tol);
         }
 
-        public void Init(ISpectrum spectrum)
+        public void Init(List<IPeak> peaks)
         {
-            searcher.Init(spectrum.GetPeaks()
+            searcher.Init(peaks
                 .Select(p => new Point<IPeak>(p.GetMZ(), p)).ToList());
         }
 

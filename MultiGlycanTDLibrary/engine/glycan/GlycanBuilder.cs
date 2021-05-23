@@ -17,6 +17,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         protected int fuc_;
         protected int neuAc_;
         protected int neuGc_;
+        protected int Thread { get; set; }
         public bool ComplexInclude { get; set; }
         public bool HybridInclude { get; set; }
         public bool HighMannoseInclude { get; set; }
@@ -31,16 +32,18 @@ namespace MultiGlycanTDLibrary.engine.glycan
         protected Dictionary<string, Compound> compound_map_;
         protected ConcurrentDictionary<string, List<double>> distr_map_;
         protected ConcurrentDictionary<string, List<double>> mass_map_;
+        protected object obj = new object();
 
         public GlycanBuilder(int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true, bool reduced = true)
+            bool permethylated = true, bool reduced = true, int thread = 4)
         {
             hexNAc_ = hexNAc;
             hex_ = hex;
             fuc_ = fuc;
             neuAc_ = neuAc;
             neuGc_ = neuGc;
+            Thread = thread;
             ComplexInclude = complex;
             HybridInclude = hybrid;
             HighMannoseInclude = highMannose;
@@ -73,7 +76,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public Dictionary<string, List<double>> GlycanDistribMaps()
         { return distr_map_.ToDictionary(entry => entry.Key, entry => entry.Value); }
 
-        public Dictionary<string, List<double>> GlycanMasMaps()
+        public Dictionary<string, List<double>> GlycanMassMaps()
         { return mass_map_.ToDictionary(entry => entry.Key, entry => entry.Value);  }
 
         public void Build() 
@@ -101,33 +104,34 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
             while (queue.Count > 0)
             {
-                IGlycan node = queue.Peek();
-                queue.Dequeue();
-
-                // next
-                foreach (var it in candidates_)
+                Queue<IGlycan> bags = new Queue<IGlycan>();
+                Parallel.ForEach(queue, new ParallelOptions { MaxDegreeOfParallelism = Thread }, node =>
                 {
-                    List<IGlycan> res = node.Grow(it);
-                    foreach (var g in res)
+                    // next
+                    foreach (var it in candidates_)
                     {
-                        if (SatisfyCriteria(g))
+                        List<IGlycan> res = node.Grow(it);
+                        foreach (var g in res)
                         {
-                            string id = g.ID();
-                            if (!glycans_map_.ContainsKey(id))
+                            if (SatisfyCriteria(g))
                             {
-                                g.Add(node);
-                                glycans_map_[id] = g;
-                                queue.Enqueue(glycans_map_[id]);
-                            }
-                            else
-                            {
+                                string id = g.ID();
+                                lock (obj)
+                                {
+                                    if (!glycans_map_.ContainsKey(id))
+                                    {
+                                        glycans_map_[id] = g;
+                                        bags.Enqueue(glycans_map_[id]);
+                                    }
+                                }
                                 glycans_map_[id].Add(node);
                             }
                         }
                     }
-                }
-            }
+                });
 
+                queue = bags;
+            }
 
             foreach (var pair in glycans_map_)
             {

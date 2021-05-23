@@ -1,12 +1,16 @@
 ﻿using MultiGlycanTDLibrary.algorithm;
+using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
+using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using SpectrumData;
 using SpectrumData.Reader;
 using SpectrumProcess;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,7 +68,7 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
+            string path = @"C:\Users\Rui Zhang\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -93,42 +97,79 @@ namespace NUnitTestProject
 
             // search
             double searchRange = 1.0;
-            IProcess picking = new LocalNeighborPicking();
+            LocalNeighborPicking picking = new LocalNeighborPicking();
             IProcess process = new WeightedAveraging(new LocalNeighborPicking());
-            foreach (var scanPair in scanGroup)
+
+            object obj = new object();
+            List<SearchResult> final = new List<SearchResult>();
+            //foreach (var scanPair in scanGroup)
+            Parallel.ForEach(scanGroup, scanPair =>
             {
                 if (scanPair.Value.Count > 0)
                 {
                     int scan1 = scanPair.Key;
-                    ISpectrum ms1 = reader.GetSpectrum(scanPair.Key);
-                    ms1 = picking.Process(ms1);
-                    List<IPeak> ms1Peaks = ms1.GetPeaks();
+                    ISpectrum ms1 = reader.GetSpectrum(scan1);
 
                     foreach (int scan in scanPair.Value)
                     {
-                        double mz = reader.GetPrecursorMass(scan1, reader.GetMSnOrder(scan1));
-                        if (FilterPeaks(ms1Peaks, mz, searchRange).Count == 0) 
-                            continue;
+
+                        double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
+                        List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
+                        ms1Peaks = picking.Process(ms1Peaks);
 
 
                         ICharger charger = new Patterson();
-                        int charge = charger.Charge(ms1.GetPeaks(), mz - searchRange, mz + searchRange);
-
+                        int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
 
                         // search
                         ISpectrum ms2 = reader.GetSpectrum(scan);
                         ms2 = process.Process(ms2);
 
                         ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
-                        GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, 
-                            glycanBuilder.GlycanCompositionMaps(), glycanBuilder.GlycanMasMaps());
+                        GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher,
+                            glycanBuilder.GlycanCompositionMaps(), glycanBuilder.GlycanMassMaps(),
+                            glycanBuilder.GlycanDistribMaps(), 0.01);
+                        List<IGlycan> candidates = precursorMatch.Match(mz, charge);
 
+                        ISearch<int> searcher2 = new BucketSearch<int>(ToleranceBy.Dalton, 0.01);
+                        GlycanSearch glycanSearch = new GlycanSearch(searcher2);
+                        Tuple<double, List<IGlycan>> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
+
+                        SearchAnalyzer analyzer = new SearchAnalyzer();
+                        List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
+
+                        EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
+                        GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess,
+                            glycanBuilder.GlycanDistribMaps());
+                        results = envelopeMatch.Match(results, ms1Peaks, mz, charge);
+                        lock(obj)
+                        {
+                            final.AddRange(results);
+                        }
                     }
 
+                }
+            });
 
-
-
-
+            //write out
+            string outputPath = @"C:\Users\Rui Zhang\Downloads\searching.csv";
+            //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
+            using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                using (StreamWriter writer = new StreamWriter(ostrm))
+                {
+                    writer.WriteLine("scan,retention,glycan,mz,score,fit");
+                    foreach(SearchResult r in final.OrderBy(p => p.Scan()))
+                    {
+                        string output = r.Scan().ToString() + ","
+                            + r.Retention().ToString() + ","
+                            + r.Glycan() + ","
+                            + r.MZ().ToString() + ","
+                            + r.Score().ToString() + ","
+                            + r.Fit().ToString();
+                        writer.WriteLine(output);
+                    }
+                    writer.Flush();
                 }
             }
 

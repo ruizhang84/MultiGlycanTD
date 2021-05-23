@@ -13,13 +13,17 @@ namespace MultiGlycanTDLibrary.model.glycan
         protected SortedDictionary<Monosaccharide, int> composite
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
+        protected object obj = new object();
 
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
 
         public void Add(IGlycan glycan)
         {
-            glycans.Add(glycan);
+            lock(obj)
+            {
+                glycans.Add(glycan);
+            }
         }
 
         public List<IGlycan> Children()

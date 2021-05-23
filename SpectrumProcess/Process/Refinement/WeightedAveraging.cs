@@ -62,6 +62,17 @@ namespace SpectrumProcess
                 Math.Round(target.GetIntensity(), peakRound));
         }
 
+        public List<IPeak> Process(List<IPeak> peaks)
+        {
+            List<IPeak> processed = new List<IPeak>();
+            List<IPeak> centroid = peakPicking.Process(peaks);
+            foreach (IPeak cPeak in centroid)
+            {
+                List<IPeak> neighbors = NeighborPeaks(cPeak, peaks);
+                processed.Add(Average(cPeak, neighbors));
+            }
+            return processed;
+        }
 
         public ISpectrum Process(ISpectrum spectrum)
         {
