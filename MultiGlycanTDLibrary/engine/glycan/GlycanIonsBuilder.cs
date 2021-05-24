@@ -13,7 +13,11 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public static GlycanIonsBuilder Build { get { return lazy.Value; } }
 
+        public Dictionary<string, List<double>> FragmentsMap { get; set; }
+            = new Dictionary<string, List<double>>();
+
         public bool Reduced { get; set; } = true;
+        object obj = new object();
 
         public const double kCarbon = 12.0;
         public const double kOxygen = 15.99491463;
@@ -48,6 +52,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             fragments.AddRange(YYions(yyionsLikeFragments));
             fragments.AddRange(YZions(yyionsLikeFragments));
             fragments.AddRange(ZZions(yyionsLikeFragments));
+
             return fragments.Distinct().ToList();
         }
 
