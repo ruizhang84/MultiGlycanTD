@@ -18,7 +18,7 @@ namespace MultiGlycanTDLibrary.model.glycan
     public interface IGlycan
     {
         IGlycan Clone();
-        bool IsValid();
+        bool IsValid(); // distinguish glycan and fragments, valid for glycan (i.e., pentacore)
         GlycanType Type();
         List<IGlycan> Children();
         List<IGlycan> Fragments();

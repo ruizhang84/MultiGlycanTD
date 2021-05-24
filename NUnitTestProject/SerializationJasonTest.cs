@@ -27,26 +27,18 @@ namespace NUnitTestProject
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
-            List<JsonEntry> entries = new List<JsonEntry>();
             Object obj = new Object();
             int count = 0;
-            var composition_map = glycanBuilder.GlycanCompositionMaps();
+
             var distr_map = glycanBuilder.GlycanDistribMaps();
             var mass_map = glycanBuilder.GlycanMassMaps();
-
-            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
-            foreach (var pair in composition_map)
-            {
-                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
-            }
-
             CompdJson compdJson = new CompdJson()
             {
-                IDMap = id_map,
                 DistrMap = distr_map,
                 MassMap = mass_map
             };
 
+            Dictionary<string, List<double>> fragments = new Dictionary<string, List<double>>();
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
@@ -57,20 +49,22 @@ namespace NUnitTestProject
                                         .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
                     lock (obj)
                     {
-                        JsonEntry g = new JsonEntry()
-                        {
-                            ID = glycan.ID(),
-                            Fragments = massList
-                        };
-                        entries.Add(g);
-                        count++;
+                        fragments[id] = massList;
                     }
                 }
             });
+            var composition_map = glycanBuilder.GlycanCompositionMaps();
+            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
+            foreach (var pair in composition_map)
+            {
+                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
+            }
+
             GlycanJson glycanJson = new GlycanJson()
             {
                 Compound = compdJson,
-                Entries = entries
+                IDMap = id_map,
+                Fragments = fragments
             };
 
             watch.Stop();
@@ -81,8 +75,8 @@ namespace NUnitTestProject
             File.WriteAllText(fileName, jsonString);
 
             string jsonStringRead = File.ReadAllText(fileName);
-            GlycanJson glycanJsonRead = JsonSerializer.Deserialize<GlycanJson>(jsonString);
-            Assert.AreEqual(count, glycanJsonRead.Entries.Count);
+            GlycanJson glycanJsonRead = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
+            Assert.AreEqual(map.Count, glycanJsonRead.Fragments.Count);
 
 
         }

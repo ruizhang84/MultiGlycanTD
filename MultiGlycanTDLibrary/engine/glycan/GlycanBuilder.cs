@@ -136,6 +136,8 @@ namespace MultiGlycanTDLibrary.engine.glycan
             foreach (var pair in glycans_map_)
             {
                 IGlycan g = pair.Value;
+                if (!g.IsValid())
+                    continue;
                 string name = g.Name();
                 if (!compound_map_.ContainsKey(name))
                 {

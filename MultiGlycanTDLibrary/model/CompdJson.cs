@@ -8,7 +8,6 @@ namespace MultiGlycanTDLibrary.model
 {
     public class CompdJson
     {
-        public Dictionary<string, List<string>> IDMap { get; set; }
         public Dictionary<string, List<double>> DistrMap { get; set; }
         public Dictionary<string, List<double>> MassMap { get; set; }
     }

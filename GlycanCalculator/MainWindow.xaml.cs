@@ -137,7 +137,11 @@ namespace GlycanCalculator
 
             permethylated = Permethylated.IsChecked == true;
             reduced = Reduced.IsChecked == true;
-
+            if (fileName.Length == 0)
+            {
+                MessageBox.Show("Name the saving file!");
+                return false;
+            }
             return true;
         }
 
@@ -149,25 +153,17 @@ namespace GlycanCalculator
             glycanBuilder.Build();
 
             // distribution maps
-            var composition_map = glycanBuilder.GlycanCompositionMaps();
             var distr_map = glycanBuilder.GlycanDistribMaps();
             var mass_map = glycanBuilder.GlycanMassMaps();
-
-            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
-            foreach (var pair in composition_map)
-            {
-                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
-            }
             CompdJson compdJson = new CompdJson()
             {
-                IDMap = id_map,
                 DistrMap = distr_map,
                 MassMap = mass_map
             };
 
-            // fragments mass
-            List<JsonEntry> entries = new List<JsonEntry>();
+            // fragmentation maps
             object obj = new object();
+            Dictionary<string, List<double>> fragments = new Dictionary<string, List<double>>();
             var map = glycanBuilder.GlycanMaps();
             Parallel.ForEach(map, pair =>
             {
@@ -179,26 +175,27 @@ namespace GlycanCalculator
                                         .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
                     lock (obj)
                     {
-                        JsonEntry g = new JsonEntry()
-                        {
-                            ID = glycan.ID(),
-                            Fragments = massList
-                        };
-                        entries.Add(g);
+                        fragments[id] = massList;
                     }
                 }
             });
+            var composition_map = glycanBuilder.GlycanCompositionMaps();
+            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
+            foreach (var pair in composition_map)
+            {
+                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
+            }
 
             // serialization
             GlycanJson glycanJson = new GlycanJson()
             {
                 Compound = compdJson,
-                Entries = entries
+                IDMap = id_map,
+                Fragments = fragments
             };
             string jsonString = JsonSerializer.Serialize(glycanJson);
             File.WriteAllText(fileName, jsonString);
 
-            Search.IsEnabled = true;
             return Task.CompletedTask;
         }
 
@@ -209,7 +206,6 @@ namespace GlycanCalculator
 
             Search.IsEnabled = false;
             Task.Run(Process);
-
         }
     }
 }

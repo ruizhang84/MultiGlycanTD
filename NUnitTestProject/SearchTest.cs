@@ -2,6 +2,7 @@
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
+using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using SpectrumData;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace NUnitTestProject
@@ -69,6 +71,7 @@ namespace NUnitTestProject
         {
             // read spectrum
             string path = @"C:\Users\iruiz\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
+            string database = @"C:\Users\iruiz\Downloads\database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -91,8 +94,9 @@ namespace NUnitTestProject
             }
 
             // init
-            GlycanBuilder glycanBuilder = new GlycanBuilder();
-            glycanBuilder.Build();
+            string jsonStringRead = File.ReadAllText(database);
+            GlycanJson glycanJson = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
+            CompdJson compdJson = glycanJson.Compound;
 
 
             // search
@@ -126,21 +130,18 @@ namespace NUnitTestProject
                         ms2 = process.Process(ms2);
 
                         ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
-                        GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher,
-                            glycanBuilder.GlycanCompositionMaps(), glycanBuilder.GlycanMassMaps(),
-                            glycanBuilder.GlycanDistribMaps(), 0.01);
-                        List<IGlycan> candidates = precursorMatch.Match(mz, charge);
+                        GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
+                        List<string> candidates = precursorMatch.Match(mz, charge);
 
                         ISearch<int> searcher2 = new BucketSearch<int>(ToleranceBy.Dalton, 0.01);
-                        GlycanSearch glycanSearch = new GlycanSearch(searcher2);
-                        Tuple<double, List<IGlycan>> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
+                        GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
+                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
 
                         SearchAnalyzer analyzer = new SearchAnalyzer();
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
 
                         EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
-                        GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess,
-                            glycanBuilder.GlycanDistribMaps());
+                        GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
                         results = envelopeMatch.Match(results, ms1Peaks, mz, charge);
                         lock(obj)
                         {

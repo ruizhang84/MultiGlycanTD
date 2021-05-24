@@ -9,26 +9,16 @@ namespace MultiGlycanTDLibrary.engine.analysis
 {
     public class SearchAnalyzer
     {
-        public List<SearchResult> Analyze(Tuple<double, List<IGlycan>> searched,
+        public List<SearchResult> Analyze(List<SearchResult> results,
             double mz, int scan, double retention)
         {
-            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
-            double score = searched.Item1;
-            foreach(IGlycan glycan in searched.Item2)
+            foreach (SearchResult r in results)
             {
-                string name = glycan.Name();
-                if (!results.ContainsKey(name))
-                {
-                    results[name] = new SearchResult();
-                    results[name].set_mz(mz);
-                    results[name].set_scan(scan);
-                    results[name].set_glycan(name);
-                    results[name].set_score(score);
-                    results[name].set_retention(retention);
-                }
-                results[name].Add(glycan.ID());
+                r.set_scan(scan);
+                r.set_mz(mz);
+                r.set_retention(retention);
             }
-            return results.Values.ToList();
+            return results;
         }
     }
 }

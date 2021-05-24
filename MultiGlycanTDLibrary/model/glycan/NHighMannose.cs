@@ -27,11 +27,8 @@ namespace MultiGlycanTDLibrary.model.glycan
             if (table_[5] == 0 || table_[6] == 0 || table_[7] == 0)
                 return false;
             // maksure sorted
-            for (int i = 1; i < 3; i++)
-            {
-                if (table_[i + 4] < table_[i + 5])
-                    return false;
-            }
+            if (table_[5] < table_[6])
+                return false;
             return base.IsValid();
         }
         public override int[] Table() { return table_; }

@@ -1,5 +1,7 @@
 ﻿using MultiGlycanTDLibrary.algorithm;
+using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
+using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
 using SpectrumData;
 using System;
@@ -13,10 +15,14 @@ namespace MultiGlycanTDLibrary.engine.search
     public class GlycanSearch
     {
         ISearch<int> searcher_;
+        Dictionary<string, List<string>> id_map_;
+        Dictionary<string, List<double>> fragments_map_;
 
-        public GlycanSearch(ISearch<int> searcher)
+        public GlycanSearch(ISearch<int> searcher, GlycanJson glycanJson)
         {
             searcher_ = searcher;
+            id_map_ = glycanJson.IDMap;
+            fragments_map_ = glycanJson.Fragments;
         }
 
         void Init(List<IPeak> peaks, int precursorCharge)
@@ -35,40 +41,62 @@ namespace MultiGlycanTDLibrary.engine.search
             searcher_.Init(points);
         }
 
-        public Tuple<double, List<IGlycan>> Search(List<IPeak> peaks, int precursorCharge,
-            List<IGlycan> candidates)
+        public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
+            List<string> candidates)
         {
             Init(peaks, precursorCharge);
 
-            List<IGlycan> results = new List<IGlycan>();
+            List<SearchResult> results = new List<SearchResult>();
 
-            double bestScore = 0;
-            foreach(IGlycan glycan in candidates)
+            double maxScore = 0;
+            foreach(string composition in candidates)
             {
-                HashSet<int> matchedIndex = new HashSet<int>();
-                List<double> fragments = GlycanIonsBuilder.Build.Fragments(glycan);
-                foreach (double mass in fragments)
-                {
-                    List<int> matched = searcher_.Search(mass, mass);
-                    matchedIndex.UnionWith(matched);
-                }
-                double score = matchedIndex.Select(
-                    index => Math.Log(peaks[index].GetIntensity())).Sum();
+                SearchResult result = new SearchResult();
+                result.set_glycan(composition);
 
-                // compare score
-                if (score > bestScore)
+                // score the result
+                double bestScore = 0;
+                List<string> isomers = new List<string>();
+                foreach (string glycan in id_map_[composition])
                 {
-                    bestScore = score;
-                    results.Clear();
-                    results.Add(glycan);
+                    HashSet<int> matchedIndex = new HashSet<int>();
+                    List<double> fragments = fragments_map_[glycan];
+                    foreach (double mass in fragments)
+                    {
+                        List<int> matched = searcher_.Search(mass, mass);
+                        matchedIndex.UnionWith(matched);
+                    }
+                    double score = matchedIndex.Select(
+                        index => Math.Log(peaks[index].GetIntensity())).Sum();
+
+                    // compare score
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        isomers.Clear();
+                        isomers.Add(glycan);
+                    }
+                    else if (score == bestScore)
+                    {
+                        isomers.Add(glycan);
+                    }
                 }
-                else if (score == bestScore)
+                result.set_isomers(isomers);
+                result.set_score(bestScore);
+
+                // set up results
+                if (bestScore > maxScore)
                 {
-                    results.Add(glycan);
+                    results.Clear();
+                    results.Add(result);
+                }
+                else if (bestScore == maxScore)
+                {
+                    results.Add(result);
                 }
             }
 
-            return new Tuple<double, List<IGlycan>>(bestScore, results);
+            return results;
         }
 
     }

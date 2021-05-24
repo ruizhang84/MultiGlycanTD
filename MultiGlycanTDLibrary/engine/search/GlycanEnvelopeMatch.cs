@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.model;
 using SpectrumData;
 
 namespace MultiGlycanTDLibrary.engine.search
@@ -11,12 +12,14 @@ namespace MultiGlycanTDLibrary.engine.search
     {
         EnvelopeProcess processor;
         Dictionary<string, List<double>> distr_map;
+        double cutoff_ = 0.8;
 
         public GlycanEnvelopeMatch(EnvelopeProcess processor,
-            Dictionary<string, List<double>> distr_map)
+            CompdJson compdJson, double cutoff=0.8)
         {
             this.processor = processor;
-            this.distr_map = distr_map;
+            distr_map = compdJson.DistrMap;
+            cutoff_ = cutoff;
         }
 
         public List<SortedDictionary<int, IPeak>> Combinator(SortedDictionary<int, List<IPeak>> cluster)
@@ -159,7 +162,8 @@ namespace MultiGlycanTDLibrary.engine.search
             return Score(alignedDistr, alignedPeaks.Select(p => p.GetIntensity()).ToList());       
         }
 
-        public List<SearchResult> Match(List<SearchResult> searched, List<IPeak> peaks, double mz, int charge)
+        public List<SearchResult> Match(List<SearchResult> searched, 
+            List<IPeak> peaks, double mz, int charge)
         {
             processor.Init(peaks);
             SortedDictionary<int, List<IPeak>> cluster = processor.Cluster(mz, charge);
@@ -185,6 +189,9 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
 
                 // score
+                if (bestScore < cutoff_)
+                    continue;
+
                 r.set_fit(bestScore);
                 if (bestScore > maxScore)
                 {

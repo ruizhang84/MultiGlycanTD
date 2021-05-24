@@ -34,20 +34,19 @@ namespace MultiGlycanTDLibrary.model.glycan
         public override bool IsValid()
         {
             // at least two chains
-            if (table_[6] == 0 || table_[7] == 0)
+            if (table_[6] == 0 || table_[8] == 0)
                 return false;
-            // maksure sorted
-            for (int i = 1; i < 4; i++)
+            // maksure sorted, so no duplicate
+            if (table_[6] < table_[8])
+                return false;
+            if (table_[6] == table_[8] && table_[10] < table_[12])
+                return false;
+            for (int i = 0; i < 2; i++)
             {
-                if (table_[i + 5] < table_[i + 6])
+                if (table_[i * 2 + 6] < table_[i * 2 + 7])
                     return false;
-                if (table_[i + 9] < table_[i + 10])
-                    return false;
-                if (table_[i + 13] < table_[i + 14])
-                    return false;
-                if (table_[i + 17] < table_[i + 18])
-                    return false;
-                if (table_[i + 21] < table_[i + 22])
+                if (table_[i * 2 + 6] == table_[i * 2 + 7] 
+                    && table_[i * 2 + 10] < table_[i * 2 + 11])
                     return false;
             }
             

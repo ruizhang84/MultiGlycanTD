@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.model
 {
-    public class JsonEntry
-    {
-        public string ID { get; set; }
-        public List<double> Fragments { get; set; }
-    }
 
     public class GlycanJson
     {
-       public CompdJson Compound { get; set; }
-       public List<JsonEntry> Entries { get; set; }
+        public CompdJson Compound { get; set; }
+        // name(composition) -> id (structure)
+        public Dictionary<string, List<string>> IDMap { get; set; }
+        public Dictionary<string, List<double>> Fragments { get; set; }
     }
 }

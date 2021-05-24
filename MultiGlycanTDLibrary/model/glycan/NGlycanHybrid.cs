@@ -32,19 +32,11 @@ namespace MultiGlycanTDLibrary.model.glycan
             if (table_[6] == 0 || table_[8] == 0)
                 return false;
             // maksure sorted
-            if (table_[4] < table_[5])
-                return false;
             if (table_[6] < table_[7])
                 return false;
-            if (table_[8] < table_[8])
+            if (table_[8] < table_[9])
                 return false;
-            if (table_[10] < table_[11])
-                return false;
-            if (table_[12] < table_[13])
-                return false;
-            if (table_[14] < table_[15])
-                return false;
-            if (table_[16] < table_[17])
+            if (table_[8] == table_[9] && table_[10] < table_[11])
                 return false;
            
             return base.IsValid();
