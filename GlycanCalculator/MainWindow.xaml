@@ -5,8 +5,88 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GlycanCalculator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="GlycanCalculator" Height="320" Width="500">
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="DataBase File" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Button x:Name="JsonFileNames" Content="Write Pre-Computed File (*.json)" Click="JSONFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label Content="Glycan Bounds" Grid.Row="0" />
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <Label Content="HexNAc"/>
+                <TextBox Name="HexNAc" Text="12" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <Label Content="Hex"/>
+                <TextBox Name="Hex" Text="12" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <Label Content="Fuc" />
+                <TextBox Name="Fuc" Text="5" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <Label Content="NeuAc"/>
+                <TextBox Name="NeuAc" Text="4" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <Label Content="NeuGc" />
+                <TextBox Name="NeuGc" Text="0" VerticalAlignment="Center" FontSize="12" Width="40"/>
+            </StackPanel>
+            <Separator VerticalAlignment="Bottom" Grid.Row="2"/>
+        </Grid>
+        <Grid Grid.Row="2">
+            <StackPanel>
+                <Label Content="Complex Types:" />
+                <StackPanel Margin="4" Orientation="Horizontal">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type CheckBox}">
+                            <Setter Property="Margin" Value="0,0,20,0"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <CheckBox Name="ComplexNGlycan"  IsChecked="True" Content="Complex"/>
+                    <CheckBox Name="HybridNGlycan" Content="Hybrid"/>
+                    <CheckBox Name="HighMannose" Content="High Mannose"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="3">
+            <StackPanel>
+                <Label Content="Derivation:" />
+                <StackPanel Margin="4" Orientation="Horizontal" >
+                    <CheckBox Name="Permethylated" Content="Permethylated"  IsChecked="True" VerticalAlignment="Center"/>
+                    <CheckBox Name="Reduced" Content="Reduced" IsChecked="True" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="4">
+            <StackPanel>
+                <Label Content="Options:" />
+                <StackPanel Orientation="Horizontal" >
+                    <Label Content="Max Num Distribution Considered" />
+                    <TextBox Name="Order" Text="10" FontSize="12" Width="40" VerticalAlignment="Center"/>
+                    <Label Content="Decimal Precision" />
+                    <TextBox Name="Precision" Text="4" FontSize="12" Width="40" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="5">
+            <Border HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0, 0, 40, 0">
+                    <Button x:Name="Search"  Content="Compute" HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="75" Click="Search_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

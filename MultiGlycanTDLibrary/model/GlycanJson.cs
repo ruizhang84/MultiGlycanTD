@@ -14,6 +14,7 @@ namespace MultiGlycanTDLibrary.model
 
     public class GlycanJson
     {
+       public CompdJson Compound { get; set; }
        public List<JsonEntry> Entries { get; set; }
     }
 }

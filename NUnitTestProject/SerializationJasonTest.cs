@@ -27,10 +27,26 @@ namespace NUnitTestProject
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
-
             List<JsonEntry> entries = new List<JsonEntry>();
             Object obj = new Object();
             int count = 0;
+            var composition_map = glycanBuilder.GlycanCompositionMaps();
+            var distr_map = glycanBuilder.GlycanDistribMaps();
+            var mass_map = glycanBuilder.GlycanMassMaps();
+
+            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
+            foreach (var pair in composition_map)
+            {
+                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
+            }
+
+            CompdJson compdJson = new CompdJson()
+            {
+                IDMap = id_map,
+                DistrMap = distr_map,
+                MassMap = mass_map
+            };
+
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
@@ -53,6 +69,7 @@ namespace NUnitTestProject
             });
             GlycanJson glycanJson = new GlycanJson()
             {
+                Compound = compdJson,
                 Entries = entries
             };
 
@@ -66,6 +83,7 @@ namespace NUnitTestProject
             string jsonStringRead = File.ReadAllText(fileName);
             GlycanJson glycanJsonRead = JsonSerializer.Deserialize<GlycanJson>(jsonString);
             Assert.AreEqual(count, glycanJsonRead.Entries.Count);
+
 
         }
     }
