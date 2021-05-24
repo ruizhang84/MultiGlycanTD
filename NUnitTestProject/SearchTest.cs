@@ -70,8 +70,8 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
-            string database = @"C:\Users\iruiz\Downloads\database.json";
+            string path = @"C:\Users\Rui Zhang\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
+            string database = @"C:\Users\Rui Zhang\Downloads\database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -147,6 +147,7 @@ namespace NUnitTestProject
                         {
                             final.AddRange(results);
                         }
+
                     }
 
                 }

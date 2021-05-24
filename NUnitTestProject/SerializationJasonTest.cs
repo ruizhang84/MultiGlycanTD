@@ -28,7 +28,6 @@ namespace NUnitTestProject
             watch.Start();
 
             Object obj = new Object();
-            int count = 0;
 
             var distr_map = glycanBuilder.GlycanDistribMaps();
             var mass_map = glycanBuilder.GlycanMassMaps();
