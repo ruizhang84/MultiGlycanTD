@@ -34,9 +34,9 @@
             <Label Content="Glycan Bounds" Grid.Row="0" />
             <StackPanel Orientation="Horizontal" Grid.Row="1">
                 <Label Content="HexNAc"/>
-                <TextBox Name="HexNAc" Text="12" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <TextBox Name="HexNAc" Text="7" VerticalAlignment="Center" FontSize="12" Width="40"/>
                 <Label Content="Hex"/>
-                <TextBox Name="Hex" Text="12" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                <TextBox Name="Hex" Text="7" VerticalAlignment="Center" FontSize="12" Width="40"/>
                 <Label Content="Fuc" />
                 <TextBox Name="Fuc" Text="5" VerticalAlignment="Center" FontSize="12" Width="40"/>
                 <Label Content="NeuAc"/>
@@ -56,8 +56,8 @@
                         </Style>
                     </StackPanel.Resources>
                     <CheckBox Name="ComplexNGlycan"  IsChecked="True" Content="Complex"/>
-                    <CheckBox Name="HybridNGlycan" Content="Hybrid"/>
-                    <CheckBox Name="HighMannose" Content="High Mannose"/>
+                    <CheckBox Name="HybridNGlycan" IsChecked="True" Content="Hybrid"/>
+                    <CheckBox Name="HighMannose" IsChecked="True" Content="High Mannose"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

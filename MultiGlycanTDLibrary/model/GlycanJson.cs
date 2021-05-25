@@ -12,6 +12,8 @@ namespace MultiGlycanTDLibrary.model
         public CompdJson Compound { get; set; }
         // name(composition) -> id (structure)
         public Dictionary<string, List<string>> IDMap { get; set; }
-        public Dictionary<string, List<double>> Fragments { get; set; }
+
+        // fragments mass -> (intact) glycan 
+        public Dictionary<double, List<string>> Fragments { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace NUnitTestProject
                 MassMap = mass_map
             };
 
-            Dictionary<string, List<double>> fragments = new Dictionary<string, List<double>>();
+            Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
@@ -48,7 +48,12 @@ namespace NUnitTestProject
                                         .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
                     lock (obj)
                     {
-                        fragments[id] = massList;
+                        foreach(double mass in massList)
+                        {
+                            if (!fragments.ContainsKey(mass))
+                                fragments[mass] = new List<string>();
+                            fragments[mass].Add(id);
+                        }
                     }
                 }
             });

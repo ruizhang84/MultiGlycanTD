@@ -106,8 +106,8 @@ namespace NUnitTestProject
 
             object obj = new object();
             List<SearchResult> final = new List<SearchResult>();
-            foreach (var scanPair in scanGroup)
-            //Parallel.ForEach(scanGroup, scanPair =>
+
+            Parallel.ForEach(scanGroup, scanPair =>
             {
                 if (scanPair.Value.Count > 0)
                 {
@@ -132,39 +132,32 @@ namespace NUnitTestProject
                         ISpectrum ms2 = reader.GetSpectrum(scan);
                         ms2 = process.Process(ms2);
 
-                        Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
                         ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
                         GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
                         List<string> candidates = precursorMatch.Match(mz, charge);
 
-                        Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
-                        ISearch<int> searcher2 = new BucketSearch<int>(ToleranceBy.Dalton, 0.01);
+                        ISearch<string> searcher2 = new BucketSearch<string>(ToleranceBy.Dalton, 0.01);
                         GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
                         List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
 
-                        Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
                         SearchAnalyzer analyzer = new SearchAnalyzer();
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
 
-                        Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
                         EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
                         GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
                         results = envelopeMatch.Match(results, ms1Peaks, mz, charge);
 
 
-                        watch.Stop();
-                        Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
-                        //lock (obj)
-                        //{
-                        //    final.AddRange(results);
-                        //}
+                        lock (obj)
+                        {
+                            final.AddRange(results);
+                        }
                         return;
                     }
 
                 }
-
-                //});
-            }
+            });
+        
             
 
             //write out

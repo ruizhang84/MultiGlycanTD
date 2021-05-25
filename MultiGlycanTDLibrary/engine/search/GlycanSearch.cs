@@ -14,28 +14,21 @@ namespace MultiGlycanTDLibrary.engine.search
 {
     public class GlycanSearch
     {
-        ISearch<int> searcher_;
+        ISearch<string> searcher_;
         Dictionary<string, List<string>> id_map_;
-        Dictionary<string, List<double>> fragments_map_;
+        Dictionary<double, List<string>> fragments_map_;
 
-        public GlycanSearch(ISearch<int> searcher, GlycanJson glycanJson)
+        public GlycanSearch(ISearch<string> searcher, GlycanJson glycanJson)
         {
             searcher_ = searcher;
             id_map_ = glycanJson.IDMap;
             fragments_map_ = glycanJson.Fragments;
-        }
-
-        void Init(List<IPeak> peaks, int precursorCharge)
-        {
-            List<Point<int>> points = new List<Point<int>>();
-            for(int i = 0; i < peaks.Count; i++)
+            List<Point<string>> points = new List<Point<string>>();
+            foreach (double mass in fragments_map_.Keys)
             {
-                IPeak peak = peaks[i];
-                for (int charge = 1; charge <= precursorCharge; charge++)
+                foreach (string glycan in fragments_map_[mass])
                 {
-                    double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
-                       util.mass.Spectrum.Proton, charge);
-                    points.Add(new Point<int>(mass, i));
+                    points.Add(new Point<string>(mass, glycan));
                 }
             }
             searcher_.Init(points);
@@ -44,11 +37,43 @@ namespace MultiGlycanTDLibrary.engine.search
         public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
             List<string> candidates)
         {
-            Init(peaks, precursorCharge);
+            // process composition
+            Dictionary<string, string> glycanCandid = new Dictionary<string, string>();
+            foreach (string composition in candidates)
+            {
+                foreach (string glycan in id_map_[composition])
+                {
+                    glycanCandid[glycan] = composition;
+                }
+            }
 
-            List<SearchResult> results = new List<SearchResult>();
+            // search peaks
+            Dictionary<string, HashSet<int>> matched =
+                new Dictionary<string, HashSet<int>>();
+            for (int i = 0; i < peaks.Count; i++)
+            {
+                IPeak peak = peaks[i];
+                for (int charge = 1; charge <= precursorCharge; charge++)
+                {
+                    double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
+                       util.mass.Spectrum.Proton, charge);
 
+                    List<string> glycans = searcher_.Search(mass, mass);
+                    foreach(string glycan in glycans)
+                    {
+                        if (!glycanCandid.ContainsKey(glycan))
+                            continue;
+
+                        if (!matched.ContainsKey(glycan))
+                            matched[glycan] = new HashSet<int>();
+                        matched[glycan].Add((i));
+                    }
+                }
+            }
+
+            // compute score
             double maxScore = 0;
+            List<SearchResult> results = new List<SearchResult>();
             foreach(string composition in candidates)
             {
                 SearchResult result = new SearchResult();
@@ -57,16 +82,9 @@ namespace MultiGlycanTDLibrary.engine.search
                 // score the result
                 double bestScore = 0;
                 List<string> isomers = new List<string>();
-                foreach (string glycan in id_map_[composition])
+                foreach (string glycan in matched.Keys)
                 {
-                    HashSet<int> matchedIndex = new HashSet<int>();
-                    List<double> fragments = fragments_map_[glycan];
-                    foreach (double mass in fragments)
-                    {
-                        List<int> matched = searcher_.Search(mass, mass);
-                        matchedIndex.UnionWith(matched);
-                    }
-                    double score = matchedIndex.Select(
+                    double score = matched[glycan].Select(
                         index => Math.Log(peaks[index].GetIntensity())).Sum();
 
                     // compare score

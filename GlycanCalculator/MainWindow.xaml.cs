@@ -137,7 +137,7 @@ namespace GlycanCalculator
 
             permethylated = Permethylated.IsChecked == true;
             reduced = Reduced.IsChecked == true;
-            if (fileName.Length == 0)
+            if (fileName is null || fileName.Length == 0)
             {
                 MessageBox.Show("Name the saving file!");
                 return false;
@@ -163,7 +163,7 @@ namespace GlycanCalculator
 
             // fragmentation maps
             object obj = new object();
-            Dictionary<string, List<double>> fragments = new Dictionary<string, List<double>>();
+            Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
             var map = glycanBuilder.GlycanMaps();
             Parallel.ForEach(map, pair =>
             {
@@ -175,7 +175,12 @@ namespace GlycanCalculator
                                         .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
                     lock (obj)
                     {
-                        fragments[id] = massList;
+                        foreach (double mass in massList)
+                        {
+                            if (!fragments.ContainsKey(mass))
+                                fragments[mass] = new List<string>();
+                            fragments[mass].Add(id);
+                        }
                     }
                 }
             });
