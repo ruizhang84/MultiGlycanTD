@@ -76,15 +76,15 @@
                 <Label Content="Fragment Ions:" />
                 <StackPanel Margin="4" Orientation="Horizontal" >
                     <CheckBox Name="Bions" Content="B  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="Cions" Content="C  "  IsChecked="True" VerticalAlignment="Center"/>
+                    <CheckBox Name="Cions" Content="C  "  IsChecked="False" VerticalAlignment="Center"/>
                     <CheckBox Name="Yions" Content="Y  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="Zions" Content="Z  "  IsChecked="True" VerticalAlignment="Center"/>
+                    <CheckBox Name="Zions" Content="Z  "  IsChecked="False" VerticalAlignment="Center"/>
                     <CheckBox Name="BYions" Content="BY/CZ  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="BZions" Content="BZ  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="CYions" Content="CY  "  IsChecked="True" VerticalAlignment="Center"/>
+                    <CheckBox Name="BZions" Content="BZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="CYions" Content="CY  "  IsChecked="False" VerticalAlignment="Center"/>
                     <CheckBox Name="YYions" Content="YY  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="YZions" Content="YZ  "  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="ZZions" Content="ZZ-type ions"  IsChecked="True" VerticalAlignment="Center"/>
+                    <CheckBox Name="YZions" Content="YZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="ZZions" Content="ZZ-type ions"  IsChecked="False" VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -93,7 +93,7 @@
                 <Label Content="Options:" />
                 <StackPanel Orientation="Horizontal" >
                     <Label Content="Max Num Distribution Considered" />
-                    <TextBox Name="Order" Text="10" FontSize="12" Width="40" VerticalAlignment="Center"/>
+                    <TextBox Name="Order" Text="6" FontSize="12" Width="40" VerticalAlignment="Center"/>
                     <Label Content="Decimal Precision" />
                     <TextBox Name="Precision" Text="4" FontSize="12" Width="40" VerticalAlignment="Center"/>
                 </StackPanel>

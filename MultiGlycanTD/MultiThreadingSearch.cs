@@ -167,16 +167,19 @@ namespace MultiGlycanTD
                 List<SearchResult> searched = glycanSearch.Search(
                     task.Spectrum.GetPeaks(), task.Charge, candidates);
 
-                // isotopic cluster match
-                List<SearchResult> matched = envelopeMatch.Match(searched,
-                    task.MSPeaks, task.PrecursorMZ, task.Charge);
+                if (searched.Count > 0)
+                {
+                    // isotopic cluster match
+                    List<SearchResult> matched = envelopeMatch.Match(searched,
+                        task.MSPeaks, task.PrecursorMZ, task.Charge);
 
-                // add meta data
-                List<SearchResult> temp = searchAnalyzer.Analyze(
-                    matched, task.PrecursorMZ,
-                    task.Spectrum.GetScanNum(),
-                    task.Spectrum.GetRetention());
-                results.AddRange(temp);
+                    // add meta data
+                    List<SearchResult> temp = searchAnalyzer.Analyze(
+                        matched, task.PrecursorMZ,
+                        task.Spectrum.GetScanNum(),
+                        task.Spectrum.GetRetention());
+                    results.AddRange(temp);
+                }
             }
         }
 
