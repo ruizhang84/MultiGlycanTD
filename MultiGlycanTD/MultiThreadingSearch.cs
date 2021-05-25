@@ -30,7 +30,6 @@ namespace MultiGlycanTD
         private readonly object resultLock = new object();
         private readonly double searchRange = 1;
         int taskSize = 0;
-        double cutoff = 0.01;
 
         public MultiThreadingSearch(string msPath, 
             Counter readingCounter, Counter searchCounter,
@@ -133,14 +132,13 @@ namespace MultiGlycanTD
                                 ICharger charger = new Patterson();
                                 int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
 
-
                                 // search
                                 ISpectrum ms2 = reader.GetSpectrum(scan);
                                 ms2 = process.Process(ms2);
 
                                 if (ms2.GetPeaks().Count > 0)
                                 {
-                                    SearchTask searchTask = new SearchTask(ms2, ms1Peaks, mz, charge);
+                                    SearchTask searchTask = new SearchTask(ms2, mz, charge);
                                     tasks.Enqueue(searchTask);
                                 }
                             }
@@ -155,7 +153,6 @@ namespace MultiGlycanTD
 
         void TaskSearch(ref List<SearchResult> results, SearchTask task,
             GlycanPrecursorMatch precursorMatch,
-            GlycanEnvelopeMatch envelopeMatch,
             GlycanSearch glycanSearch,
             SearchAnalyzer searchAnalyzer)
         {
@@ -169,13 +166,9 @@ namespace MultiGlycanTD
 
                 if (searched.Count > 0)
                 {
-                    // isotopic cluster match
-                    List<SearchResult> matched = envelopeMatch.Match(searched,
-                        task.MSPeaks, task.PrecursorMZ, task.Charge);
-
                     // add meta data
                     List<SearchResult> temp = searchAnalyzer.Analyze(
-                        matched, task.PrecursorMZ,
+                        searched, task.PrecursorMZ,
                         task.Spectrum.GetScanNum(),
                         task.Spectrum.GetRetention());
                     results.AddRange(temp);
@@ -190,7 +183,8 @@ namespace MultiGlycanTD
             ISearch<string> searcher = new BucketSearch<string>(
                 SearchingParameters.Access.MS1ToleranceBy, 
                 SearchingParameters.Access.MS1Tolerance);
-            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, cutoff);
+            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 
+                SearchingParameters.Access.Cutoff);
           
 
             ISearch<string> searcher2 = new BucketSearch<string>(
@@ -200,17 +194,11 @@ namespace MultiGlycanTD
 
             SearchAnalyzer searchAnalyzer = new SearchAnalyzer();
 
-            EnvelopeProcess envelopeProcess = new EnvelopeProcess(
-                SearchingParameters.Access.MS2ToleranceBy,
-                SearchingParameters.Access.MSMSTolerance);
-            GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
-
             SearchTask task;
             while ((task = TryGetTask()) != null)
             {
                 TaskSearch(ref tempResults, task,
-                    precursorMatch, envelopeMatch,
-                    glycanSearch, searchAnalyzer);
+                    precursorMatch, glycanSearch, searchAnalyzer);
 
                 searchCounter.Add(taskSize);
             }

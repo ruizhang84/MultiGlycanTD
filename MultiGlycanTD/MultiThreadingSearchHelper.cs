@@ -36,15 +36,13 @@ namespace MultiGlycanTD
 
     public class SearchTask
     {
-        public SearchTask(ISpectrum spectrum, List<IPeak> peaks, double mz, int charge)
+        public SearchTask(ISpectrum spectrum, double mz, int charge)
         {
             Spectrum = spectrum;
-            MSPeaks = peaks;
             PrecursorMZ = mz;
             Charge = charge;
         }
         public ISpectrum Spectrum { get; set; }
-        public List<IPeak> MSPeaks { get; set; }
         public double PrecursorMZ { get; set; }
         public int Charge { get; set; }
 
@@ -105,15 +103,14 @@ namespace MultiGlycanTD
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
-                    writer.WriteLine("scan,retention,glycan,precursor_mz,score,fit");
+                    writer.WriteLine("scan,retention,glycan,precursor_mz,score");
                     foreach (SearchResult r in results.OrderBy(p => p.Scan()))
                     {
                         string output = r.Scan().ToString() + ","
                             + r.Retention().ToString() + ","
                             + r.Glycan() + ","
                             + r.MZ().ToString() + ","
-                            + r.Score().ToString() + ","
-                            + r.Fit().ToString();
+                            + r.Score().ToString();
                         writer.WriteLine(output);
                     }
                     writer.Flush();

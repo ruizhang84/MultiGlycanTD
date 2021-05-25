@@ -17,10 +17,10 @@ namespace MultiGlycanTD
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
         //performance
-        public int ThreadNums { get; set; } = 1;
+        public int ThreadNums { get; set; } = 4;
 
         //result
-        public double Cutoff { get; set; } = 0.80;
+        public double Cutoff { get; set; } = 0.01;
         public double Quantile { get; set; } = 0.75;
 
         //file
@@ -58,10 +58,10 @@ namespace MultiGlycanTD
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
         //Performance
-        public int ThreadNums { get; set; } = 1;
+        public int ThreadNums { get; set; } = 4;
 
         //result
-        public double Cutoff { get; set; } = 0.80;
+        public double Cutoff { get; set; } = 0.01;
         public double Quntile { get; set; } = 0.75;
 
         protected static readonly Lazy<ConfigureParameters>
