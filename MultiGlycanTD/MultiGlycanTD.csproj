@@ -7,4 +7,10 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MultiGlycanTDLibrary\MultiGlycanTDLibrary.csproj" />
+    <ProjectReference Include="..\SpectrumData\SpectrumData.csproj" />
+    <ProjectReference Include="..\SpectrumProcess\SpectrumProcess.csproj" />
+  </ItemGroup>
+
 </Project>
