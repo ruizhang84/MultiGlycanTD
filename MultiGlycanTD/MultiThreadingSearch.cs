@@ -133,7 +133,7 @@ namespace MultiGlycanTD
                                 int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
 
                                 // search
-                                ISpectrum ms2 = reader.GetSpectrum(scan);
+                                ISpectrum ms2 = reader.GetSpectrum(i);
                                 ms2 = process.Process(ms2);
 
                                 if (ms2.GetPeaks().Count > 0)

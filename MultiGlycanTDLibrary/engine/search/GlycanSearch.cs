@@ -105,6 +105,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 // set up results
                 if (bestScore > maxScore)
                 {
+                    maxScore = bestScore;
                     results.Clear();
                     results.Add(result);
                 }
