@@ -17,7 +17,7 @@ namespace MultiGlycanTD
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
         //performance
-        public int ThreadNums { get; set; } = 2;
+        public int ThreadNums { get; set; } = 1;
 
         //result
         public double Cutoff { get; set; } = 0.80;
@@ -58,7 +58,7 @@ namespace MultiGlycanTD
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
         //Performance
-        public int ThreadNums { get; set; } = 2;
+        public int ThreadNums { get; set; } = 1;
 
         //result
         public double Cutoff { get; set; } = 0.80;

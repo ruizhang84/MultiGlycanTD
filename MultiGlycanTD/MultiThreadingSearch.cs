@@ -159,8 +159,6 @@ namespace MultiGlycanTD
             GlycanSearch glycanSearch,
             SearchAnalyzer searchAnalyzer)
         {
-            // get spectrum
-            ISpectrum spectrum = task.Spectrum;
             //precursor match
             List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge);
             if (candidates.Count > 0)
@@ -174,7 +172,7 @@ namespace MultiGlycanTD
                     task.MSPeaks, task.PrecursorMZ, task.Charge);
 
                 // add meta data
-                List < SearchResult> temp = searchAnalyzer.Analyze(
+                List<SearchResult> temp = searchAnalyzer.Analyze(
                     matched, task.PrecursorMZ,
                     task.Spectrum.GetScanNum(),
                     task.Spectrum.GetRetention());
@@ -185,7 +183,6 @@ namespace MultiGlycanTD
         void Search()
         {
             List<SearchResult> tempResults = new List<SearchResult>();
-
 
             ISearch<string> searcher = new BucketSearch<string>(
                 SearchingParameters.Access.MS1ToleranceBy, 

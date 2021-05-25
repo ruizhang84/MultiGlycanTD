@@ -38,6 +38,7 @@ namespace GlycanCalculator
         protected bool permethylated;
         protected bool reduced;
         protected int precision;
+        protected List<FragmentTypes> types = new List<FragmentTypes>();
 
         public MainWindow()
         {
@@ -137,6 +138,34 @@ namespace GlycanCalculator
 
             permethylated = Permethylated.IsChecked == true;
             reduced = Reduced.IsChecked == true;
+
+            types.Clear();
+            if (Bions.IsChecked == true)
+                types.Add(FragmentTypes.B);
+            if (Cions.IsChecked == true)
+                types.Add(FragmentTypes.C);
+            if (Yions.IsChecked == true)
+                types.Add(FragmentTypes.Y);
+            if (Zions.IsChecked == true)
+                types.Add(FragmentTypes.Z);
+            if (BYions.IsChecked == true)
+                types.Add(FragmentTypes.BY);
+            if (BZions.IsChecked == true)
+                types.Add(FragmentTypes.BZ);
+            if (CYions.IsChecked == true)
+                types.Add(FragmentTypes.CY);
+            if (YYions.IsChecked == true)
+                types.Add(FragmentTypes.YY);
+            if (YZions.IsChecked == true)
+                types.Add(FragmentTypes.YZ);
+            if (ZZions.IsChecked == true)
+                types.Add(FragmentTypes.ZZ); 
+            if (types.Count == 0)
+            {
+                MessageBox.Show("Select at least one ions!");
+                return false;
+            }
+            
             if (fileName is null || fileName.Length == 0)
             {
                 MessageBox.Show("Name the saving file!");
@@ -149,7 +178,8 @@ namespace GlycanCalculator
         {
             GlycanBuilder glycanBuilder =
                 new GlycanBuilder(hexNAc, hex, fuc, neuAc, neuGc,
-                complexInclude, hybridInclude, highMannoseInclude);
+                complexInclude, hybridInclude, highMannoseInclude, 
+                order, permethylated, reduced);
             glycanBuilder.Build();
 
             // distribution maps
@@ -165,6 +195,10 @@ namespace GlycanCalculator
             object obj = new object();
             Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
             var map = glycanBuilder.GlycanMaps();
+
+            GlycanIonsBuilder.Build.Permethylated = permethylated;
+            GlycanIonsBuilder.Build.Reduced = reduced;
+            GlycanIonsBuilder.Build.Types = types;
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;

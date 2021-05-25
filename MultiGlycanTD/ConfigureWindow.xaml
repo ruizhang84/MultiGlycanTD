@@ -47,7 +47,7 @@
                     <Label Content="Searching"/>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Number of Threads"/>
-                        <TextBox Name="ThreadNums" Text="2" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                        <TextBox Name="ThreadNums" Text="1" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">

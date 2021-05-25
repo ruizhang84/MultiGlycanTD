@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="MultiGlycanTD" Height="250" Width="800">
+        Title="MultiGlycanTD" Height="280" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

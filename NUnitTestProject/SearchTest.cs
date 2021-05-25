@@ -107,7 +107,8 @@ namespace NUnitTestProject
             object obj = new object();
             List<SearchResult> final = new List<SearchResult>();
 
-            Parallel.ForEach(scanGroup, scanPair =>
+            //Parallel.ForEach(scanGroup, scanPair =>
+            foreach(var scanPair in scanGroup)
             {
                 if (scanPair.Value.Count > 0)
                 {
@@ -152,11 +153,11 @@ namespace NUnitTestProject
                         {
                             final.AddRange(results);
                         }
-                        return;
+                        //return;
                     }
 
                 }
-            });
+            }
         
             
 

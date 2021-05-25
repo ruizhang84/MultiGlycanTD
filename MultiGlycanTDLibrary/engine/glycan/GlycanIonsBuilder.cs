@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
+    public enum FragmentTypes
+    {
+        B, C, Y, Z, BY, BZ, CY, YY, YZ, ZZ
+    }
+
+
     public class GlycanIonsBuilder
     {
         protected static readonly Lazy<GlycanIonsBuilder>
@@ -17,6 +23,16 @@ namespace MultiGlycanTDLibrary.engine.glycan
             = new Dictionary<string, List<double>>();
 
         public bool Reduced { get; set; } = true;
+        public bool Permethylated { get; set; } = true;
+        public List<FragmentTypes> Types { get; set; }
+            = new List<FragmentTypes>()
+            {
+                FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
+                FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
+                FragmentTypes.YZ, FragmentTypes.ZZ
+            };
+
+
         object obj = new object();
 
         public const double kCarbon = 12.0;
@@ -37,27 +53,54 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<double> Fragments(IGlycan glycan)
         {
             List<double> fragments = new List<double>();
-            List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.Build.YionsLikeFragments(glycan);
-            List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.Build.BionsLikeFragments(glycan);
-            List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan);
-            List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan);
+            if (Types.Contains(FragmentTypes.B) || Types.Contains(FragmentTypes.C))
+            {
+                List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.Build.BionsLikeFragments(glycan);
+                if (Types.Contains(FragmentTypes.B))
+                    fragments.AddRange(Bions(bionsLikeFragments));
+                if (Types.Contains(FragmentTypes.C))
+                    fragments.AddRange(Cions(bionsLikeFragments));
+            }
 
-            fragments.AddRange(Bions(bionsLikeFragments));
-            fragments.AddRange(Cions(bionsLikeFragments));
-            fragments.AddRange(Yions(yionsLikeFragments));
-            fragments.AddRange(Zions(yionsLikeFragments));
-            fragments.AddRange(BYions(byionsLikeFragments));
-            fragments.AddRange(BZions(byionsLikeFragments));
-            fragments.AddRange(CYions(byionsLikeFragments));
-            fragments.AddRange(YYions(yyionsLikeFragments));
-            fragments.AddRange(YZions(yyionsLikeFragments));
-            fragments.AddRange(ZZions(yyionsLikeFragments));
+            if (Types.Contains(FragmentTypes.Y) || Types.Contains(FragmentTypes.Z))
+            {
+                List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.Build.YionsLikeFragments(glycan);
+                if (Types.Contains(FragmentTypes.Y))
+                    fragments.AddRange(Yions(yionsLikeFragments));
+                if (Types.Contains(FragmentTypes.Z))
+                    fragments.AddRange(Zions(yionsLikeFragments));
+            }
+
+            if (Types.Contains(FragmentTypes.BY) || Types.Contains(FragmentTypes.BZ) || Types.Contains(FragmentTypes.CY))
+            {
+                List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan);
+                if (Types.Contains(FragmentTypes.BY))
+                    fragments.AddRange(BYions(byionsLikeFragments));
+                if (Types.Contains(FragmentTypes.BZ))
+                    fragments.AddRange(BZions(byionsLikeFragments));
+                if (Types.Contains(FragmentTypes.CY))
+                    fragments.AddRange(CYions(byionsLikeFragments));
+            }
+
+            if (Types.Contains(FragmentTypes.YY) || Types.Contains(FragmentTypes.YZ) || Types.Contains(FragmentTypes.ZZ))
+            {
+                List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan);
+                if (Types.Contains(FragmentTypes.YY))
+                    fragments.AddRange(YYions(yyionsLikeFragments));
+                if (Types.Contains(FragmentTypes.YZ))
+                    fragments.AddRange(YZions(yyionsLikeFragments));
+                if (Types.Contains(FragmentTypes.ZZ))
+                    fragments.AddRange(ZZions(yyionsLikeFragments));
+            }
 
             return fragments.Distinct().ToList();
         }
 
         public List<double> Yions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             if (Reduced)
                 return glycans
                     .Select(m => Glycan.To.ComputeFragment(m) + kReduced + kHydrogen).Distinct().ToList();
@@ -67,6 +110,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public List<double> Zions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             if (Reduced)
                 return glycans
                     .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kHydroxyl).Distinct().ToList();
@@ -76,6 +122,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public List<double> Bions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             return glycans
                 .Select(m => Glycan.To.ComputeFragment(m) + kCarbon + kHydrogen * 2).Distinct().ToList();
         }
@@ -88,6 +137,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public List<double> YYions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             if (Reduced)
                 return glycans
                     .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kCarbon - kHydrogen).Distinct().ToList();
@@ -106,6 +158,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public List<double> ZZions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             if (Reduced)
                 return glycans
                     .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5).Distinct().ToList();
@@ -121,12 +176,18 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public List<double> BZions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             return glycans
                 .Select(m => Glycan.To.ComputeFragment(m) - kWater).Distinct().ToList();
         }
 
         public List<double> CYions(List<IGlycan> glycans)
         {
+            if (!Permethylated)
+                return glycans
+                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
             return glycans
                 .Select(m => Glycan.To.ComputeFragment(m) + kWater).Distinct().ToList();
         }

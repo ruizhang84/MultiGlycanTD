@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="Searching.." Height="120" Width="400">
+        Title="Searching.." Height="140" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
