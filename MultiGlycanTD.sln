@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpectrumProcess", "Spectrum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitTestProject", "NUnitTestProject\NUnitTestProject.csproj", "{F32B596E-5597-4B70-8F64-27DEE3F2335C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlycanCalculator", "GlycanCalculator\GlycanCalculator.csproj", "{EC362D6C-D7BB-4276-9893-A0ACB730B91B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlycanCalculator", "GlycanCalculator\GlycanCalculator.csproj", "{EC362D6C-D7BB-4276-9893-A0ACB730B91B}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MultiGlycanTDSetup", "MultiGlycanTDSetup\MultiGlycanTDSetup.vdproj", "{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{EC362D6C-D7BB-4276-9893-A0ACB730B91B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC362D6C-D7BB-4276-9893-A0ACB730B91B}.Release|x64.ActiveCfg = Release|Any CPU
 		{EC362D6C-D7BB-4276-9893-A0ACB730B91B}.Release|x64.Build.0 = Release|Any CPU
+		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Debug|Any CPU.ActiveCfg = Debug
+		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Debug|x64.ActiveCfg = Debug
+		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Release|Any CPU.ActiveCfg = Release
+		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
