@@ -81,6 +81,25 @@ namespace MultiGlycanTD
 
         void GenerateTasks()
         {
+            if (Path.GetExtension(msPath) == ".mgf")
+            {
+                MGFSpectrumReader mgfReader = new MGFSpectrumReader();
+                mgfReader.Init(msPath);
+
+                Dictionary<int, MS2Spectrum> spectraData = mgfReader.GetSpectrum();
+                foreach (int scan in spectraData.Keys)
+                {
+                    MS2Spectrum spectrum = spectraData[scan];
+                    readingCounter.Add(spectraData.Count);
+
+                    if (spectrum.Activation() != TypeOfMSActivation.CID)
+                        continue;
+                    SearchTask searchTask = new SearchTask(spectrum,
+                        spectrum.PrecursorMZ(), spectrum.PrecursorCharge());
+                    tasks.Enqueue(searchTask);
+                }
+            }
+
             // read spectrum
             ISpectrumReader reader = new ThermoRawSpectrumReader();
             IProcess picking = new LocalNeighborPicking();

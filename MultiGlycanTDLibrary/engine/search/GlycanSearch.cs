@@ -74,6 +74,7 @@ namespace MultiGlycanTDLibrary.engine.search
             // compute score
             double maxScore = 0;
             List<SearchResult> results = new List<SearchResult>();
+            double sum = peaks.Select(p => Math.Log(p.GetIntensity())).Sum();
             foreach(string composition in candidates)
             {
                 SearchResult result = new SearchResult();
@@ -100,7 +101,7 @@ namespace MultiGlycanTDLibrary.engine.search
                     }
                 }
                 result.set_isomers(isomers);
-                result.set_score(bestScore);
+                result.set_score(bestScore/sum);
 
                 // set up results
                 if (bestScore > maxScore)

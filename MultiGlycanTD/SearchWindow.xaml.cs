@@ -67,10 +67,10 @@ namespace MultiGlycanTD
 
         private void Analyze(string msPath, List<SearchResult> targets)
         {
-            //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
+            QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
             string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + ".csv");
-            MultiThreadingSearchHelper.ReportResults(path, targets);
+            MultiThreadingSearchHelper.ReportResults(path, filter.Filter(targets));
         }
 
         private void UpdateSignal(string signal)
