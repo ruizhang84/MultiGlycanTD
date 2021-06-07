@@ -58,19 +58,29 @@ namespace MultiGlycanTD
                        SearchingParameters.Access.Database);
                 search.Run();
                 UpdateSignal("Analyzing...");
-                Analyze(file, search.Target());
+                Analyze(file, search.Target(), search.Decoy());
             }
 
             UpdateSignal("Done");
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath, List<SearchResult> targets)
+        private void Analyze(string msPath, List<SearchResult> targets, List<SearchResult> decoys)
         {
-            QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
-            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+            //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
+            string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + ".csv");
-            MultiThreadingSearchHelper.ReportResults(path, filter.Filter(targets));
+            MultiThreadingSearchHelper.ReportResults(targetpath, targets);
+            string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoy.csv");
+            MultiThreadingSearchHelper.ReportResults(decoyPath, decoys);
+            FDRFilter filter = new FDRFilter(0.05);
+            filter.set_data(targets, decoys);
+            filter.Init();
+            List<SearchResult> results = filter.Filter();
+            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
+            MultiThreadingSearchHelper.ReportResults(path, results);
         }
 
         private void UpdateSignal(string signal)

@@ -109,10 +109,9 @@ namespace MultiGlycanTD
 
         private bool SaveOutput()
         {
-            if (double.TryParse(Quntile.Text, out double cutoff) && cutoff >= 0 && cutoff <= 100)
+            if (double.TryParse(Cutoff.Text, out double cutoff) && cutoff >= 0 && cutoff <= 100)
             {
                 ConfigureParameters.Access.Cutoff = cutoff * 0.01;
-                return true;
             }
             else
             {
@@ -123,13 +122,13 @@ namespace MultiGlycanTD
             if (double.TryParse(Quntile.Text, out double rate) && rate >= 0 && rate <= 100)
             {
                 ConfigureParameters.Access.Quntile = rate * 0.01;
-                return true;
             }
             else
             {
                 MessageBox.Show("Filter level is invalid!");
                 return false;
             }
+            return true;
         }
 
         private void MS1TolByPPM_Checked(object sender, RoutedEventArgs e)
