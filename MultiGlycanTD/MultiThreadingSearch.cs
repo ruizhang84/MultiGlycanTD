@@ -49,9 +49,6 @@ namespace MultiGlycanTD
             tasks = new Queue<SearchTask>();
             GenerateTasks();
             taskSize = tasks.Count;
-
-            // random generator for precursor match
-            random = new Random(Seed);
         }
 
         public List<SearchResult> Target()
