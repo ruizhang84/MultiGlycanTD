@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FiniteMixtureModel\FiniteMixtureModel.csproj" />
     <ProjectReference Include="..\SpectrumData\SpectrumData.csproj" />
   </ItemGroup>
 

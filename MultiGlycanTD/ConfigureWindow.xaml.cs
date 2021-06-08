@@ -43,7 +43,7 @@ namespace MultiGlycanTD
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
 
             Cutoff.Text = (SearchingParameters.Access.Cutoff * 100.0).ToString();
-            Quntile.Text = (SearchingParameters.Access.Quantile * 100.0).ToString();
+            FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -119,9 +119,9 @@ namespace MultiGlycanTD
                 return false;
             }
 
-            if (double.TryParse(Quntile.Text, out double rate) && rate >= 0 && rate <= 100)
+            if (double.TryParse(FDR.Text, out double rate) && rate >= 0 && rate <= 100)
             {
-                ConfigureParameters.Access.Quntile = rate * 0.01;
+                ConfigureParameters.Access.FDR = rate * 0.01;
             }
             else
             {

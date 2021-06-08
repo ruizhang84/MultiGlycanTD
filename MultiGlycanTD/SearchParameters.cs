@@ -21,7 +21,7 @@ namespace MultiGlycanTD
 
         //result
         public double Cutoff { get; set; } = 0.01;
-        public double Quantile { get; set; } = 0.75;
+        public double FDR { get; set; } = 0.01;
 
         //file
         public List<string> MSMSFiles { get; set; } = new List<string>();
@@ -39,7 +39,7 @@ namespace MultiGlycanTD
             MS2ToleranceBy = ConfigureParameters.Access.MS2ToleranceBy;
             Cutoff = ConfigureParameters.Access.Cutoff;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
-            Quantile = ConfigureParameters.Access.Quntile;
+            FDR = ConfigureParameters.Access.FDR;
         }
 
         protected static readonly Lazy<SearchingParameters>
@@ -62,7 +62,7 @@ namespace MultiGlycanTD
 
         //result
         public double Cutoff { get; set; } = 0.01;
-        public double Quntile { get; set; } = 0.75;
+        public double FDR { get; set; } = 0.01;
 
         protected static readonly Lazy<ConfigureParameters>
             lazy = new Lazy<ConfigureParameters>(() => new ConfigureParameters());

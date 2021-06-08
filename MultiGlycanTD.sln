@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlycanCalculator", "GlycanC
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MultiGlycanTDSetup", "MultiGlycanTDSetup\MultiGlycanTDSetup.vdproj", "{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FiniteMixtureModel", "FiniteMixtureModel\FiniteMixtureModel.csproj", "{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,14 @@ Global
 		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Debug|x64.ActiveCfg = Debug
 		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Release|Any CPU.ActiveCfg = Release
 		{BA17B460-40A2-4BB3-A439-94FEAA95FCBF}.Release|x64.ActiveCfg = Release
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4F1609D-8972-4DD4-ACDC-E8FDE72D8022}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
