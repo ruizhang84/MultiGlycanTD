@@ -33,6 +33,7 @@ namespace MultiGlycanTD
         int taskSize = 0;
         int minPeaks = 30;
 
+        public int Seed { get; set; } = 2;
 
         public MultiThreadingSearch(string msPath, 
             Counter readingCounter, Counter searchCounter,
@@ -48,6 +49,9 @@ namespace MultiGlycanTD
             tasks = new Queue<SearchTask>();
             GenerateTasks();
             taskSize = tasks.Count;
+
+            // random generator for precursor match
+            random = new Random(Seed);
         }
 
         public List<SearchResult> Target()
@@ -192,7 +196,7 @@ namespace MultiGlycanTD
             {
                 // spectrum search
                 List<SearchResult> searched = glycanSearch.Search(
-                    task.Spectrum.GetPeaks(), task.Charge, candidates);
+                    task.Spectrum.GetPeaks(), task.Charge, candidates, false);
 
                 if (searched.Count > 0)
                 {

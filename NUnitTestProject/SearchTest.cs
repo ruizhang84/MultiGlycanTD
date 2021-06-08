@@ -70,8 +70,8 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
-            string database = @"C:\Users\iruiz\Downloads\small_database.json";
+            string path = @"C:\Users\Rui Zhang\Downloads\HBS1_dextrinspkd_C18_10252018.raw";
+            string database = @"C:\Users\Rui Zhang\Downloads\small_database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -120,7 +120,8 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-
+                        if (scan != 192)
+                            continue;
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                         ms1Peaks = picking.Process(ms1Peaks);
@@ -144,9 +145,9 @@ namespace NUnitTestProject
                         SearchAnalyzer analyzer = new SearchAnalyzer();
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
 
-                        EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
-                        GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
-                        results = envelopeMatch.Match(results, ms1Peaks, mz, charge);
+                        //EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
+                        //GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
+                        //results = envelopeMatch.Match(results, ms1Peaks, mz, charge);
 
 
                         lock (obj)
@@ -162,7 +163,7 @@ namespace NUnitTestProject
             
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\searching.csv";
+            string outputPath = @"C:\Users\Rui Zhang\Downloads\searching.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {

@@ -23,7 +23,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
             // init
             cutoff_ = -1;
             if (decoy_.Count == 0 || target_.Count == 0 ||
-                (decoy_.Count * (1.0 + target_.Count / decoy_.Count) / (decoy_.Count + target_.Count) < fdr_))   //trivial case
+                (decoy_.Count * 1.0 / (decoy_.Count + target_.Count) < fdr_))   //trivial case
             {
                 return;
             }
@@ -50,7 +50,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
                     j++;
                 }
                 // compute fdr rate
-                double rate = (decoy_.Count - j) * 1.0 / (target_.Count - i + 1);
+                double rate = (decoy_.Count - j) * 1.0 / (target_.Count + decoy_.Count - i - j + 1);
+                rate = rate * (1.0 + target_.Count / decoy_.Count);
                 if (rate <= fdr_)
                 {
                     cutoff_ = score;
@@ -59,6 +60,10 @@ namespace MultiGlycanTDLibrary.engine.analysis
                 else
                 {
                     k++;
+                    while (k < scores.Count - 1 && scores[k] == scores[k+1])
+                    {
+                        k++;
+                    }
                 }
 
             }
@@ -78,6 +83,9 @@ namespace MultiGlycanTDLibrary.engine.analysis
         {
             // acquire the best score of the scan
             Dictionary<int, double> score_map = new Dictionary<int, double>();
+            targets = targets.Where(p => p.Score() > 0).ToList();
+            decoys = decoys.Where(p => p.Score() > 0).ToList();
+            // acquire the best score of the scan
             foreach (var it in targets)
             {
                 int scan = it.Scan();
