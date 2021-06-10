@@ -70,7 +70,7 @@ namespace MultiGlycanTDLibrary.engine.search
                         mass += randomMass;
 
                     List<string> glycans = searcher_.Search(mass, mass);
-                    foreach(string glycan in glycans)
+                    foreach (string glycan in glycans)
                     {
                         if (!glycanCandid.ContainsKey(glycan))
                             continue;
@@ -86,7 +86,7 @@ namespace MultiGlycanTDLibrary.engine.search
             double maxScore = 0;
             List<SearchResult> results = new List<SearchResult>();
             double sum = peaks.Select(p => Math.Log(p.GetIntensity())).Sum();
-            foreach(string composition in candidates)
+            foreach (string composition in candidates)
             {
                 SearchResult result = new SearchResult();
                 result.set_glycan(composition);
@@ -112,7 +112,7 @@ namespace MultiGlycanTDLibrary.engine.search
                     }
                 }
                 result.set_isomers(isomers);
-                result.set_score(bestScore/sum);
+                result.set_score(bestScore / sum);
 
                 // set up results
                 if (bestScore > maxScore)
