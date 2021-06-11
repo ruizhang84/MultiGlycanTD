@@ -41,10 +41,9 @@ namespace MultiGlycanTDLibrary.engine.search
             searcher_.Init(glycans_);
         }
 
-        public List<string> Match(double precursor, int charge)
+        public List<string> Match(double precursor, int charge, double ion = 1.0078)
         {
-            double mass = util.mass.Spectrum.To.Compute(precursor,
-                util.mass.Spectrum.Proton, charge);
+            double mass = util.mass.Spectrum.To.Compute(precursor,ion, charge);
             return searcher_.Search(mass).Distinct().ToList();
         }
     }

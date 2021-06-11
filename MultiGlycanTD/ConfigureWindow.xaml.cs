@@ -40,6 +40,18 @@ namespace MultiGlycanTD
                 MS2TolByDalton.IsChecked = true;
             }
 
+            foreach (double ion in SearchingParameters.Access.Ions)
+            {
+                if (ion == MultiGlycanTDLibrary.util.mass.Spectrum.Proton)
+                {
+                    Proton.IsChecked = true;
+                }
+                else if (ion == MultiGlycanTDLibrary.util.mass.Spectrum.Sodium)
+                {
+                    Sodium.IsChecked = true;
+                }
+            }
+
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
 
             Cutoff.Text = (SearchingParameters.Access.Cutoff * 100.0).ToString();
@@ -76,6 +88,21 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Thread value is invalid!");
+                return false;
+            }
+            if (Proton.IsChecked == true || Sodium.IsChecked == true)
+            {
+                ConfigureParameters.Access.Ions.Clear();
+                if (Proton.IsChecked == true)
+                    ConfigureParameters.Access.Ions
+                        .Add(MultiGlycanTDLibrary.util.mass.Spectrum.Proton);
+                if (Sodium.IsChecked == true)
+                    ConfigureParameters.Access.Ions
+                        .Add(MultiGlycanTDLibrary.util.mass.Spectrum.Sodium);
+            }
+            else
+            {
+                MessageBox.Show("At least one Ion type!");
                 return false;
             }
 

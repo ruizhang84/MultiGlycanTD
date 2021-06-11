@@ -188,36 +188,39 @@ namespace MultiGlycanTD
             GlycanSearch glycanSearch,
             SearchAnalyzer searchAnalyzer)
         {
-            //precursor match
-            List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge);
-            if (candidates.Count > 0)
+            foreach(double ion in SearchingParameters.Access.Ions)
             {
-                // spectrum search
-                List<SearchResult> searched = glycanSearch.Search(
-                    task.Spectrum.GetPeaks(), task.Charge, candidates, false);
-
-                if (searched.Count > 0)
+                //precursor match
+                List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge, ion);
+                if (candidates.Count > 0)
                 {
-                    // add meta data
-                    List<SearchResult> temp = searchAnalyzer.Analyze(
-                        searched, task.PrecursorMZ,
-                        task.Spectrum.GetScanNum(),
-                        task.Spectrum.GetRetention());
-                    results.AddRange(temp);
-                }
+                    // spectrum search
+                    List<SearchResult> searched = glycanSearch.Search(
+                        task.Spectrum.GetPeaks(), task.Charge, candidates, false, ion);
 
-                // decoy spectrum search
-                List<SearchResult> decoySearched = glycanSearch.Search(
-                    task.Spectrum.GetPeaks(), task.Charge, candidates, true);
+                    if (searched.Count > 0)
+                    {
+                        // add meta data
+                        List<SearchResult> temp = searchAnalyzer.Analyze(
+                            searched, task.PrecursorMZ,
+                            task.Spectrum.GetScanNum(),
+                            task.Spectrum.GetRetention());
+                        results.AddRange(temp);
+                    }
 
-                if (decoySearched.Count > 0)
-                {
-                    // add meta data
-                    List<SearchResult> temp = searchAnalyzer.Analyze(
-                        decoySearched, task.PrecursorMZ,
-                        task.Spectrum.GetScanNum(),
-                        task.Spectrum.GetRetention());
-                    decoyResults.AddRange(temp);
+                    // decoy spectrum search
+                    List<SearchResult> decoySearched = glycanSearch.Search(
+                        task.Spectrum.GetPeaks(), task.Charge, candidates, true, ion);
+
+                    if (decoySearched.Count > 0)
+                    {
+                        // add meta data
+                        List<SearchResult> temp = searchAnalyzer.Analyze(
+                            decoySearched, task.PrecursorMZ,
+                            task.Spectrum.GetScanNum(),
+                            task.Spectrum.GetRetention());
+                        decoyResults.AddRange(temp);
+                    }
                 }
             }
         }

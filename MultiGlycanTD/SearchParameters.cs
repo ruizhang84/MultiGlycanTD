@@ -10,20 +10,24 @@ namespace MultiGlycanTD
 {
     public class SearchingParameters
     {
-        //spectrum
+        // spectrum
         public double MS1Tolerance { get; set; } = 10;
         public double MSMSTolerance { get; set; } = 0.1;
         public ToleranceBy MS1ToleranceBy { get; set; } = ToleranceBy.PPM;
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
-        //performance
+        // performance
         public int ThreadNums { get; set; } = 4;
 
-        //result
+        // searching
+        public List<double> Ions { get; set; } = new List<double>()
+            { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
+
+        // result
         public double Cutoff { get; set; } = 0.01;
         public double FDR { get; set; } = 0.01;
 
-        //file
+        // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
         public GlycanJson Database { get; set; } = null;
 
@@ -40,6 +44,7 @@ namespace MultiGlycanTD
             Cutoff = ConfigureParameters.Access.Cutoff;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
             FDR = ConfigureParameters.Access.FDR;
+            Ions = ConfigureParameters.Access.Ions;
         }
 
         protected static readonly Lazy<SearchingParameters>
@@ -59,6 +64,10 @@ namespace MultiGlycanTD
 
         //Performance
         public int ThreadNums { get; set; } = 4;
+
+        // searching
+        public List<double> Ions { get; set; } = new List<double>()
+            { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
 
         //result
         public double Cutoff { get; set; } = 0.01;

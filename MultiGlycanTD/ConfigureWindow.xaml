@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="Configuration" Height="200" Width="600">
+        Title="Configuration" Height="230" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -55,6 +55,13 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Ions Types  " />
+                        <CheckBox Name="Proton" Content="Proton (H)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,4,0"/>
+                        <CheckBox Name="Sodium" Content="Sodium (Na)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Label Content="Result"/>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="FDR (%)" />
