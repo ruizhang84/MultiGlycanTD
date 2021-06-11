@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.analysis
 {
-    public class FMMFDRFileter
+    public class FMMFDRFilter
     {
         double fdr_;
         double cutoff_;
         List<SearchResult> target_ = new List<SearchResult>();
         List<SearchResult> decoy_ = new List<SearchResult>();
-        public FMMFDRFileter(double fdr)
+        public FMMFDRFilter(double fdr)
         {
             fdr_ = fdr;
             cutoff_ = -1;
@@ -35,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
             // fit gamma
             ECMAlgorithm bestEcm = null;
             double bestBIC = int.MaxValue;
-            for (int component = 1; component < 4; component++)
+            for (int component = 1; component <= 4; component++)
             {
                 ECMAlgorithm ecm = new ECMAlgorithm(decoy, component);
                 if (!ecm.Run())

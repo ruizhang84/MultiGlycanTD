@@ -115,6 +115,7 @@ namespace MultiGlycanTD
             ISpectrumReader reader = new ThermoRawSpectrumReader();
             IProcess picking = new LocalNeighborPicking();
             IProcess process = new WeightedAveraging(new LocalNeighborPicking());
+
             reader.Init(msPath);
 
             int start = reader.GetFirstScan();

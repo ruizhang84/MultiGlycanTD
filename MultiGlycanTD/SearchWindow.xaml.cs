@@ -74,6 +74,7 @@ namespace MultiGlycanTD
             string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoy.csv");
             MultiThreadingSearchHelper.ReportResults(decoyPath, decoys);
+            //FMMFDRFilter filter = new FMMFDRFilter(0.01);
             FDRFilter filter = new FDRFilter(0.01);
             filter.set_data(targets, decoys);
             filter.Init();
