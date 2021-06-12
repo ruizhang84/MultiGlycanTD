@@ -69,13 +69,13 @@ namespace MultiGlycanTD
         {
             //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-                System.IO.Path.GetFileNameWithoutExtension(msPath) + ".csv");
-            MultiThreadingSearchHelper.ReportResults(targetpath, targets);
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_targets.csv");
+            MultiThreadingSearchHelper.ReportResults(targetpath, targets.Where(r => r.Score() > 0).ToList());
             string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoy.csv");
-            MultiThreadingSearchHelper.ReportResults(decoyPath, decoys);
-            FMMFDRFilter filter = new FMMFDRFilter(0.01);
-            //FDRFilter filter = new FDRFilter(0.01);
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
+            MultiThreadingSearchHelper.ReportResults(decoyPath, decoys.Where(r => r.Score() > 0).ToList());
+            //FMMFDRFilter filter = new FMMFDRFilter(0.01);
+            FDRFilter filter = new FDRFilter(0.01);
             filter.set_data(targets, decoys);
             filter.Init();
             List<SearchResult> results = filter.Filter();

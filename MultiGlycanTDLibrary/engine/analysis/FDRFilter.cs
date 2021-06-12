@@ -22,8 +22,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
         {
             // init
             cutoff_ = -1;
-            if (decoy_.Count == 0 || target_.Count == 0 ||
-                (decoy_.Count * 1.0 / (decoy_.Count + target_.Count) < fdr_))   //trivial case
+            if (decoy_.Count == 0 || target_.Count == 0)   //trivial case
             {
                 return;
             }
@@ -50,8 +49,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
                     j++;
                 }
                 // compute fdr rate
-                double rate = (decoy_.Count - j) * 1.0 / (target_.Count + decoy_.Count - i - j + 1);
-                rate = rate * (1.0 + target_.Count / decoy_.Count);
+                double rate = (decoy_.Count - j) * 1.0 / (target_.Count- i + 1);
                 if (rate <= fdr_)
                 {
                     cutoff_ = score;
