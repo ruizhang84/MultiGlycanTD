@@ -85,7 +85,7 @@ namespace MultiGlycanTDLibrary.engine.search
             // compute score
             double maxScore = 0;
             List<SearchResult> results = new List<SearchResult>();
-            double sum = peaks.Select(p => Math.Log(p.GetIntensity())).Sum();
+            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
             foreach (string composition in candidates)
             {
                 SearchResult result = new SearchResult();
@@ -97,7 +97,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 foreach (string glycan in matched.Keys)
                 {
                     double score = matched[glycan].Select(
-                        index => Math.Log(peaks[index].GetIntensity())).Sum();
+                        index => Math.Sqrt(peaks[index].GetIntensity())).Sum();
 
                     // compare score
                     if (score > bestScore)

@@ -240,8 +240,7 @@ namespace MultiGlycanTD
 
             SearchAnalyzer searchAnalyzer = new SearchAnalyzer();
 
-            SearchTask task;
-            while (tasks.TryDequeue(out task))
+            while (tasks.TryDequeue(out SearchTask task))
             {
                 TaskSearch(ref tempResults, ref tempDecoyResults, task,
                     precursorMatch, glycanSearch, searchAnalyzer);
