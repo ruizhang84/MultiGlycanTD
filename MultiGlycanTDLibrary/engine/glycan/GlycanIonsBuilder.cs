@@ -33,8 +33,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
             };
 
 
-        object obj = new object();
-
         public const double kCarbon = 12.0;
         public const double kOxygen = 15.99491463;
         public const double kHydrogen = 1.007825;
@@ -96,100 +94,137 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return fragments.Distinct().ToList();
         }
 
-        public List<double> Yions(List<IGlycan> glycans)
+        public double Yion(IGlycan glycan)
         {
             if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
+                return Glycan.To.ComputeFragment(glycan);
             if (Reduced)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m) + kReduced + kHydrogen).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kNonReduced + kHydrogen).Distinct().ToList(); 
+                return Glycan.To.ComputeFragment(glycan) + kReduced + kHydrogen;
+            return Glycan.To.ComputeFragment(glycan) + kNonReduced + kHydrogen;
+        }
+
+        public List<double> Yions(List<IGlycan> glycans)
+        {
+            return glycans.Select(m => Yion(m)).Distinct().ToList();
+        }
+
+        public double Zion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
+            if (Reduced)
+                return Glycan.To.ComputeFragment(glycan) + kReduced - kHydroxyl;
+            return Glycan.To.ComputeFragment(glycan) + kNonReduced - kHydroxyl;
         }
 
         public List<double> Zions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
-            if (Reduced)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kHydroxyl).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kNonReduced - kHydroxyl).Distinct().ToList();
+            return glycans.Select(m => Zion(m)).Distinct().ToList();
         }
+
+        public double Bion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) + kCarbon + kHydrogen * 2;
+        }
+
 
         public List<double> Bions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kCarbon + kHydrogen * 2).Distinct().ToList();
+            return glycans.Select(m => Bion(m)).Distinct().ToList();
         }
+
+        public double Cion(IGlycan glycan)
+        {
+            return Glycan.To.ComputeFragment(glycan) + kCarbon + kHydrogen * 4 + kOxygen;
+        }
+
 
         public List<double> Cions(List<IGlycan> glycans)
         {
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kCarbon + kHydrogen * 4 + kOxygen).Distinct().ToList();
+            return glycans.Select(m => Cion(m)).Distinct().ToList();
+        }
+
+        public double YYion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
+            if (Reduced)
+                return Glycan.To.ComputeFragment(glycan) + kReduced - kCarbon - kHydrogen;
+            return Glycan.To.ComputeFragment(glycan) + kNonReduced - kCarbon - kHydrogen;
         }
 
         public List<double> YYions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
+            return glycans.Select(m => YYion(m)).Distinct().ToList();
+        }
+
+        public double YZion(IGlycan glycan)
+        {
             if (Reduced)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kCarbon - kHydrogen).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kNonReduced - kCarbon - kHydrogen).Distinct().ToList();
+                return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen - kCarbon - kHydrogen * 3;
+            return Glycan.To.ComputeFragment(glycan);
         }
 
         public List<double> YZions(List<IGlycan> glycans)
         {
+            return glycans.Select(m => YZion(m)).Distinct().ToList(); ;
+        }
+
+        public double ZZion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
             if (Reduced)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kOxygen - kCarbon - kHydrogen * 3).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
+                return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
+            return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
         }
 
         public List<double> ZZions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
-            if (Reduced)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5).Distinct().ToList();
+            return glycans.Select(m => ZZion(m)).Distinct().ToList(); ;
+        }
+
+        public double BYion(IGlycan glycan)
+        {
+            return Glycan.To.ComputeFragment(glycan);
         }
 
         public List<double> BYions(List<IGlycan> glycans)
         {
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
+            return glycans.Select(m => BYion(m)).Distinct().ToList(); ;
         }
+
+        public double BZion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) - kWater;
+        }
+
 
         public List<double> BZions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) - kWater).Distinct().ToList();
+            return glycans.Select(m => BZion(m)).Distinct().ToList(); ;
         }
+
+        public double CYion(IGlycan glycan)
+        {
+            if (!Permethylated)
+                return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) + kWater;
+        }
+
 
         public List<double> CYions(List<IGlycan> glycans)
         {
-            if (!Permethylated)
-                return glycans
-                    .Select(m => Glycan.To.ComputeFragment(m)).Distinct().ToList();
-            return glycans
-                .Select(m => Glycan.To.ComputeFragment(m) + kWater).Distinct().ToList();
+            return glycans.Select(m => CYion(m)).Distinct().ToList();
+        }
+
+        public double CZion(IGlycan glycan)
+        {
+            return BYion(glycan);
         }
 
         public List<double> CZions(List<IGlycan> glycans)
