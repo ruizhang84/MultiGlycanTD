@@ -207,8 +207,8 @@ namespace GlycanCalculator
             object obj = new object();
             Dictionary<double, List<string>> fragments =
                 new Dictionary<double, List<string>>();
-            List<Dictionary<double, List<string>>> fragmentsContainer =
-                new List<Dictionary<double, List<string>>>();
+            List<Tuple<string, List<double>>> fragmentsContainer =
+                new List<Tuple<string, List<double>>>();
             var map = glycanBuilder.GlycanMaps();
 
             GlycanIonsBuilder.Build.Permethylated = permethylated;
@@ -221,30 +221,23 @@ namespace GlycanCalculator
                 var glycan = pair.Value;
                 if (glycan.IsValid())
                 {
-                    Dictionary<double, List<string>> temp = new Dictionary<double, List<string>>();
                     List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                            .Select(m => Math.Round(m, 4)).ToList();
-
-                    foreach (double mass in massList)
+                                        .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
+                    lock (obj)
                     {
-                        if (!temp.ContainsKey(mass))
-                            temp[mass] = new List<string>();
-                        temp[mass].Add(id);                       
-                    }
-
-                    lock(obj)
-                    {
-                        fragmentsContainer.Add(temp);
+                        fragmentsContainer.Add(Tuple.Create(id, massList));
                     }
                 }
             });
-            foreach (Dictionary<double, List<string>> item in fragmentsContainer)
+
+            foreach (Tuple<string, List<double>> item in fragmentsContainer)
             {
-                foreach(double mass in item.Keys)
+                string id = item.Item1;
+                foreach (double mass in item.Item2)
                 {
                     if (!fragments.ContainsKey(mass))
                         fragments[mass] = new List<string>();
-                    fragments[mass].AddRange(item[mass]);
+                    fragments[mass].Add(id);
                 }
             }
 

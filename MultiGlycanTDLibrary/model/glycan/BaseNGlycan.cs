@@ -14,6 +14,8 @@ namespace MultiGlycanTDLibrary.model.glycan
             = new SortedDictionary<Monosaccharide, int>();
         protected string id;
         protected object obj = new object();
+        protected bool init = false;
+        protected List<IGlycan> children_ = new List<IGlycan>();
 
         public abstract int[] Table();
         public abstract void SetTable(int[] table);
@@ -33,6 +35,9 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         public List<IGlycan> Fragments()
         {
+            if (init)
+                return children_;
+
             List<IGlycan> children = new List<IGlycan>();
             Stack<IGlycan> stack = new Stack<IGlycan>(glycans);
             HashSet<string> visited = new HashSet<string>();
@@ -52,6 +57,8 @@ namespace MultiGlycanTDLibrary.model.glycan
                     }
                 }
             }
+            init = true;
+            children_ = children;
             return children;
         }
 
