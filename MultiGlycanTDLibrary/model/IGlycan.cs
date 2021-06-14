@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MultiGlycanTDLibrary.model.glycan
 {
     public enum Monosaccharide
-    { GlcNAc, Man, Gal, Fuc, NeuAc, NeuGc }
+    { GlcNAc, Man, Gal, Fuc, NeuAc, NeuGc, HexNAc, Hex }
 
     public enum GlycanType
     {

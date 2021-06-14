@@ -67,7 +67,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             };
         }
 
-        public Dictionary<string, IGlycan> GlycanMaps()
+        public virtual Dictionary<string, IGlycan> GlycanMaps()
         { return glycans_map_; }
 
         public Dictionary<string, List<IGlycan>> GlycanCompositionMaps()
@@ -133,6 +133,12 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 queue = bags;
             }
 
+            BuildMaps();
+
+        }
+
+        protected virtual void BuildMaps()
+        {
             foreach (var pair in glycans_map_)
             {
                 IGlycan g = pair.Value;
@@ -154,8 +160,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 distr_map_[name] = Brain.Run.Distribute(compound, Order);
                 mass_map_[name] = Brain.Run.CenterMass(compound, Order);
             });
-
-
         }
 
         public bool SatisfyCriteria(IGlycan glycan)

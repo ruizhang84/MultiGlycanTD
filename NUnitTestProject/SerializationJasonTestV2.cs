@@ -1,5 +1,6 @@
 ﻿using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
+using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
@@ -8,12 +9,94 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
     public class SerializationJasonTestV2
     {
+        public List<SortedDictionary<Monosaccharide, int>> ReadFilter()
+        {
+            string path = @"C:\Users\iruiz\Downloads\MSMS\309 N-glycan search space for HGI.txt";
+            Regex HexNAc = new Regex("HexNAc(\\d+)", RegexOptions.Compiled);
+            Regex Hex = new Regex("Hex(\\d+)", RegexOptions.Compiled);
+            Regex Fuc = new Regex("Fuc(\\d+)", RegexOptions.Compiled);
+            Regex NeuAc = new Regex("NeuAc(\\d+)", RegexOptions.Compiled);
+            Regex NeuGc = new Regex("NeuGc(\\d+)", RegexOptions.Compiled);
+
+            List<SortedDictionary<Monosaccharide, int>> Filtered = 
+                new List<SortedDictionary<Monosaccharide, int>>();
+            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader sr = new StreamReader(fileStream))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.StartsWith("%"))
+                        {
+                            continue;
+                        }
+                        SortedDictionary<Monosaccharide, int> temp 
+                            = new SortedDictionary<Monosaccharide, int>();
+                        if (HexNAc.IsMatch(line))
+                        {
+                            MatchCollection matches = HexNAc.Matches(line);
+                            foreach (Match match in matches)
+                            {
+                                GroupCollection groups = match.Groups;
+                                temp[Monosaccharide.HexNAc] = int.Parse(groups[1].Value);
+                                break;
+                            }
+                        }
+                        if (Hex.IsMatch(line))
+                        {
+                            MatchCollection matches = HexNAc.Matches(line);
+                            foreach (Match match in matches)
+                            {
+                                GroupCollection groups = match.Groups;
+                                temp[Monosaccharide.Hex] = int.Parse(groups[1].Value);
+                                break;
+                            }
+                        }
+                        if (Fuc.IsMatch(line))
+                        {
+                            MatchCollection matches = HexNAc.Matches(line);
+                            foreach (Match match in matches)
+                            {
+                                GroupCollection groups = match.Groups;
+                                temp[Monosaccharide.Fuc] = int.Parse(groups[1].Value);
+                                break;
+                            }
+                        }
+                        if (NeuAc.IsMatch(line))
+                        {
+                            MatchCollection matches = HexNAc.Matches(line);
+                            foreach (Match match in matches)
+                            {
+                                GroupCollection groups = match.Groups;
+                                temp[Monosaccharide.NeuAc] = int.Parse(groups[1].Value);
+                                break;
+                            }
+                        }
+                        if (NeuGc.IsMatch(line))
+                        {
+                            MatchCollection matches = HexNAc.Matches(line);
+                            foreach (Match match in matches)
+                            {
+                                GroupCollection groups = match.Groups;
+                                temp[Monosaccharide.NeuGc] = int.Parse(groups[1].Value);
+                                break;
+                            }
+                        }
+                        Filtered.Add(temp);
+                    }
+                }
+            }
+            return Filtered;
+        }
+
         [Test]
         public void JasonTestV2()
         {
@@ -23,8 +106,6 @@ namespace NUnitTestProject
             glycanBuilder.Build();
 
             //Console.WriteLine(map.Count);
-
-
 
             var distr_map = glycanBuilder.GlycanDistribMaps();
             var mass_map = glycanBuilder.GlycanMassMaps();
