@@ -20,6 +20,8 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="DataBase File" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Button x:Name="JsonFileNames" Content="Write Pre-Computed File (*.json)" Click="JSONFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                    <Label Content="Computing Threads" />
+                    <TextBox Name="Thread" Text="4" FontSize="12" Width="40" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Grid>

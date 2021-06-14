@@ -2,6 +2,7 @@
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace GlycanCalculator
         protected bool permethylated;
         protected bool reduced;
         protected int precision;
+        protected int thread;
         protected List<FragmentTypes> types = new List<FragmentTypes>();
 
         public MainWindow()
@@ -123,6 +125,15 @@ namespace GlycanCalculator
                 MessageBox.Show("Decimal value is invalid!");
                 return false;
             }
+            if (int.TryParse(Thread.Text, out int threads) && threads >= 1)
+            {
+                thread = threads;
+            }
+            else
+            {
+                MessageBox.Show("Thread value is invalid!");
+                return false;
+            }
             if (ComplexNGlycan.IsChecked == false &&
                 HybridNGlycan.IsChecked == false && HighMannose.IsChecked == false)
             {
@@ -180,6 +191,7 @@ namespace GlycanCalculator
                 new GlycanBuilder(hexNAc, hex, fuc, neuAc, neuGc,
                 complexInclude, hybridInclude, highMannoseInclude, 
                 order, permethylated, reduced);
+            glycanBuilder.Thread = thread;
             glycanBuilder.Build();
 
             // distribution maps
@@ -193,31 +205,50 @@ namespace GlycanCalculator
 
             // fragmentation maps
             object obj = new object();
-            Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
+            Dictionary<double, List<string>> fragments =
+                new Dictionary<double, List<string>>();
+            List<Dictionary<double, List<string>>> fragmentsContainer =
+                new List<Dictionary<double, List<string>>>();
             var map = glycanBuilder.GlycanMaps();
 
             GlycanIonsBuilder.Build.Permethylated = permethylated;
             GlycanIonsBuilder.Build.Reduced = reduced;
             GlycanIonsBuilder.Build.Types = types;
+            //Parallel.ForEach(map, new ParallelOptions { MaxDegreeOfParallelism = thread }, pair =>
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
                 var glycan = pair.Value;
                 if (glycan.IsValid())
                 {
+                    Dictionary<double, List<string>> temp = new Dictionary<double, List<string>>();
                     List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                                        .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
-                    lock (obj)
+                            .Select(m => Math.Round(m, 4)).ToList();
+
+                    foreach (double mass in massList)
                     {
-                        foreach (double mass in massList)
-                        {
-                            if (!fragments.ContainsKey(mass))
-                                fragments[mass] = new List<string>();
-                            fragments[mass].Add(id);
-                        }
+                        if (!temp.ContainsKey(mass))
+                            temp[mass] = new List<string>();
+                        temp[mass].Add(id);                       
+                    }
+
+                    lock(obj)
+                    {
+                        fragmentsContainer.Add(temp);
                     }
                 }
             });
+            foreach (Dictionary<double, List<string>> item in fragmentsContainer)
+            {
+                foreach(double mass in item.Keys)
+                {
+                    if (!fragments.ContainsKey(mass))
+                        fragments[mass] = new List<string>();
+                    fragments[mass].AddRange(item[mass]);
+                }
+            }
+
+            fragmentsContainer.Clear();
             var composition_map = glycanBuilder.GlycanCompositionMaps();
             Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
             foreach (var pair in composition_map)

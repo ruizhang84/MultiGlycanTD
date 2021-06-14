@@ -17,7 +17,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         protected int fuc_;
         protected int neuAc_;
         protected int neuGc_;
-        protected int Thread { get; set; }
+        public int Thread { get; set; }
         public bool ComplexInclude { get; set; }
         public bool HybridInclude { get; set; }
         public bool HighMannoseInclude { get; set; }

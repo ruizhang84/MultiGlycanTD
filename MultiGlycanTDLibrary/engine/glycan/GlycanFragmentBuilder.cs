@@ -9,14 +9,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 {
     public class GlycanFragmentBuilder
     {
-        // assume N-Glycan with pentacore
-        protected static readonly Lazy<GlycanFragmentBuilder>
-              lazy = new Lazy<GlycanFragmentBuilder>(() => new GlycanFragmentBuilder());
-
-        // fragments higher than 3. 
-        public static GlycanFragmentBuilder Build { get { return lazy.Value; } }
-
-        public List<IGlycan> YionsLikeFragments(IGlycan glycan)
+        public static List<IGlycan> YionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();       
             foreach (IGlycan sub in glycan.Fragments())
@@ -30,7 +23,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanYFragment;
         }
-        public List<IGlycan> YYionsLikeFragments(IGlycan glycan)
+        public static List<IGlycan> YYionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanYFragment = new List<IGlycan>();
             foreach (IGlycan sub in glycan.Fragments())
@@ -43,7 +36,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanYFragment;
         }
-        public List<IGlycan> BionsLikeFragments(IGlycan glycan)
+        public static List<IGlycan> BionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanBFragment = new List<IGlycan>();
             List<IGlycan> yionsFragments = YionsLikeFragments(glycan);
@@ -53,7 +46,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanBFragment;
         }
-        public List<IGlycan> BYionsLikeFragments(IGlycan glycan)
+        public static List<IGlycan> BYionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanBYFragment = new List<IGlycan>();
 

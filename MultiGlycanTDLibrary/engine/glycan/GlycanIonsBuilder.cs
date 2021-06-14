@@ -53,7 +53,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             List<double> fragments = new List<double>();
             if (Types.Contains(FragmentTypes.B) || Types.Contains(FragmentTypes.C))
             {
-                List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.Build.BionsLikeFragments(glycan);
+                List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.BionsLikeFragments(glycan);
                 if (Types.Contains(FragmentTypes.B))
                     fragments.AddRange(Bions(bionsLikeFragments));
                 if (Types.Contains(FragmentTypes.C))
@@ -62,7 +62,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
             if (Types.Contains(FragmentTypes.Y) || Types.Contains(FragmentTypes.Z))
             {
-                List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.Build.YionsLikeFragments(glycan);
+                List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.YionsLikeFragments(glycan);
                 if (Types.Contains(FragmentTypes.Y))
                     fragments.AddRange(Yions(yionsLikeFragments));
                 if (Types.Contains(FragmentTypes.Z))
@@ -71,7 +71,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
             if (Types.Contains(FragmentTypes.BY) || Types.Contains(FragmentTypes.BZ) || Types.Contains(FragmentTypes.CY))
             {
-                List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan);
+                List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.BYionsLikeFragments(glycan);
                 if (Types.Contains(FragmentTypes.BY))
                     fragments.AddRange(BYions(byionsLikeFragments));
                 if (Types.Contains(FragmentTypes.BZ))
@@ -82,7 +82,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
             if (Types.Contains(FragmentTypes.YY) || Types.Contains(FragmentTypes.YZ) || Types.Contains(FragmentTypes.ZZ))
             {
-                List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan);
+                List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.YYionsLikeFragments(glycan);
                 if (Types.Contains(FragmentTypes.YY))
                     fragments.AddRange(YYions(yyionsLikeFragments));
                 if (Types.Contains(FragmentTypes.YZ))

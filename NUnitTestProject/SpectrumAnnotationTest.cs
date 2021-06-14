@@ -110,18 +110,18 @@ namespace NUnitTestProject
             {
                 case FragmentTypes.B:
                 case FragmentTypes.C:
-                    return GlycanFragmentBuilder.Build.BionsLikeFragments(glycan);
+                    return GlycanFragmentBuilder.BionsLikeFragments(glycan);
                 case FragmentTypes.Y:
                 case FragmentTypes.Z:
-                    return GlycanFragmentBuilder.Build.YionsLikeFragments(glycan);
+                    return GlycanFragmentBuilder.YionsLikeFragments(glycan);
                 case FragmentTypes.BY:
                 case FragmentTypes.BZ:
                 case FragmentTypes.CY:
-                    return GlycanFragmentBuilder.Build.BYionsLikeFragments(glycan);
+                    return GlycanFragmentBuilder.BYionsLikeFragments(glycan);
                 case FragmentTypes.YY:
                 case FragmentTypes.YZ:
                 case FragmentTypes.ZZ:
-                    return GlycanFragmentBuilder.Build.YYionsLikeFragments(glycan);
+                    return GlycanFragmentBuilder.YYionsLikeFragments(glycan);
 
             }
             return new List<IGlycan>();
@@ -276,9 +276,9 @@ namespace NUnitTestProject
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
-                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates, false);
+                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates, true);
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
-                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results, false);
+                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results, true);
 
                         //EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
                         //GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
