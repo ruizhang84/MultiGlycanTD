@@ -184,7 +184,7 @@ namespace MultiGlycanTD
             foreach(double ion in SearchingParameters.Access.Ions)
             {
                 //precursor match
-                List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge, ion);
+                List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge, ion, false);
                 if (candidates.Count > 0)
                 {
                     // spectrum search
@@ -200,12 +200,16 @@ namespace MultiGlycanTD
                             task.Spectrum.GetRetention());
                         results.AddRange(temp);
                     }
+                }
 
+                candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge, ion, true);
+                if (candidates.Count > 0)
+                {
                     // decoy spectrum search
                     for (int _ = 0; _ < repeat; _++)
                     {
                         List<SearchResult> decoySearched = glycanSearch.Search(
-                            task.Spectrum.GetPeaks(), task.Charge, candidates, true, ion);
+                            task.Spectrum.GetPeaks(), task.Charge, candidates, false, ion);
 
                         if (decoySearched.Count > 0)
                         {

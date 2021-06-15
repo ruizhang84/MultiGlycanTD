@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
-    public class GlycanBuilder
+    public class GlycanBuilder : IGlycanBuilder
     {
         protected int hexNAc_;
         protected int hex_;
@@ -63,12 +63,21 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 Monosaccharide.Gal,
                 Monosaccharide.Fuc,
                 Monosaccharide.NeuAc,
-                //Monosaccharide.NeuGc
+                Monosaccharide.NeuGc
             };
         }
 
         public virtual Dictionary<string, IGlycan> GlycanMaps()
-        { return glycans_map_; }
+        {
+            Dictionary<string, IGlycan> results = new Dictionary<string, IGlycan>();
+            foreach (string id in glycans_map_.Keys)
+            {
+                IGlycan g = glycans_map_[id];
+                if (g.IsValid())
+                    results[id] = g;
+            }
+            return results;
+        }
 
         public Dictionary<string, List<IGlycan>> GlycanCompositionMaps()
         { return glycan_compound_map_;  }

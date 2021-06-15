@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
+using MultiGlycanTDLibrary.model.glycan;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +29,7 @@ namespace GlycanCalculator
     public partial class MainWindow : Window
     {
         protected string fileName;
+        protected string glycanFileName = "";
         protected int hexNAc;
         protected int hex;
         protected int fuc;
@@ -39,7 +42,6 @@ namespace GlycanCalculator
         protected bool permethylated;
         protected bool reduced;
         protected int precision;
-        protected int thread;
         protected List<FragmentTypes> types = new List<FragmentTypes>();
 
         public MainWindow()
@@ -56,6 +58,17 @@ namespace GlycanCalculator
             if (savefile.ShowDialog() == true)
             {
                 fileName = savefile.FileName;
+            }
+        }
+
+        private void TxtFileNames_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openfile = new OpenFileDialog();
+            openfile.Filter = "Text files (*.txt) | *.txt";
+
+            if (openfile.ShowDialog() == true)
+            {
+                glycanFileName = openfile.FileName;
             }
         }
 
@@ -125,15 +138,6 @@ namespace GlycanCalculator
                 MessageBox.Show("Decimal value is invalid!");
                 return false;
             }
-            if (int.TryParse(Thread.Text, out int threads) && threads >= 1)
-            {
-                thread = threads;
-            }
-            else
-            {
-                MessageBox.Show("Thread value is invalid!");
-                return false;
-            }
             if (ComplexNGlycan.IsChecked == false &&
                 HybridNGlycan.IsChecked == false && HighMannose.IsChecked == false)
             {
@@ -187,11 +191,25 @@ namespace GlycanCalculator
 
         private Task Process()
         {
-            GlycanBuilder glycanBuilder =
-                new GlycanBuilder(hexNAc, hex, fuc, neuAc, neuGc,
-                complexInclude, hybridInclude, highMannoseInclude, 
+            IGlycanBuilder glycanBuilder;
+            if (glycanFileName.Length > 0)
+            {
+                List<SortedDictionary<Monosaccharide, int>> glycanList
+                    =  CalculatorHelper.ReadFilter(glycanFileName);
+
+                glycanBuilder =
+                new GlycanBuilderFiltered(glycanList, hexNAc, hex, fuc, neuAc, neuGc,
+                complexInclude, hybridInclude, highMannoseInclude,
                 order, permethylated, reduced);
-            glycanBuilder.Thread = thread;
+            }
+            else
+            {
+                glycanBuilder =
+                new GlycanBuilder(hexNAc, hex, fuc, neuAc, neuGc,
+                complexInclude, hybridInclude, highMannoseInclude,
+                order, permethylated, reduced);
+            }
+
             glycanBuilder.Build();
 
             // distribution maps
@@ -214,7 +232,7 @@ namespace GlycanCalculator
             GlycanIonsBuilder.Build.Permethylated = permethylated;
             GlycanIonsBuilder.Build.Reduced = reduced;
             GlycanIonsBuilder.Build.Types = types;
-            //Parallel.ForEach(map, new ParallelOptions { MaxDegreeOfParallelism = thread }, pair =>
+
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
@@ -270,5 +288,7 @@ namespace GlycanCalculator
             Search.IsEnabled = false;
             Task.Run(Process);
         }
+
+
     }
 }

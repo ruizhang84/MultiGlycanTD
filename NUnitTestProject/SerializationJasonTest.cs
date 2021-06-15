@@ -18,7 +18,7 @@ namespace NUnitTestProject
         {
 
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(6, 6, 5, 4, 0, true, false, false);
+                new GlycanBuilder(10, 10, 5, 4, 0, true, false, false);
             glycanBuilder.Build();
 
             var watch = new System.Diagnostics.Stopwatch();
@@ -44,24 +44,22 @@ namespace NUnitTestProject
             {
                 var id = pair.Key;
                 var glycan = pair.Value;
-                if (glycan.IsValid())
+                Dictionary<double, List<string>> temp = new Dictionary<double, List<string>>();
+                List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
+                        .Select(m => Math.Round(m, 2)).ToList();
+
+                foreach (double mass in massList)
                 {
-                    Dictionary<double, List<string>> temp = new Dictionary<double, List<string>>();
-                    List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                            .Select(m => Math.Round(m, 4)).ToList();
-
-                    foreach (double mass in massList)
-                    {
-                        if (!temp.ContainsKey(mass))
-                            temp[mass] = new List<string>();
-                        temp[mass].Add(id);
-                    }
-
-                    lock (obj)
-                    {
-                        fragmentsContainer.Add(temp);
-                    }
+                    if (!temp.ContainsKey(mass))
+                        temp[mass] = new List<string>();
+                    temp[mass].Add(id);
                 }
+
+                lock (obj)
+                {
+                    fragmentsContainer.Add(temp);
+                }
+                
             });
             foreach (Dictionary<double, List<string>> item in fragmentsContainer)
             {

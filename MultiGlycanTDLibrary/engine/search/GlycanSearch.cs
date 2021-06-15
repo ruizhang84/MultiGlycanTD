@@ -19,9 +19,10 @@ namespace MultiGlycanTDLibrary.engine.search
         Dictionary<double, List<string>> fragments_map_;
         //private readonly int maxCharge = 2;
         private Random random;
-        private readonly int lower = 1;
-        private readonly int upper = 30;
+        private readonly double lower = 1;
+        private readonly double upper = 30;
         public int Seed { get; set; } = 2;
+        private int maxCharge = 3; // it is not likely a higher charge for fragments.
 
         public GlycanSearch(ISearch<string> searcher, GlycanJson glycanJson)
         {
@@ -62,7 +63,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 double randomMass = 0;
                 if (decoy)
                     randomMass = random.NextDouble() * (upper - lower) + lower;
-                for (int charge = 1; charge <= precursorCharge; charge++)
+                for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
                 {
                     double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
                        ion, charge);

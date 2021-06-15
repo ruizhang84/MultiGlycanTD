@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GlycanCalculator"
         mc:Ignorable="d"
-        Title="GlycanCalculator" Height="360" Width="500">
+        Title="GlycanCalculator" Height="400" Width="500">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -20,12 +21,18 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="DataBase File" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <Button x:Name="JsonFileNames" Content="Write Pre-Computed File (*.json)" Click="JSONFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
-                    <Label Content="Computing Threads" />
-                    <TextBox Name="Thread" Text="4" FontSize="12" Width="40" VerticalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Grid>
         <Grid Grid.Row="1">
+            <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Glycans File (Optional)" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Button x:Name="TxtFileNames" Content="Read Glycan Searching List (*.txt)" VerticalAlignment="Center" Padding="5, 1, 5, 1" Click="TxtFileNames_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -49,7 +56,7 @@
             </StackPanel>
             <Separator VerticalAlignment="Bottom" Grid.Row="2"/>
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <StackPanel>
                 <Label Content="Complex Types:" />
                 <StackPanel Margin="4" Orientation="Horizontal">
@@ -64,7 +71,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <StackPanel>
                 <Label Content="Derivation:" />
                 <StackPanel Margin="4" Orientation="Horizontal" >
@@ -73,7 +80,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="5">
             <StackPanel>
                 <Label Content="Fragment Ions:" />
                 <StackPanel Margin="4" Orientation="Horizontal" >
@@ -90,7 +97,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="6">
             <StackPanel>
                 <Label Content="Options:" />
                 <StackPanel Orientation="Horizontal" >
