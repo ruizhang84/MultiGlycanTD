@@ -41,6 +41,7 @@ namespace NUnitTestProject
                 new List<Tuple<string, List<double>>>();
 
             GlycanIonsBuilder.Build.Permethylated = false;
+            
 
             Parallel.ForEach(map, pair =>
             {

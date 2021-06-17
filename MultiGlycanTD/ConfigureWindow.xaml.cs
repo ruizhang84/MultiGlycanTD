@@ -71,8 +71,6 @@ namespace MultiGlycanTD
                 {
                     PermethylatedReduced.IsEnabled = false;
                 }
-
-
             }
             else
             {
@@ -80,8 +78,26 @@ namespace MultiGlycanTD
                 NativeDerivatization.IsEnabled = true;
                 PermethylatedReduced.IsEnabled = false;
 
-
-
+                if (SearchingParameters.Access.Derivatization == 
+                    MultiGlycanClassLibrary.util.mass.Glycan.kWater)
+                {
+                    unDerived.IsChecked = true;
+                }
+                else if (SearchingParameters.Access.Derivatization ==
+                    MultiGlycanClassLibrary.util.mass.Glycan.k2AA)
+                {
+                    o2AA.IsChecked = true;
+                }
+                else if (SearchingParameters.Access.Derivatization ==
+                    MultiGlycanClassLibrary.util.mass.Glycan.k2AB)
+                {
+                    o2AB.IsChecked = true;
+                }
+                else if (SearchingParameters.Access.Derivatization ==
+                    MultiGlycanClassLibrary.util.mass.Glycan.kABEE)
+                {
+                    oABEE.IsChecked = true;
+                }
             }
 
         }
@@ -255,5 +271,6 @@ namespace MultiGlycanTD
         {
             ConfigureParameters.Access.Derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
         }
+
     }
 }

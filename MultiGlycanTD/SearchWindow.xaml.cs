@@ -1,4 +1,6 @@
-﻿using MultiGlycanTDLibrary.engine.analysis;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.engine.glycan;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +46,19 @@ namespace MultiGlycanTD
             Counter searchCounter = new Counter();
             readerCounter.progressChange += ReadProgressChanged;
             searchCounter.progressChange += SearchProgressChanged;
+
+            if (SearchingParameters.Access.Permethylated)
+            {
+                GlycanIonsBuilder.Build.Permethylated = true;
+                Glycan.To.SetPermethylation(true, SearchingParameters.Access.Reduced);
+            }
+            else
+            {
+                GlycanIonsBuilder.Build.Permethylated = false;
+                Glycan.To.SetPermethylation(false, SearchingParameters.Access.Reduced);
+                GlycanIonsBuilder.Build.Derivatization = SearchingParameters.Access.Derivatization;
+                Glycan.To.Derivatization = SearchingParameters.Access.Derivatization;
+            }
 
             int index = 1;
             foreach (string file in SearchingParameters.Access.MSMSFiles)
