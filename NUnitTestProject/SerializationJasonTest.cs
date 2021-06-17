@@ -4,7 +4,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,78 +15,94 @@ namespace NUnitTestProject
 {
     public class SerializationJasonTest
     {
+        public static byte[] SerializeAndCompress(List<double> massList)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (GZipStream zs = new GZipStream(ms, CompressionMode.Compress, true))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(zs, massList);
+                return ms.ToArray();
+            }
+        }
+
+        public static T DecompressAndDeserialize<T>(byte[] data)
+        {
+            using (MemoryStream ms = new MemoryStream(data))
+            using (GZipStream zs = new GZipStream(ms, CompressionMode.Decompress, true))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                return (T)bf.Deserialize(zs);
+            }
+        }
+
         [Test]
         public void JasonTest()
         {
 
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(10, 10, 5, 4, 0, true, false, false);
+                new GlycanBuilder(7, 7, 5, 4, 0, true, false, false);
             glycanBuilder.Build();
+
+
+            //var distr_map = glycanBuilder.GlycanDistribMaps();
+            //var mass_map = glycanBuilder.GlycanMassMaps();
+            //CompdJson compdJson = new CompdJson()
+            //{
+            //    DistrMap = distr_map,
+            //    MassMap = mass_map
+            //};
 
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
-
-            var distr_map = glycanBuilder.GlycanDistribMaps();
-            var mass_map = glycanBuilder.GlycanMassMaps();
-            CompdJson compdJson = new CompdJson()
-            {
-                DistrMap = distr_map,
-                MassMap = mass_map
-            };
-
             object obj = new object();
-            Dictionary<double, List<string>> fragments =
-                new Dictionary<double, List<string>>();
-            List<Dictionary<double, List<string>>> fragmentsContainer =
-                new List<Dictionary<double, List<string>>>();
             var map = glycanBuilder.GlycanMaps();
+            Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
+            List<Tuple<string, byte[]>> fragmentsContainer =
+                new List<Tuple<string, byte[]>>();
 
-            //Parallel.ForEach(map, new ParallelOptions { MaxDegreeOfParallelism = thread }, pair =>
             Parallel.ForEach(map, pair =>
             {
                 var id = pair.Key;
                 var glycan = pair.Value;
-                Dictionary<double, List<string>> temp = new Dictionary<double, List<string>>();
-                List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                        .Select(m => Math.Round(m, 2)).ToList();
-
-                foreach (double mass in massList)
+                if (glycan.IsValid())
                 {
-                    if (!temp.ContainsKey(mass))
-                        temp[mass] = new List<string>();
-                    temp[mass].Add(id);
+                    List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
+                                        .Select(m => Math.Round(m, 4)).ToList();
+                    lock (obj)
+                    {
+                        fragmentsContainer.Add(Tuple.Create(id, SerializeAndCompress(massList)));
+                    }
                 }
-
-                lock (obj)
-                {
-                    fragmentsContainer.Add(temp);
-                }
-                
             });
-            foreach (Dictionary<double, List<string>> item in fragmentsContainer)
-            {
-                foreach (double mass in item.Keys)
-                {
-                    if (!fragments.ContainsKey(mass))
-                        fragments[mass] = new List<string>();
-                    fragments[mass].AddRange(item[mass]);
-                }
-            }
 
-            fragmentsContainer.Clear();
-            var composition_map = glycanBuilder.GlycanCompositionMaps();
-            Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
-            foreach (var pair in composition_map)
-            {
-                id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
-            }
+            //foreach (Tuple<string, List<double>> item in fragmentsContainer)
+            //{
+            //    string id = item.Item1;
+            //    foreach (double mass in item.Item2)
+            //    {
+            //        if (!fragments.ContainsKey(mass))
+            //            fragments[mass] = new List<string>();
+            //        fragments[mass].Add(id);
+            //    }
+            //}
 
-            GlycanJson glycanJson = new GlycanJson()
-            {
-                Compound = compdJson,
-                IDMap = id_map,
-                Fragments = fragments
-            };
+
+            watch.Stop();
+            Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
+            //var composition_map = glycanBuilder.GlycanCompositionMaps();
+            //Dictionary<string, List<string>> id_map = new Dictionary<string, List<string>>();
+            //foreach (var pair in composition_map)
+            //{
+            //    id_map[pair.Key] = pair.Value.Select(p => p.ID()).ToList();
+            //}
+
+            //GlycanJson glycanJson = new GlycanJson()
+            //{
+            //    Compound = compdJson,
+            //    IDMap = id_map,
+            //    Fragments = fragments
+            //};
 
             watch.Stop();
             Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");

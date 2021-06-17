@@ -1,4 +1,5 @@
 ﻿using MultiGlycanTDLibrary.engine.glycan;
+using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class FragmentMassUnitTest
+    public class FragmentMassUnitTestSingleLine
     {
         [Test]
         public void FragmentsTest()
@@ -35,39 +36,35 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = false;
 
             GlycanIonsBuilder.Build.Types = new List<FragmentTypes>()
-            { FragmentTypes.YZ };
+            { FragmentTypes.ZZ };
             //{
             //    FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
             //    FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
             //    FragmentTypes.YZ, FragmentTypes.ZZ
             //};
-            //2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0 0 0 0 0
-            string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";
-            using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            foreach(var pair in map)
             {
-                using (StreamWriter writer = new StreamWriter(ostrm))
-                {
-                    writer.WriteLine("glycan_id,name,mass");
-                    foreach(var pair in map)
-                    {
-                        var id = pair.Key;
-                        var glycan = pair.Value;
-                        if (glycan.IsValid())
-                        {
-                            List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                                                .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
-                            string output = glycan.ID() + "," + glycan.Name() + ","
-                                + string.Join(" ", massList.Select(m => m.ToString()));
-                            writer.WriteLine(output);
-                        }
-                    }
+                var id = pair.Key;
+                if (!id.StartsWith("2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0"))
+                    continue;
+                var glycan = pair.Value;
+                //foreach(IGlycan g in glycan.Fragments())
+                //{
+                //    Console.WriteLine(g.ID());
+                //}
 
-                    writer.Flush();
+                if (glycan.IsValid())
+                {
+                    List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
+                                        .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
+                    Console.WriteLine(string.Join("\n", massList.Select(m => m.ToString())));
                 }
             }
         }
 
     }
 }
+
+
 
 
