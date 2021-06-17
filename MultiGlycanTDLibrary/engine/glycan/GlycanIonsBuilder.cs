@@ -24,7 +24,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public bool Reduced { get; set; } = true;
         public bool Permethylated { get; set; } = true;
-        public bool ABEE { get; set; } = false;
+
         public List<FragmentTypes> Types { get; set; }
             = new List<FragmentTypes>()
             {
@@ -33,22 +33,25 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 FragmentTypes.YZ, FragmentTypes.ZZ
             };
 
+        // ABEE 149.0841, 2-AA labeled 139.06333, 2-AB labeled 	138.07931
+        public double Derivatization { get; set; } = kWater;
+        public const double kABEE = 149.0841;
+        public const double k2AA = 139.06333;
+        public const double k2AB = 138.07931;
 
         public const double kCarbon = 12.0;
         public const double kOxygen = 15.99491463;
         public const double kHydrogen = 1.007825;
         // methyl
         public const double kMethyl = kCarbon + kHydrogen * 3;
-        // H2O
-        public const double kWater = kHydrogen * 2 + kOxygen;
         // oH
         public const double kHydroxyl = kHydrogen + kOxygen;
+        // water
+        public const double kWater = kHydrogen * 2 + kOxygen;
         // 31
         public const double kNonReduced = kMethyl + kOxygen;
         // 47
         public const double kReduced = kMethyl * 2 + kHydrogen + kOxygen;
-        // ABB
-        public const double kABEE = 149.0841;
 
         // assume only consist of the part of glycan
         public List<double> Fragments(IGlycan glycan)
@@ -110,7 +113,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced + kHydrogen;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) + kWater;
+            return Glycan.To.ComputeFragment(glycan) + Derivatization;
         }
 
         public List<double> Yions(List<IGlycan> glycans)
@@ -131,7 +134,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kHydroxyl;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater;
         }
 
         public List<double> Zions(List<IGlycan> glycans)
@@ -180,7 +183,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kCarbon - kHydrogen;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) + kWater;
+            return Glycan.To.ComputeFragment(glycan) + Derivatization;
         }
 
         public List<double> YYions(List<IGlycan> glycans)
@@ -201,7 +204,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan);
                 }
             }
-            return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater;
         }
 
         public List<double> YZions(List<IGlycan> glycans)
@@ -222,7 +225,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) - kWater;            
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;            
         }
 
         public List<double> ZZions(List<IGlycan> glycans)

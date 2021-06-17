@@ -56,6 +56,34 @@ namespace MultiGlycanTD
 
             Cutoff.Text = (SearchingParameters.Access.Cutoff * 100.0).ToString();
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
+
+            if (SearchingParameters.Access.Permethylated)
+            {
+                Permethylated.IsChecked = true;
+                NativeDerivatization.IsEnabled = false;
+                PermethylatedReduced.IsEnabled = true;
+                if (SearchingParameters.Access.Reduced)
+                {
+                    PermethylatedReduced.IsEnabled = true;
+
+                }
+                else
+                {
+                    PermethylatedReduced.IsEnabled = false;
+                }
+
+
+            }
+            else
+            {
+                Native.IsChecked = true;
+                NativeDerivatization.IsEnabled = true;
+                PermethylatedReduced.IsEnabled = false;
+
+
+
+            }
+
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -104,6 +132,10 @@ namespace MultiGlycanTD
             {
                 MessageBox.Show("At least one Ion type!");
                 return false;
+            }
+            if (PermethylatedReduced.IsEnabled == true && PermethylatedReduced.IsChecked == true)
+            {
+                ConfigureParameters.Access.Reduced = true;
             }
 
             return true;
@@ -176,6 +208,52 @@ namespace MultiGlycanTD
         private void MS2TolByDalton_Checked(object sender, RoutedEventArgs e)
         {
             ConfigureParameters.Access.MS2ToleranceBy = ToleranceBy.Dalton;
+        }
+
+        private void Permethylated_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Permethylated = true;
+            if (PermethylatedReduced.IsEnabled == false)
+            {
+                PermethylatedReduced.IsEnabled = true;
+            }
+            if (NativeDerivatization.IsEnabled == true)
+            {
+                NativeDerivatization.IsEnabled = false;
+            }
+        }
+
+        private void Native_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Permethylated = false;
+            if (PermethylatedReduced.IsEnabled == true)
+            {
+                PermethylatedReduced.IsEnabled = false;
+            }
+            if (NativeDerivatization.IsEnabled == false)
+            {
+                NativeDerivatization.IsEnabled = true;
+            }
+        }
+
+        private void unDerived_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+        }
+
+        private void o2AA_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AA;
+        }
+
+        private void o2AB_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AB;
+        }
+
+        private void oABEE_Checked(object sender, RoutedEventArgs e)
+        {
+            ConfigureParameters.Access.Derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
         }
     }
 }

@@ -23,6 +23,12 @@ namespace MultiGlycanTD
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
 
+        // derivatization 
+        public bool Permethylated { get; set; } = true;
+        public bool Reduced { get; set; } = true;
+        public double Derivatization { get; set; }
+            = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+
         // result
         public double Cutoff { get; set; } = 0.01;
         public double FDR { get; set; } = 0.01;
@@ -43,6 +49,9 @@ namespace MultiGlycanTD
             MS2ToleranceBy = ConfigureParameters.Access.MS2ToleranceBy;
             Cutoff = ConfigureParameters.Access.Cutoff;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
+            Permethylated = ConfigureParameters.Access.Permethylated;
+            Reduced = ConfigureParameters.Access.Reduced;
+            Derivatization = ConfigureParameters.Access.Derivatization;
             FDR = ConfigureParameters.Access.FDR;
             Ions = ConfigureParameters.Access.Ions;
         }
@@ -68,6 +77,12 @@ namespace MultiGlycanTD
         // searching
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
+
+        // derivatization 
+        public bool Permethylated { get; set; } = true;
+        public bool Reduced { get; set; } = true;
+        public double Derivatization { get; set; }
+            = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
 
         //result
         public double Cutoff { get; set; } = 0.01;

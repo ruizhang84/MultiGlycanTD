@@ -1,4 +1,5 @@
-﻿using MultiGlycanTDLibrary.engine.glycan;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using System;
@@ -35,8 +36,11 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.permethylation = false;
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = false;
 
+            GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AB;
+            Glycan.To.Derivatization = Glycan.k2AB;
+
             GlycanIonsBuilder.Build.Types = new List<FragmentTypes>()
-            { FragmentTypes.ZZ };
+            { FragmentTypes.YZ };
             //{
             //    FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
             //    FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
@@ -52,7 +56,7 @@ namespace NUnitTestProject
                 //{
                 //    Console.WriteLine(g.ID());
                 //}
-
+                Console.WriteLine(Glycan.To.Compute(glycan));
                 if (glycan.IsValid())
                 {
                     List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)

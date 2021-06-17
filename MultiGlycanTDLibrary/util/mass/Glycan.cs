@@ -43,6 +43,14 @@ namespace MultiGlycanClassLibrary.util.mass
         public const double kPermNeuAc = 361.1737;  //N-acetyl-neuraminic acid
         public const double kPermNeuGc = 391.1842;  //N-glycolyl-neuraminic acid
 
+        // native glycan is water
+        public double Derivatization { get; set; } = kWater;
+        public const double kABEE = 149.0841;
+        public const double k2AA = 139.06333;
+        public const double k2AB = 138.07931;
+        // water
+        public const double kWater = kHydrogen * 2 + kOxygen;
+
         public bool permethylation;
         public bool reduced;
         public void SetPermethylation(bool set, bool reduced)
@@ -128,7 +136,7 @@ namespace MultiGlycanClassLibrary.util.mass
                     return PermethylatedGlycanMass(glycan.Composition()) + kNonReduced;
                 }
             }
-            return NativeGlycanMass(glycan.Composition());
+            return NativeGlycanMass(glycan.Composition()) + Derivatization;
         }
 
         public double ComputeFragment(IGlycan glycan)

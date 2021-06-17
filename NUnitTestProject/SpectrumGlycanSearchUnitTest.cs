@@ -40,7 +40,6 @@ namespace NUnitTestProject
             List<Tuple<string, List<double>>> fragmentsContainer =
                 new List<Tuple<string, List<double>>>();
 
-            GlycanIonsBuilder.Build.ABEE = true;
             GlycanIonsBuilder.Build.Permethylated = false;
 
             Parallel.ForEach(map, pair =>

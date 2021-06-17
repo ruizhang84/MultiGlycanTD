@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="Configuration" Height="230" Width="600">
+        Title="Configuration" Height="300" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -34,9 +34,30 @@
                 <RadioButton Name="MS2TolByPPM" Content="ppm" VerticalAlignment="Center" Margin="5" Checked="MS2TolByPPM_Checked"/>
                 <RadioButton Name="MS2TolByDalton" Content="Dalton" VerticalAlignment="Center"  IsChecked="True" Margin="5" Checked="MS2TolByDalton_Checked"/>
             </StackPanel>
-            <Separator VerticalAlignment="Bottom" Grid.Row="2"/>
+            <Separator VerticalAlignment="Bottom" Grid.Row="1"/>
         </Grid>
-        <Grid Grid.Row="2" Margin="10, 0, 10, 0">
+        <Grid Grid.Row="1" Margin="10, 0, 0, 0">
+            <Label Content="Derivatization"/>
+        </Grid>
+        <Grid Grid.Row="2" Margin="10, -5, 0, 0">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Name="Permethylated" Content="Permethylated " IsChecked="True" VerticalAlignment="Center" Margin="5" Click="Permethylated_Checked"/>
+                <RadioButton Name="Native" Content="Native " VerticalAlignment="Center" Margin="5" Click="Native_Checked"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="3" Margin="10, -5, 10, 0">
+            <StackPanel Orientation="Horizontal" Margin="10, 0, 10, 0">
+                <CheckBox Name="PermethylatedReduced" VerticalAlignment="Center" IsChecked="True" IsEnabled="true" Content="Reduced"/>
+                <StackPanel Name="NativeDerivatization" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5" IsEnabled="False">
+                    <RadioButton Name="unDerived" Content="underived" VerticalAlignment="Center" IsChecked="true" Margin="10 0"/>
+                    <RadioButton Name="o2AA" Content="2-AA" VerticalAlignment="Center" Margin="2"/>
+                    <RadioButton Name="o2AB" Content="2-AB" VerticalAlignment="Center" Margin="2"/>
+                    <RadioButton Name="oABEE" Content="ABEE" VerticalAlignment="Center" Margin="2"/>
+                </StackPanel>
+            </StackPanel>
+            <Separator VerticalAlignment="Bottom" Grid.Row="3"/>
+        </Grid>
+        <Grid Grid.Row="4" Margin="10, 0, 10, 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
