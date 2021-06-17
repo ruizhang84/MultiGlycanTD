@@ -36,8 +36,8 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.permethylation = false;
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = false;
 
-            GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AB;
-            Glycan.To.Derivatization = Glycan.k2AB;
+            GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.kABEE;
+            Glycan.To.Derivatization = Glycan.kABEE;
 
             GlycanIonsBuilder.Build.Types = new List<FragmentTypes>()
             { FragmentTypes.YZ };
@@ -49,7 +49,9 @@ namespace NUnitTestProject
             foreach(var pair in map)
             {
                 var id = pair.Key;
-                if (!id.StartsWith("2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0"))
+                //if (!id.StartsWith("2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0"))
+                //    continue;
+                if (!id.StartsWith("2 1 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"))
                     continue;
                 var glycan = pair.Value;
                 //foreach(IGlycan g in glycan.Fragments())

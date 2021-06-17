@@ -1,4 +1,5 @@
-﻿using MultiGlycanTDLibrary.algorithm;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.algorithm;
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
@@ -23,7 +24,7 @@ namespace NUnitTestProject
         {
             // init database
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(12, 12, 5, 4, 0, true, false, false);
+                new GlycanBuilder(7, 7, 5, 4, 0, true, false, false);
             glycanBuilder.Build();
 
             var distr_map = glycanBuilder.GlycanDistribMaps();
@@ -41,6 +42,7 @@ namespace NUnitTestProject
                 new List<Tuple<string, List<double>>>();
 
             GlycanIonsBuilder.Build.Permethylated = false;
+            Glycan.To.Derivatization = Glycan.kABEE;
             
 
             Parallel.ForEach(map, pair =>
@@ -93,7 +95,7 @@ namespace NUnitTestProject
             // search
             List<SearchResult> final = new List<SearchResult>();
 
-            ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
+            ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.Dalton, 1.0);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
             ISearch<string> searcher2 = new BucketSearch<string>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch
