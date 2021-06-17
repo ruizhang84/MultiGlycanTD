@@ -42,7 +42,9 @@ namespace NUnitTestProject
                 new List<Tuple<string, List<double>>>();
 
             GlycanIonsBuilder.Build.Permethylated = false;
-            Glycan.To.Derivatization = Glycan.kABEE;
+            GlycanIonsBuilder.Build.Derivatization = Glycan.k2AA;
+            Glycan.To.SetPermethylation(false, false);
+            Glycan.To.Derivatization = Glycan.k2AA;
             
 
             Parallel.ForEach(map, pair =>

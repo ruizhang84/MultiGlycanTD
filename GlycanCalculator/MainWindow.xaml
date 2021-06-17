@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GlycanCalculator"
         mc:Ignorable="d"
-        Title="GlycanCalculator" Height="400" Width="500">
+        Title="GlycanCalculator" Height="440" Width="500">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -54,7 +57,6 @@
                 <Label Content="NeuGc" />
                 <TextBox Name="NeuGc" Text="0" VerticalAlignment="Center" FontSize="12" Width="40"/>
             </StackPanel>
-            <Separator VerticalAlignment="Bottom" Grid.Row="2"/>
         </Grid>
         <Grid Grid.Row="3">
             <StackPanel>
@@ -70,17 +72,30 @@
                     <CheckBox Name="HighMannose" IsChecked="True" Content="High Mannose"/>
                 </StackPanel>
             </StackPanel>
+            <Separator VerticalAlignment="Bottom" Grid.Row="3"/>
         </Grid>
         <Grid Grid.Row="4">
-            <StackPanel>
-                <Label Content="Derivation:" />
-                <StackPanel Margin="4" Orientation="Horizontal" >
-                    <CheckBox Name="Permethylated" Content="Permethylated"  IsChecked="True" VerticalAlignment="Center"/>
-                    <CheckBox Name="Reduced" Content="Reduced" IsChecked="True" VerticalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
+            <Label Content="Derivatization"/>
         </Grid>
         <Grid Grid.Row="5">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Name="Permethylated" Content="Permethylated " IsChecked="True" VerticalAlignment="Center" Margin="5" Click="Permethylated_Checked"/>
+                <RadioButton Name="Native" Content="Native " VerticalAlignment="Center" Margin="5" Click="Native_Checked"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="6">
+            <StackPanel Orientation="Horizontal" Margin="10, 0, 10, 0">
+                <CheckBox Name="PermethylatedReduced" VerticalAlignment="Center" IsChecked="True" IsEnabled="true" Content="Reduced"/>
+                <StackPanel Name="NativeDerivatization" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5" IsEnabled="False">
+                    <RadioButton Name="unDerived" Content="Underived" VerticalAlignment="Center" IsChecked="true" Margin="10 0" Checked="unDerived_Checked"/>
+                    <RadioButton Name="o2AA" Content="2-AA" VerticalAlignment="Center" Margin="2" Checked="o2AA_Checked"/>
+                    <RadioButton Name="o2AB" Content="2-AB" VerticalAlignment="Center" Margin="2" Checked="o2AB_Checked"/>
+                    <RadioButton Name="oABEE" Content="ABEE" VerticalAlignment="Center" Margin="2" Checked="oABEE_Checked"/>
+                </StackPanel>
+            </StackPanel>
+            <Separator VerticalAlignment="Bottom" Grid.Row="3"/>
+        </Grid>
+        <Grid Grid.Row="7">
             <StackPanel>
                 <Label Content="Fragment Ions:" />
                 <StackPanel Margin="4" Orientation="Horizontal" >
@@ -97,7 +112,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="6">
+        <Grid Grid.Row="8">
             <StackPanel>
                 <Label Content="Options:" />
                 <StackPanel Orientation="Horizontal" >

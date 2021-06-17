@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using MultiGlycanClassLibrary.util.mass;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
@@ -39,9 +40,11 @@ namespace GlycanCalculator
         protected bool hybridInclude;
         protected bool highMannoseInclude;
         protected int order;
+        protected int precision;
+
+        protected double derivatization;
         protected bool permethylated;
         protected bool reduced;
-        protected int precision;
         protected List<FragmentTypes> types = new List<FragmentTypes>();
 
         public MainWindow()
@@ -151,9 +154,6 @@ namespace GlycanCalculator
                 highMannoseInclude = HighMannose.IsChecked == true;
             }
 
-            permethylated = Permethylated.IsChecked == true;
-            reduced = Reduced.IsChecked == true;
-
             types.Clear();
             if (Bions.IsChecked == true)
                 types.Add(FragmentTypes.B);
@@ -186,11 +186,46 @@ namespace GlycanCalculator
                 MessageBox.Show("Name the saving file!");
                 return false;
             }
+
+            permethylated = Permethylated.IsChecked == true;
+            reduced = PermethylatedReduced.IsChecked == true;
+            if (unDerived.IsChecked == true)
+            {
+                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+            }
+            else if (o2AA.IsChecked == true)
+            {
+                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AA;
+            }
+            else if (o2AB.IsChecked == true)
+            {
+                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AB;
+                
+            }
+            else if (oABEE.IsChecked == true)
+            {
+                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
+            }
             return true;
         }
 
         private Task Process()
         {
+            // init mass calculator
+            if (permethylated)
+            {
+                GlycanIonsBuilder.Build.Permethylated = true;
+                Glycan.To.SetPermethylation(true, reduced);
+            }
+            else
+            {
+                GlycanIonsBuilder.Build.Permethylated = false;
+                Glycan.To.SetPermethylation(false, reduced);
+                GlycanIonsBuilder.Build.Derivatization = derivatization;
+                Glycan.To.Derivatization = derivatization;
+            }
+
+            // build
             IGlycanBuilder glycanBuilder;
             if (glycanFileName.Length > 0)
             {
@@ -289,6 +324,51 @@ namespace GlycanCalculator
             Task.Run(Process);
         }
 
+        private void Permethylated_Checked(object sender, RoutedEventArgs e)
+        {
+            permethylated = true;
+            if (PermethylatedReduced.IsEnabled == false)
+            {
+                PermethylatedReduced.IsEnabled = true;
+            }
+            if (NativeDerivatization.IsEnabled == true)
+            {
+                NativeDerivatization.IsEnabled = false;
+            }
+        }
+
+        private void Native_Checked(object sender, RoutedEventArgs e)
+        {
+            permethylated = false;
+            if (PermethylatedReduced.IsEnabled == true)
+            {
+                PermethylatedReduced.IsEnabled = false;
+            }
+            if (NativeDerivatization.IsEnabled == false)
+            {
+                NativeDerivatization.IsEnabled = true;
+            }
+        }
+
+        private void unDerived_Checked(object sender, RoutedEventArgs e)
+        {
+            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+        }
+
+        private void o2AA_Checked(object sender, RoutedEventArgs e)
+        {
+            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AA;
+        }
+
+        private void o2AB_Checked(object sender, RoutedEventArgs e)
+        {
+            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AB;
+        }
+
+        private void oABEE_Checked(object sender, RoutedEventArgs e)
+        {
+            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
+        }
 
     }
 }
