@@ -18,10 +18,11 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public GlycanBuilderFiltered(List<SortedDictionary<Monosaccharide, int>> filterList,
             int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true, bool reduced = true, int thread = 4) : 
+            bool permethylated = true, bool reduced = true, 
+            Derivatization derivatization = Derivatization.Underivatized, int thread = 4) : 
             base(hexNAc, hex, fuc, neuAc, neuGc, complex, 
                 hybrid, highMannose, order, 
-                permethylated, reduced, thread)
+                permethylated, reduced, derivatization, thread)
         {
             this.filterList = filterList;
             filterSet = new HashSet<string>();

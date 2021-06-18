@@ -4,6 +4,7 @@ using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using MultiGlycanTDLibrary.model;
+using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using SpectrumData.Reader;
 using SpectrumData.Spectrum;
@@ -42,9 +43,9 @@ namespace NUnitTestProject
                 new List<Tuple<string, List<double>>>();
 
             GlycanIonsBuilder.Build.Permethylated = false;
-            GlycanIonsBuilder.Build.Derivatization = Glycan.k2AA;
+            GlycanIonsBuilder.Build.Derivatization = Glycan.kWater;
             Glycan.To.SetPermethylation(false, false);
-            Glycan.To.Derivatization = Glycan.k2AA;
+            Glycan.To.Derivatization = Glycan.kWater;
             
 
             Parallel.ForEach(map, pair =>
@@ -87,12 +88,23 @@ namespace NUnitTestProject
                 Fragments = fragments
             };
 
+            //IGlycan g = new NGlycanComplex();
+            //SortedDictionary<Monosaccharide, int> compos = new SortedDictionary<Monosaccharide, int>();
+            //compos[Monosaccharide.GlcNAc] = 4;
+            //compos[Monosaccharide.Man] = 3;
+            //compos[Monosaccharide.Gal] = 2;
+            //compos[Monosaccharide.Fuc] = 1;
+            //compos[Monosaccharide.NeuAc] = 1;
+            //g.SetComposition(compos);
+
+            //Assert.AreEqual(2077.7349, Glycan.To.Compute(g), 0.1);
 
             // read spectrum
             string path = @"C:\Users\iruiz\Downloads\MSMS\glycan_standard.mgf";
   
             MGFSpectrumReader mgfReader = new MGFSpectrumReader();
             mgfReader.Init(path);
+
 
             // search
             List<SearchResult> final = new List<SearchResult>();
@@ -107,6 +119,8 @@ namespace NUnitTestProject
             Dictionary<int, MS2Spectrum> spectraData = mgfReader.GetSpectrum();
             foreach (int scan in spectraData.Keys)
             {
+                if (scan != 5082)
+                    continue;
                 MS2Spectrum spectrum = spectraData[scan];
                 double mz = spectrum.PrecursorMZ();
                 int charge = spectrum.PrecursorCharge();

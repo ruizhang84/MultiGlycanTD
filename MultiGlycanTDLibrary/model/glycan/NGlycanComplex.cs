@@ -36,7 +36,7 @@ namespace MultiGlycanTDLibrary.model.glycan
             // at least two chains
             //if (table_[6] == 0 || table_[8] == 0)
             //    return false;
-            if (table_[4] == 0 && table_[5] == 0)
+            if (table_[4] == 0 || table_[5] == 0)
                 return false;
             // maksure sorted, so no duplicate
             if (table_[6] < table_[8])

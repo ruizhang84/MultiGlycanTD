@@ -42,7 +42,7 @@ namespace GlycanCalculator
         protected int order;
         protected int precision;
 
-        protected double derivatization;
+        protected Derivatization derivatization;
         protected bool permethylated;
         protected bool reduced;
         protected List<FragmentTypes> types = new List<FragmentTypes>();
@@ -191,20 +191,16 @@ namespace GlycanCalculator
             reduced = PermethylatedReduced.IsChecked == true;
             if (unDerived.IsChecked == true)
             {
-                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+                derivatization = Derivatization.Underivatized;
             }
             else if (o2AA.IsChecked == true)
             {
-                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AA;
+                derivatization = Derivatization.k2AA;
             }
             else if (o2AB.IsChecked == true)
             {
-                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AB;
+                derivatization = Derivatization.k2AB;
                 
-            }
-            else if (oABEE.IsChecked == true)
-            {
-                derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
             }
             return true;
         }
@@ -221,8 +217,21 @@ namespace GlycanCalculator
             {
                 GlycanIonsBuilder.Build.Permethylated = false;
                 Glycan.To.SetPermethylation(false, reduced);
-                GlycanIonsBuilder.Build.Derivatization = derivatization;
-                Glycan.To.Derivatization = derivatization;
+                switch (derivatization)
+                {
+                    case Derivatization.k2AA:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AA;
+                        Glycan.To.Derivatization = Glycan.k2AA;
+                        break;
+                    case Derivatization.k2AB:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AB;
+                        Glycan.To.Derivatization = Glycan.k2AB;
+                        break;
+                    default:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.kWater;
+                        Glycan.To.Derivatization = Glycan.kWater;
+                        break;
+                }
             }
 
             // build
@@ -235,14 +244,14 @@ namespace GlycanCalculator
                 glycanBuilder =
                 new GlycanBuilderFiltered(glycanList, hexNAc, hex, fuc, neuAc, neuGc,
                 complexInclude, hybridInclude, highMannoseInclude,
-                order, permethylated, reduced);
+                order, permethylated, reduced, derivatization);
             }
             else
             {
                 glycanBuilder =
                 new GlycanBuilder(hexNAc, hex, fuc, neuAc, neuGc,
                 complexInclude, hybridInclude, highMannoseInclude,
-                order, permethylated, reduced);
+                order, permethylated, reduced, derivatization);
             }
 
             glycanBuilder.Build();
@@ -352,22 +361,17 @@ namespace GlycanCalculator
 
         private void unDerived_Checked(object sender, RoutedEventArgs e)
         {
-            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kWater;
+            derivatization = Derivatization.Underivatized;
         }
 
         private void o2AA_Checked(object sender, RoutedEventArgs e)
         {
-            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AA;
+            derivatization = Derivatization.k2AA;
         }
 
         private void o2AB_Checked(object sender, RoutedEventArgs e)
         {
-            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.k2AB;
-        }
-
-        private void oABEE_Checked(object sender, RoutedEventArgs e)
-        {
-            derivatization = MultiGlycanClassLibrary.util.mass.Glycan.kABEE;
+            derivatization = Derivatization.k2AB;
         }
 
     }

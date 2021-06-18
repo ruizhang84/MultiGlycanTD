@@ -90,7 +90,6 @@
                     <RadioButton Name="unDerived" Content="Underived" VerticalAlignment="Center" IsChecked="true" Margin="10 0" Checked="unDerived_Checked"/>
                     <RadioButton Name="o2AA" Content="2-AA" VerticalAlignment="Center" Margin="2" Checked="o2AA_Checked"/>
                     <RadioButton Name="o2AB" Content="2-AB" VerticalAlignment="Center" Margin="2" Checked="o2AB_Checked"/>
-                    <RadioButton Name="oABEE" Content="ABEE" VerticalAlignment="Center" Margin="2" Checked="oABEE_Checked"/>
                 </StackPanel>
             </StackPanel>
             <Separator VerticalAlignment="Bottom" Grid.Row="3"/>

@@ -10,6 +10,11 @@ using System.Collections.Concurrent;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
+    public enum Derivatization
+    {
+        Underivatized, k2AA, k2AB
+    }
+
     public class GlycanBuilder : IGlycanBuilder
     {
         protected int hexNAc_;
@@ -22,8 +27,10 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public bool HybridInclude { get; set; }
         public bool HighMannoseInclude { get; set; }
         public bool Permethylated { get; set; } = true;
-        public int Order { get; set; } = 10;
         public bool Reduced { get; set; } = true;
+        public int Order { get; set; } = 10;
+        public Derivatization Derivates { get; set; } 
+            = Derivatization.Underivatized;
 
         protected Dictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
         protected List<Monosaccharide> candidates_;
@@ -36,7 +43,8 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public GlycanBuilder(int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true, bool reduced = true, int thread = 4)
+            bool permethylated = true,  bool reduced = true, 
+            Derivatization derivatization = Derivatization.Underivatized, int thread = 4)
         {
             hexNAc_ = hexNAc;
             hex_ = hex;
@@ -48,8 +56,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
             HybridInclude = hybrid;
             HighMannoseInclude = highMannose;
             Permethylated = permethylated;
-            Order = order;
             Reduced = reduced;
+            Order = order;
+            Derivates = derivatization;
             compound_map_ = new Dictionary<string, Compound>();
             glycan_compound_map_ = new Dictionary<string, List<IGlycan>>();
             distr_map_ = new ConcurrentDictionary<string, List<double>>();
@@ -213,7 +222,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             // composition to elements
             foreach (var sugar in compose.Keys)
             {
-                Dictionary<ElementType, int> tempCompose = NMonosaccharideCreator.Get.SubCompositions(
+                Dictionary<ElementType, int> tempCompose = NMonosaccharideCreator.Get.Compositions(
                     sugar, Permethylated);
                 foreach (ElementType elm in tempCompose.Keys)
                 {
@@ -239,6 +248,29 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     formulaComposition[ElementType.C] += 2;
                     formulaComposition[ElementType.H] += 6;
                     formulaComposition[ElementType.O] += 1;
+                }
+            }
+            else
+            // derivation
+            {
+                switch(Derivates)
+                {
+                    case Derivatization.k2AA:
+                        formulaComposition[ElementType.C] += 7;
+                        formulaComposition[ElementType.H] += 7;
+                        formulaComposition[ElementType.O] += 1;
+                        formulaComposition[ElementType.N] += 2;
+                        break;
+                    case Derivatization.k2AB:
+                        formulaComposition[ElementType.C] += 7;
+                        formulaComposition[ElementType.H] += 8;
+                        formulaComposition[ElementType.O] += 2;
+                        formulaComposition[ElementType.N] += 1;
+                        break;
+                    default:
+                        formulaComposition[ElementType.H] += 2;
+                        formulaComposition[ElementType.O] += 1;
+                        break;
                 }
             }
 

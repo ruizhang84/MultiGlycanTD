@@ -15,42 +15,8 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         protected NMonosaccharideCreator() { }
 
-        public Compound Compounds(Monosaccharide sugar)
-        {
-
-            Dictionary<ElementType, int> composition = Compositions(sugar);
-            return new Compound(composition);
-        }
-
-        public Dictionary<ElementType, int> Compositions(Monosaccharide sugar)
-        {
-            // GlcNAc, Man, Gal,
-            // GlcNAc C8H15NO6, Man/Gal C6H12O6, Fuc C6H12O5,  NeuAc C11H19NO9, NeuGc C11H19NO10
-            switch (sugar)
-            {
-                case Monosaccharide.GlcNAc:
-                    return new Dictionary<ElementType, int>()
-                    { { ElementType.C, 8}, { ElementType.H, 15}, { ElementType.N, 1}, { ElementType.O, 6} };
-                case Monosaccharide.Man:
-                case Monosaccharide.Gal:
-                    return new Dictionary<ElementType, int>()
-                    { {ElementType.C, 6}, {ElementType.H, 12}, {ElementType.O, 6} };
-                case Monosaccharide.Fuc:
-                    return new Dictionary<ElementType, int>()
-                    { {ElementType.C, 6}, {ElementType.H, 12}, {ElementType.O, 5} };
-                case Monosaccharide.NeuAc:
-                    return new Dictionary<ElementType, int>()
-                    { {ElementType.C, 11}, {ElementType.H, 19}, {ElementType.N, 1}, {ElementType.O, 9} };
-                case Monosaccharide.NeuGc:
-                    return new Dictionary<ElementType, int>()
-                    { {ElementType.C, 11}, {ElementType.H, 19}, {ElementType.N, 1}, {ElementType.O, 10} };
-            }
-
-            return new Dictionary<ElementType, int>();
-        }
-
         // composition in a glycan
-        public Dictionary<ElementType, int> SubCompositions(Monosaccharide sugar, bool permethylated)
+        public Dictionary<ElementType, int> Compositions(Monosaccharide sugar, bool permethylated)
         {
             // GlcNAc C8H15NO6, Man/Gal C6H12O6, Fuc C6H12O5,  NeuAc C11H19NO9, NeuGc C11H19NO10
             if (permethylated)
