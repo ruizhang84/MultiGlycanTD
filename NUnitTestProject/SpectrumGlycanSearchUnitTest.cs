@@ -25,7 +25,8 @@ namespace NUnitTestProject
         {
             // init database
             GlycanBuilder glycanBuilder =
-                new GlycanBuilder(7, 7, 5, 4, 0, true, false, false);
+                new GlycanBuilder(7, 7, 5, 4, 0, true, false, false, 10, 
+                false, false, Derivatization.Underivatized);
             glycanBuilder.Build();
 
             var distr_map = glycanBuilder.GlycanDistribMaps();
@@ -88,17 +89,6 @@ namespace NUnitTestProject
                 Fragments = fragments
             };
 
-            //IGlycan g = new NGlycanComplex();
-            //SortedDictionary<Monosaccharide, int> compos = new SortedDictionary<Monosaccharide, int>();
-            //compos[Monosaccharide.GlcNAc] = 4;
-            //compos[Monosaccharide.Man] = 3;
-            //compos[Monosaccharide.Gal] = 2;
-            //compos[Monosaccharide.Fuc] = 1;
-            //compos[Monosaccharide.NeuAc] = 1;
-            //g.SetComposition(compos);
-
-            //Assert.AreEqual(2077.7349, Glycan.To.Compute(g), 0.1);
-
             // read spectrum
             string path = @"C:\Users\iruiz\Downloads\MSMS\glycan_standard.mgf";
   
@@ -119,8 +109,6 @@ namespace NUnitTestProject
             Dictionary<int, MS2Spectrum> spectraData = mgfReader.GetSpectrum();
             foreach (int scan in spectraData.Keys)
             {
-                if (scan != 5082)
-                    continue;
                 MS2Spectrum spectrum = spectraData[scan];
                 double mz = spectrum.PrecursorMZ();
                 int charge = spectrum.PrecursorCharge();
