@@ -249,8 +249,8 @@ namespace NUnitTestProject
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
-            int targetScan = 3427;
-            double targetMZ = 1300.68176269531;
+            int targetScan = 3438;
+            double targetMZ = -1;
 
             foreach (var scanPair in scanGroup)
             {
@@ -301,7 +301,8 @@ namespace NUnitTestProject
             
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec_1.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec"
+                    + (targetMZ > 0? "_decoy" : "_target") + ".csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {

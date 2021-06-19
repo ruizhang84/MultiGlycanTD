@@ -83,8 +83,8 @@ namespace NUnitTestProject
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
-            ISpectrum A = reader.GetSpectrum(2240);
-            ISpectrum B = reader.GetSpectrum(2273);
+            ISpectrum A = reader.GetSpectrum(2657);
+            ISpectrum B = reader.GetSpectrum(3438);
 
             Console.WriteLine(computeCos(A.GetPeaks(), B.GetPeaks(), 0.1));
 

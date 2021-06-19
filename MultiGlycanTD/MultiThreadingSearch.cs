@@ -214,7 +214,7 @@ namespace MultiGlycanTD
                   // init randomness
                   Random random = new Random(randomSeed);
 
-                  HashSet<int> selectedScans = new HashSet<int>();
+                  HashSet<int> swappedScans = new HashSet<int>();
                   // precursor swap, swap any spectrums within d, set precursor mz
                   foreach (SearchTask task in tasks)
                   {
@@ -222,14 +222,14 @@ namespace MultiGlycanTD
                           continue;
 
                       // avoid duplicate
-                      if (selectedScans.Contains(task.Spectrum.GetScanNum()))
+                      if (swappedScans.Contains(task.Spectrum.GetScanNum()))
                           continue;
 
                       List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ);
                       foreach (SearchTask selectTask in candidates)
                       {
                           // avoid duplicate
-                          if (selectedScans.Contains(selectTask.Spectrum.GetScanNum()))
+                          if (swappedScans.Contains(selectTask.Spectrum.GetScanNum()))
                               continue;
 
                           // distance bound by minDistance
@@ -252,8 +252,8 @@ namespace MultiGlycanTD
                           // swap
                           decoyTasks.Enqueue(new SearchTask(task.Spectrum, selectTask.PrecursorMZ, charge));
                           decoyTasks.Enqueue(new SearchTask(selectTask.Spectrum, task.PrecursorMZ, charge));
-                          selectedScans.Add(task.Spectrum.GetScanNum());
-                          selectedScans.Add(selectTask.Spectrum.GetScanNum());
+                          swappedScans.Add(task.Spectrum.GetScanNum());
+                          swappedScans.Add(selectTask.Spectrum.GetScanNum());
                           break;
                       }
                   }
