@@ -276,7 +276,7 @@ namespace NUnitTestProject
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
-                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates, true);
+                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates, decoy: true);
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
                         List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results, true);
 

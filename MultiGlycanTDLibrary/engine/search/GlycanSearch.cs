@@ -42,7 +42,7 @@ namespace MultiGlycanTDLibrary.engine.search
         }
 
         public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
-            List<string> candidates, bool decoy = false, double ion = 1.0078)
+            List<string> candidates, double ion = 1.0078, bool decoy = false)
         {
             // process composition
             Dictionary<string, string> glycanCandid = new Dictionary<string, string>();
