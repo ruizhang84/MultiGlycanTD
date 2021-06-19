@@ -43,6 +43,10 @@ namespace MultiGlycanTDLibrary.model.glycan
                 return false;
             if (table_[6] == table_[8] && table_[10] < table_[12])
                 return false;
+            if (table_[6] == table_[8] && table_[10] == table_[12]
+                && (table_[14] < table_[16] 
+                || table_[18] < table_[20] || table_[22] < table_[24]))
+                return false;
             for (int i = 0; i < 2; i++)
             {
                 if (table_[i * 2 + 6] < table_[i * 2 + 7])
