@@ -277,7 +277,7 @@ namespace NUnitTestProject
                             continue;
                         ms2 = process.Process(ms2);
 
-                        mz = 1213.63952636718;
+                        //mz = 1213.63952636718;
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;

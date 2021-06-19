@@ -44,7 +44,7 @@ namespace MultiGlycanTDLibrary.engine.search
         public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
             List<string> candidates, double ion = 1.0078, bool decoy = false)
         {
-            // process composition
+            // process composition, id -> compos
             Dictionary<string, string> glycanCandid = new Dictionary<string, string>();
             foreach (string composition in candidates)
             {
@@ -84,51 +84,37 @@ namespace MultiGlycanTDLibrary.engine.search
             }
 
             // compute score
-            double maxScore = 0;
-            List<SearchResult> results = new List<SearchResult>();
+            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
             double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-            foreach (string composition in candidates)
+            double bestScore = 0;
+
+            foreach (string isomer in matched.Keys)
             {
-                SearchResult result = new SearchResult();
-                result.set_glycan(composition);
-
-                // score the result
-                double bestScore = 0;
-                List<string> isomers = new List<string>();
-                foreach (string glycan in matched.Keys)
+                string glycan = glycanCandid[isomer];
+                double score = matched[isomer].Select(
+                    index => Math.Sqrt(peaks[index].GetIntensity())).Sum();
+                // compare score
+                if (score > bestScore)
                 {
-                    double score = matched[glycan].Select(
-                        index => Math.Sqrt(peaks[index].GetIntensity())).Sum();
-
-                    // compare score
-                    if (score > bestScore)
-                    {
-                        bestScore = score;
-                        isomers.Clear();
-                        isomers.Add(glycan);
-                    }
-                    else if (score == bestScore)
-                    {
-                        isomers.Add(glycan);
-                    }
-                }
-                result.set_isomers(isomers);
-                result.set_score(bestScore / sum);
-
-                // set up results
-                if (bestScore > maxScore)
-                {
-                    maxScore = bestScore;
+                    bestScore = score;
                     results.Clear();
-                    results.Add(result);
                 }
-                else if (bestScore == maxScore)
+                else if (score < bestScore)
                 {
-                    results.Add(result);
+                    continue;
                 }
+                // build up results
+                if (!results.ContainsKey(glycan))
+                {
+                    results[glycan] = new SearchResult();
+                    results[glycan].set_glycan(glycan);
+                    results[glycan].set_score(score/sum);
+                }
+                results[glycan].Add(isomer);
+
             }
 
-            return results;
+            return results.Values.ToList();
         }
 
     }
