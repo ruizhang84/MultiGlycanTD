@@ -39,7 +39,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
             List<SearchResult> candidates, bool decoy = false, double ion = 1.0078)
         {
             // init
-            Dictionary<string, PeakAnnotated> results = new Dictionary<string, PeakAnnotated>();
+            List<PeakAnnotated> peakAnnotateds = new List<PeakAnnotated>();
             HashSet<string> glycanCandid = new HashSet<string>();
             foreach (SearchResult r in candidates)
             {
@@ -52,6 +52,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
                 double randomMass = 0;
                 if (decoy)
                     randomMass = random.NextDouble() * (upper - lower) + lower;
+                Dictionary<string, PeakAnnotated> results = new Dictionary<string, PeakAnnotated>();
                 for (int charge = 1; charge <= precursorCharge; charge++)
                 {
                     double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(), ion, charge);
@@ -73,10 +74,11 @@ namespace MultiGlycanTDLibrary.engine.annotation
                         }
                     }
                 }
+                peakAnnotateds.AddRange(results.Values.ToList());
 
             }
            
-            return results.Values.ToList();
+            return peakAnnotateds;
         }
     }
 }

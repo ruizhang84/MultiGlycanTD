@@ -1,4 +1,5 @@
-﻿using MultiGlycanTDLibrary.algorithm;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.algorithm;
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.annotation;
 using MultiGlycanTDLibrary.engine.glycan;
@@ -20,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class SpectrumAnnotationTest
+    public class SpectrumAnnotationTestV2
     {
         object obj = new object();
 
@@ -221,6 +222,7 @@ namespace NUnitTestProject
 
             GlycanIonsBuilder.Build.Permethylated = true;
             GlycanIonsBuilder.Build.Reduced = true;
+            Glycan.To.SetPermethylation(true, true);
 
             ConcurrentDictionary<double, List<GlycanAnnotated>> massMap 
                 = new ConcurrentDictionary<double, List<GlycanAnnotated>>();
@@ -256,6 +258,9 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
+                        if (scan != 2273)
+                            continue;
+
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                         if (ms1Peaks.Count() == 0)
@@ -271,7 +276,6 @@ namespace NUnitTestProject
                         if (ms2.GetPeaks().Count <= 30)
                             continue;
                         ms2 = process.Process(ms2);
-
 
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
@@ -292,7 +296,7 @@ namespace NUnitTestProject
             
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
