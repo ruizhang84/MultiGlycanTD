@@ -50,6 +50,12 @@ namespace MultiGlycanTDLibrary.model.glycan
                 if (table_[i * 2 + 6] == table_[i * 2 + 7] 
                     && table_[i * 2 + 10] < table_[i * 2 + 11])
                     return false;
+                if (table_[i * 2 + 6] == table_[i * 2 + 7]
+                    && table_[i * 2 + 10] == table_[i * 2 + 11]
+                    && (table_[i * 2 + 14] < table_[i * 2 + 15]
+                    || table_[i * 2 + 18] < table_[i * 2 + 19]
+                    || table_[i * 2 + 22] < table_[i * 2 + 23]))
+                    return false;
             }
             
             return base.IsValid();

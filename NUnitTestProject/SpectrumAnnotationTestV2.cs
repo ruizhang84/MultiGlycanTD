@@ -244,7 +244,7 @@ namespace NUnitTestProject
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
             ISearch<string> searcher2 = new BucketSearch<string>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
-            ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);
+            ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.05);
             SearchAnalyzer analyzer = new SearchAnalyzer();
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
@@ -277,6 +277,7 @@ namespace NUnitTestProject
                             continue;
                         ms2 = process.Process(ms2);
 
+                        mz = 1213.63952636718;
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
@@ -296,7 +297,7 @@ namespace NUnitTestProject
             
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec_2.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
