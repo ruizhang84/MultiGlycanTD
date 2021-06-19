@@ -119,9 +119,12 @@ namespace MultiGlycanTDLibrary.algorithm
             return Match(expect, expect);
         }
 
-        public List<T> Search(double expect, double baseValue)
+        public List<Point<T>> Search(double expect)
+        { return Search(expect, expect);  }
+
+        public List<Point<T>> Search(double expect, double baseValue)
         {
-            List<T> result = new List<T>();
+            List<Point<T>> result = new List<Point<T>>();
             int index = Index(expect);
             int size = (int)data_.Count;
             if (index < 0 || index >= size)
@@ -129,7 +132,7 @@ namespace MultiGlycanTDLibrary.algorithm
 
             foreach (var it in data_[index])
             {
-                result.Add(it.Content());
+                result.Add(it);
             }
 
 
@@ -140,7 +143,7 @@ namespace MultiGlycanTDLibrary.algorithm
                 {
                     if (IsMatch(expect, it[i].Value(), baseValue))
                     {
-                        result.Add(it[i].Content());
+                        result.Add(it[i]);
                     }
                 }
             }
@@ -154,7 +157,7 @@ namespace MultiGlycanTDLibrary.algorithm
                 {
                     if (IsMatch(expect, it[i].Value(), baseValue))
                     {
-                        result.Add(it[i].Content());
+                        result.Add(it[i]);
                     }
                 }
             }
@@ -162,9 +165,14 @@ namespace MultiGlycanTDLibrary.algorithm
             return result;
         }
 
-        public List<T> Search(double expect)
+        public List<T> SearchContent(double expect, double baseValue)
         {
-            return Search(expect, expect);
+            return Search(expect, baseValue).Select(r => r.Content()).ToList();
+        }
+
+        public List<T> SearchContent(double expect)
+        {
+            return SearchContent(expect, expect);
         }
 
         public void SetTolerance(double tol)

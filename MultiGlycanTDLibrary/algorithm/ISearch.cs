@@ -12,8 +12,10 @@ namespace MultiGlycanTDLibrary.algorithm
     {
         void Init(List<Point<T>> inputs);
         void Init();
-        List<T> Search(double expect, double baseValue);
-        List<T> Search(double expect);
+        List<Point<T>> Search(double expect, double baseValue);
+        List<Point<T>> Search(double expect);
+        List<T> SearchContent(double expect, double baseValue);
+        List<T> SearchContent(double expect);
         bool Match(double expect, double baseValue);
         bool Match(double expect);
         void Add(Point<T> point);

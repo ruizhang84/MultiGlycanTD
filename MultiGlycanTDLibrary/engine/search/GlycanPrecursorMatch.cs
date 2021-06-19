@@ -53,7 +53,7 @@ namespace MultiGlycanTDLibrary.engine.search
             if (decoy)
                 randomMass = random.NextDouble() * (upper - lower) + lower;
             mass += randomMass;
-            return searcher_.Search(mass).Distinct().ToList();
+            return searcher_.SearchContent(mass).Distinct().ToList();
         }
     }
 }

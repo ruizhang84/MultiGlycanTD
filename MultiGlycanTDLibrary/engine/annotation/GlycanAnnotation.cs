@@ -59,7 +59,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
                     if (decoy)
                         mass += randomMass;
 
-                    List<GlycanAnnotated> glycans = searcher_.Search(mass);
+                    List<GlycanAnnotated> glycans = searcher_.SearchContent(mass);
                     foreach (GlycanAnnotated glycan in glycans)
                     {
                         if (glycanCandid.Contains(glycan.Parent))

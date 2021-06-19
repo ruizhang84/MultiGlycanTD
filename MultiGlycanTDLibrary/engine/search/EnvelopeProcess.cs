@@ -35,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
         public List<IPeak> Search(double mz)
         {
-            return searcher.Search(mz);
+            return searcher.SearchContent(mz);
         }
 
         public SortedDictionary<int, List<IPeak>> Cluster(double mz, int charge)
@@ -49,7 +49,7 @@ namespace MultiGlycanTDLibrary.engine.search
             while (steps * index < range) // search with 1 mz
             {
                 double target = mz + steps * index;
-                List<IPeak> isotopics = searcher.Search(target, target);
+                List<IPeak> isotopics = searcher.SearchContent(target, target);
                 if (isotopics.Count > 0)
                     cluster[index] = isotopics;
                 index++;
@@ -58,7 +58,7 @@ namespace MultiGlycanTDLibrary.engine.search
             while (steps * index > -range)
             {
                 double target = mz + steps * index;
-                List<IPeak> isotopics = searcher.Search(target, target);
+                List<IPeak> isotopics = searcher.SearchContent(target, target);
                 if (isotopics.Count > 0)
                     cluster[index] = isotopics;
                 index--;

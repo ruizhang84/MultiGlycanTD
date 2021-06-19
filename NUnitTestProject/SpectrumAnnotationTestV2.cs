@@ -249,6 +249,9 @@ namespace NUnitTestProject
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
+            int targetScan = 3427;
+            double targetMZ = 1300.68176269531;
+
             foreach (var scanPair in scanGroup)
             {
                 if (scanPair.Value.Count > 0)
@@ -258,7 +261,7 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-                        if (scan != 2273)
+                        if (scan != targetScan)
                             continue;
 
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
@@ -277,7 +280,8 @@ namespace NUnitTestProject
                             continue;
                         ms2 = process.Process(ms2);
 
-                        //mz = 1213.63952636718;
+                        if (targetMZ > 0)
+                            mz = targetMZ;
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
@@ -297,7 +301,7 @@ namespace NUnitTestProject
             
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec_2.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec_1.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {

@@ -54,9 +54,9 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
             }
 
-            // search peaks
-            Dictionary<string, HashSet<int>> matched =
-                new Dictionary<string, HashSet<int>>();
+            // search peaks glycan_id -> peak_index -> expect mass
+            Dictionary<string, Dictionary<int, double>> matched =
+                new Dictionary<string, Dictionary<int, double>>();
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
@@ -70,29 +70,38 @@ namespace MultiGlycanTDLibrary.engine.search
                     if (decoy)
                         mass += randomMass;
 
-                    List<string> glycans = searcher_.Search(mass, mass);
-                    foreach (string glycan in glycans)
+                    List<Point<string>> glycans = searcher_.Search(mass);
+                    foreach (Point<string> pt in glycans)
                     {
+                        string glycan = pt.Content();
+                        double expectMass = pt.Value();
                         if (!glycanCandid.ContainsKey(glycan))
                             continue;
 
                         if (!matched.ContainsKey(glycan))
-                            matched[glycan] = new HashSet<int>();
-                        matched[glycan].Add((i));
+                        {
+                            matched[glycan] = new Dictionary<int, double>();
+                        }
+
+                        // update matching peaks and expected mass
+                        if (!matched[glycan].ContainsKey(i) ||
+                            Math.Abs(mass - expectMass) < Math.Abs(mass - matched[glycan][i]))
+                        {
+                            matched[glycan][i] = expectMass;
+                        }
                     }
                 }
             }
 
             // compute score
             Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
-            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
             double bestScore = 0;
 
             foreach (string isomer in matched.Keys)
             {
                 string glycan = glycanCandid[isomer];
                 double score = matched[isomer].Select(
-                    index => Math.Sqrt(peaks[index].GetIntensity())).Sum();
+                    pair => Math.Log(peaks[pair.Key].GetIntensity())).Sum();
                 // compare score
                 if (score > bestScore)
                 {
@@ -108,13 +117,20 @@ namespace MultiGlycanTDLibrary.engine.search
                 {
                     results[glycan] = new SearchResult();
                     results[glycan].set_glycan(glycan);
-                    results[glycan].set_score(score/sum);
+                    results[glycan].set_score(ComputeScore(peaks, matched[isomer]));
                 }
                 results[glycan].Add(isomer);
-
             }
 
             return results.Values.ToList();
+        }
+
+        public double ComputeScore(List<IPeak> peaks, Dictionary<int, double> matches)
+        {
+            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
+            double score = matches.Select(
+                    KeyValuePair => Math.Sqrt(peaks[KeyValuePair.Key].GetIntensity())).Sum();
+            return score / sum;
         }
 
     }

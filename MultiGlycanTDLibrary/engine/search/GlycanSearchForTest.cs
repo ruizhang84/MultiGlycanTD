@@ -85,8 +85,8 @@ namespace MultiGlycanTDLibrary.engine.search
                     if (decoy)
                         mass += randomMass;
 
-                    List<string> glycans = searcher_.Search(mass, mass);
-                    List<string> glycans2 = searcher2_.Search(mass, mass);
+                    List<string> glycans = searcher_.SearchContent(mass, mass);
+                    List<string> glycans2 = searcher2_.SearchContent(mass, mass);
                     if (testCharge > 0)
                     {
                         if (charge != testCharge)
