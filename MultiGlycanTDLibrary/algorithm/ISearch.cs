@@ -19,6 +19,8 @@ namespace MultiGlycanTDLibrary.algorithm
         bool Match(double expect, double baseValue);
         bool Match(double expect);
         void Add(Point<T> point);
+        double Tolerance();
+        ToleranceBy ToleranceType();
         void SetTolerance(double tol);
         void SetToleranceBy(ToleranceBy by);
     }

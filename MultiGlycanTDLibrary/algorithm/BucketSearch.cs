@@ -243,5 +243,14 @@ namespace MultiGlycanTDLibrary.algorithm
             }
         }
 
+        public double Tolerance()
+        {
+            return tolerance_;
+        }
+
+        public ToleranceBy ToleranceType()
+        {
+            return type_;
+        }
     }
 }
