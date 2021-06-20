@@ -17,11 +17,6 @@ namespace MultiGlycanTDLibrary.engine.search
         ISearch<string> searcher_;
         Dictionary<string, List<string>> id_map_;
         Dictionary<double, List<string>> fragments_map_;
-        //private readonly int maxCharge = 2;
-        private Random random;
-        private readonly double lower = 1;
-        private readonly double upper = 30;
-        public int Seed { get; set; } = 2;
         private int maxCharge = 3; // it is not likely a higher charge for fragments.
         private double tol;
         private ToleranceBy by;
@@ -40,13 +35,12 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
             }
             searcher_.Init(points);
-            random = new Random(Seed);
             tol = searcher.Tolerance();
             by = searcher.ToleranceType();
         }
 
         public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
-            List<string> candidates, double ion = 1.0078, bool decoy = false)
+            List<string> candidates, double ion = 1.0078)
         {
             // process composition, id -> compos
             Dictionary<string, string> glycanCandid = new Dictionary<string, string>();
@@ -64,15 +58,10 @@ namespace MultiGlycanTDLibrary.engine.search
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
-                double randomMass = 0;
-                if (decoy)
-                    randomMass = random.NextDouble() * (upper - lower) + lower;
                 for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
                 {
                     double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
                        ion, charge);
-                    if (decoy)
-                        mass += randomMass;
 
                     List<Point<string>> glycans = searcher_.Search(mass);
                     foreach (Point<string> pt in glycans)

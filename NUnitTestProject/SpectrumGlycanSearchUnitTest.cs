@@ -117,7 +117,7 @@ namespace NUnitTestProject
                 if (candidates.Count == 0)
                     continue;
 
-                List<SearchResult> searched = glycanSearch.Search(spectrum.GetPeaks(), charge, candidates, decoy: true);
+                List<SearchResult> searched = glycanSearch.Search(spectrum.GetPeaks(), charge, candidates);
                 List<SearchResult> results = analyzer.Analyze(searched, mz, scan, 0);
                 final.AddRange(results);
                 

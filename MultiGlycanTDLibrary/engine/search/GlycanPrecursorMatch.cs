@@ -16,10 +16,6 @@ namespace MultiGlycanTDLibrary.engine.search
         Dictionary<string, List<double>> mass_map_;
         Dictionary<string, List<double>> distr_map_;
         protected double cutoff_;
-        private Random random;
-        private readonly double lower = 1;
-        private readonly double upper = 30;
-        public int Seed { get; set; } = 2;
 
         public GlycanPrecursorMatch(ISearch<string> searcher, CompdJson compdJson,
             double cutoff = 0.01)
@@ -43,16 +39,11 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
             }
             searcher_.Init(glycans_);
-            random = new Random(Seed);
         }
 
-        public List<string> Match(double precursor, int charge, double ion = 1.0078, bool decoy = false)
+        public List<string> Match(double precursor, int charge, double ion = 1.0078)
         {
             double mass = util.mass.Spectrum.To.Compute(precursor,ion, charge);
-            double randomMass = 0;
-            if (decoy)
-                randomMass = random.NextDouble() * (upper - lower) + lower;
-            mass += randomMass;
             return searcher_.SearchContent(mass).Distinct().ToList();
         }
     }
