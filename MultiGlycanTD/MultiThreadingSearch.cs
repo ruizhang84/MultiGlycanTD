@@ -262,7 +262,7 @@ namespace MultiGlycanTD
             SearchTask task,
             GlycanPrecursorMatch precursorMatch,
             GlycanSearch glycanSearch,
-            SearchAnalyzer searchAnalyzer)
+            SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
             {
@@ -277,7 +277,7 @@ namespace MultiGlycanTD
                     if (searched.Count > 0)
                     {
                         // add meta data
-                        List<SearchResult> temp = searchAnalyzer.Analyze(
+                        List<SearchResult> temp = searchInfo.Commit(
                             searched, task.PrecursorMZ,
                             task.Spectrum.GetScanNum(),
                             task.Spectrum.GetRetention());
@@ -304,13 +304,13 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.MSMSTolerance);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
 
-            SearchAnalyzer searchAnalyzer = new SearchAnalyzer();
+            SearchMetaData searchInfo = new SearchMetaData();
 
             // targets
             while (tasks.TryDequeue(out SearchTask task))
             {
                 TaskSearch(ref tempResults, task,
-                    precursorMatch, glycanSearch, searchAnalyzer);
+                    precursorMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
             }
@@ -319,7 +319,7 @@ namespace MultiGlycanTD
             while (decoyTasks.TryDequeue(out SearchTask task))
             {
                 TaskSearch(ref tempDecoyResults, task,
-                    precursorMatch, glycanSearch, searchAnalyzer);
+                    precursorMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
             }

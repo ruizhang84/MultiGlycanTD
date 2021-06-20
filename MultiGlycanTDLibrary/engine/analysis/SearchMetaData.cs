@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.analysis
 {
-    public class SearchAnalyzer
+    public class SearchMetaData
     {
-        public List<SearchResult> Analyze(List<SearchResult> results,
+        public List<SearchResult> Commit(List<SearchResult> results,
             double mz, int scan, double retention)
         {
             foreach (SearchResult r in results)

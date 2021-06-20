@@ -28,8 +28,8 @@ namespace MultiGlycanTDLibrary.model.glycan
         }
         public override bool IsValid()
         {
-            // at least two chains
-            if (table_[6] == 0 || table_[8] == 0)
+            // at least one complex chains and two man chain
+            if (table_[6] == 0 || table_[7] == 0 || table_[8] == 0)
                 return false;
             // maksure sorted
             if (table_[6] < table_[7])

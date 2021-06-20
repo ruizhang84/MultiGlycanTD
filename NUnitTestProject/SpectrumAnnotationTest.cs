@@ -243,7 +243,7 @@ namespace NUnitTestProject
             ISearch<string> searcher2 = new BucketSearch<string>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
             ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);
-            SearchAnalyzer analyzer = new SearchAnalyzer();
+            SearchMetaData analyzer = new SearchMetaData();
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
@@ -277,7 +277,7 @@ namespace NUnitTestProject
                         if (candidates.Count == 0)
                             continue;
                         List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
-                        List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
+                        List<SearchResult> results = analyzer.Commit(searched, mz, scan, ms2.GetRetention());
                         List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
 
                         //EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);

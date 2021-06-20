@@ -157,8 +157,8 @@ namespace NUnitTestProject
                         //GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
                         //searched = envelopeMatch.Match(searched, ms1Peaks, mz, charge);
 
-                        SearchAnalyzer analyzer = new SearchAnalyzer();
-                        List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
+                        SearchMetaData analyzer = new SearchMetaData();
+                        List<SearchResult> results = analyzer.Commit(searched, mz, scan, ms2.GetRetention());
 
 
                         lock (obj)

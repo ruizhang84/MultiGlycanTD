@@ -4,6 +4,7 @@ using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
 using SpectrumData;
+using SpectrumData.Spectrum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,19 +91,18 @@ namespace MultiGlycanTDLibrary.engine.search
             // compute score
             Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
             double bestScore = 0;
-
             foreach (string isomer in matched.Keys)
             {
                 string glycan = glycanCandid[isomer];
-                double score = matched[isomer].Select(
-                    pair => Math.Log(peaks[pair.Key].GetIntensity())).Sum();
+                double score = matched[isomer].Select(pair =>
+                    Math.Log10(peaks[pair.Key].GetIntensity())).Sum();
                 // compare score
                 if (score > bestScore)
                 {
                     bestScore = score;
                     results.Clear();
                 }
-                else if (score < bestScore)
+                else if (score < bestScore || score == 0)
                 {
                     continue;
                 }
@@ -114,6 +114,10 @@ namespace MultiGlycanTDLibrary.engine.search
                 if (!results.ContainsKey(glycan))
                 {
                     results[glycan] = new SearchResult();
+                    //results[glycan].set_matches(
+                    //    matched[isomer].ToDictionary(entry => entry.Value,
+                    //    entry => 
+                    //    new GeneralPeak(peaks[entry.Key].GetMZ(), Math.Sqrt(peaks[entry.Key].GetIntensity())/sum) as IPeak));
                     results[glycan].set_glycan(glycan);
                     results[glycan].set_score(ComputeScore(peaks, matched[isomer]));
                 }
