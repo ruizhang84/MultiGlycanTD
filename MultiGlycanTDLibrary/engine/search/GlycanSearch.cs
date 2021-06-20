@@ -18,6 +18,7 @@ namespace MultiGlycanTDLibrary.engine.search
         Dictionary<string, List<string>> id_map_;
         Dictionary<double, List<string>> fragments_map_;
         private int maxCharge = 3; // it is not likely a higher charge for fragments.
+        private int minMatches = 5; // it is not likely only match a few peaks.
         private double tol;
         private ToleranceBy by;
 
@@ -105,6 +106,10 @@ namespace MultiGlycanTDLibrary.engine.search
                 {
                     continue;
                 }
+                // check number of matches
+                if (matched[isomer].Count <= minMatches)
+                    continue;
+
                 // build up results
                 if (!results.ContainsKey(glycan))
                 {

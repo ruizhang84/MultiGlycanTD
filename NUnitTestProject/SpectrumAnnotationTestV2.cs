@@ -244,12 +244,12 @@ namespace NUnitTestProject
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
             ISearch<string> searcher2 = new BucketSearch<string>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
-            ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.05);
+            ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);
             SearchAnalyzer analyzer = new SearchAnalyzer();
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
-            int targetScan = 3438;
+            int targetScan = 3427;
             double targetMZ = -1;
 
             foreach (var scanPair in scanGroup)
