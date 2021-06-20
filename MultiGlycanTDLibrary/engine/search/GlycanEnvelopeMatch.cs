@@ -159,26 +159,29 @@ namespace MultiGlycanTDLibrary.engine.search
                 out alignedDistr, out alignedPeaks);
 
             // compute correlation
+            if (alignedPeaks.Count == 0)
+                return 0;
             return Score(alignedDistr, alignedPeaks.Select(p => p.GetIntensity()).ToList());       
         }
 
         public List<SearchResult> Match(List<SearchResult> searched, 
             List<IPeak> peaks, double mz, int charge)
         {
+            List<SearchResult> results = new List<SearchResult>();
             processor.Init(peaks);
             SortedDictionary<int, List<IPeak>> cluster = processor.Cluster(mz, charge);
+            if (cluster.Count == 0)
+                return results;
 
-            List<SearchResult> results = new List<SearchResult>();
             double maxScore = 0;
-
+            List<SortedDictionary<int, IPeak>> clustered = Combinator(cluster);
             foreach (SearchResult r in searched)
             {
                 string compose = r.Glycan();
                 List<double> distr = distr_map[compose];
 
                 // score by fitting the distr
-                double bestScore = -1;
-                List<SortedDictionary<int, IPeak>> clustered = Combinator(cluster);
+                double bestScore = -1;               
                 foreach (SortedDictionary<int, IPeak> sequence in clustered)
                 {
                     double score = Fit(distr, sequence);

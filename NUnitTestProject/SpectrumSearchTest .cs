@@ -153,6 +153,10 @@ namespace NUnitTestProject
 
                         List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates, true);
 
+                        //EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);
+                        //GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcess, compdJson);
+                        //searched = envelopeMatch.Match(searched, ms1Peaks, mz, charge);
+
                         SearchAnalyzer analyzer = new SearchAnalyzer();
                         List<SearchResult> results = analyzer.Analyze(searched, mz, scan, ms2.GetRetention());
 

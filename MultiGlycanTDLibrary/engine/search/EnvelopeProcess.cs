@@ -49,7 +49,7 @@ namespace MultiGlycanTDLibrary.engine.search
             while (steps * index < range) // search with 1 mz
             {
                 double target = mz + steps * index;
-                List<IPeak> isotopics = searcher.SearchContent(target, target);
+                List<IPeak> isotopics = searcher.SearchContent(target);
                 if (isotopics.Count > 0)
                     cluster[index] = isotopics;
                 index++;
@@ -58,7 +58,7 @@ namespace MultiGlycanTDLibrary.engine.search
             while (steps * index > -range)
             {
                 double target = mz + steps * index;
-                List<IPeak> isotopics = searcher.SearchContent(target, target);
+                List<IPeak> isotopics = searcher.SearchContent(target);
                 if (isotopics.Count > 0)
                     cluster[index] = isotopics;
                 index--;

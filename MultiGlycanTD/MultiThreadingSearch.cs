@@ -182,8 +182,6 @@ namespace MultiGlycanTD
                     }
                     readingCounter.Add(scanGroup.Count);
                 });
-            
-
         }
 
         void GenerateDecoyTasks()
