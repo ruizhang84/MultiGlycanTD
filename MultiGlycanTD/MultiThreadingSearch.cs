@@ -35,7 +35,7 @@ namespace MultiGlycanTD
         // It is not likely that a target spectrum has very high charge
         // for glycan or very few peaks for fragments.
         int minPeaks = 30;   // sequencable spectrum with min num peaks
-        int maxCharge = 4;   // max charge of spectrum to consider
+        int maxCharge = 3;   // max charge of spectrum to consider
         // Generate decoy by delta_M > d
         // for glycan delta_M < max_d, since glycan fragmetns
         // differ by monosaccradie can be very similar.

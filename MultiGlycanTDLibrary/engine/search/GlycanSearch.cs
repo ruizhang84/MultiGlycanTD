@@ -107,7 +107,7 @@ namespace MultiGlycanTDLibrary.engine.search
                     continue;
                 }
                 // check number of matches
-                if (matched[isomer].Count <= minMatches)
+                if (matched[isomer].Count < minMatches)
                     continue;
 
                 // build up results

@@ -249,8 +249,8 @@ namespace NUnitTestProject
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
-            int targetScan = 3427;
-            double targetMZ = -1;
+            int targetScan = 3076;
+            double targetMZ = 1214.631470;
 
             foreach (var scanPair in scanGroup)
             {
