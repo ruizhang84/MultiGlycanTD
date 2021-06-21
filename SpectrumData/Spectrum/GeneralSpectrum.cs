@@ -30,7 +30,8 @@ namespace SpectrumData.Spectrum
         public ISpectrum Clone()
         {
             ISpectrum spec = new GeneralSpectrum(scanNum, retention);
-            spec.SetPeaks(peaks);
+            spec.SetPeaks(peaks.Count > 0 ?
+                peaks.Select(p => p.Clone()).ToList() : new List<IPeak>());
             return spec;
         }
 

@@ -248,8 +248,22 @@ namespace MultiGlycanTD
                           if (r % 2 == 0) continue;
 
                           // swap
-                          decoyTasks.Enqueue(new SearchTask(task.Spectrum, selectTask.PrecursorMZ, charge));
-                          decoyTasks.Enqueue(new SearchTask(selectTask.Spectrum, task.PrecursorMZ, charge));
+                          ISpectrum taskSpectrum = task.Spectrum.Clone();
+                          ISpectrum selectTaskSepctrum = selectTask.Spectrum.Clone();
+                          double delta = selectTask.PrecursorMZ - task.PrecursorMZ;
+                          foreach (IPeak pk in taskSpectrum.GetPeaks())
+                          {
+                              if (pk.GetMZ() + delta < 2000 && pk.GetMZ() + delta > 0)
+                                pk.SetMZ(pk.GetMZ() + delta);
+                          }
+                          foreach (IPeak pk in selectTaskSepctrum.GetPeaks())
+                          {
+                              if (pk.GetMZ() - delta < 2000 && pk.GetMZ() - delta > 0)
+                                  pk.SetMZ(pk.GetMZ() - delta);
+                          }
+
+                          decoyTasks.Enqueue(new SearchTask(taskSpectrum, selectTask.PrecursorMZ, charge));
+                          decoyTasks.Enqueue(new SearchTask(selectTaskSepctrum, task.PrecursorMZ, charge));
                           swappedScans.Add(task.Spectrum.GetScanNum());
                           swappedScans.Add(selectTask.Spectrum.GetScanNum());
                           break;

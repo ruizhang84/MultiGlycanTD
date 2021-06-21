@@ -41,5 +41,9 @@ namespace SpectrumData.Spectrum
             return GetMZ().CompareTo(other.GetMZ());
         }
 
+        public IPeak Clone()
+        {
+            return new GeneralPeak(mz, intensity);
+        }
     }
 }

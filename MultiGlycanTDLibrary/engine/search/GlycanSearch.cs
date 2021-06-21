@@ -150,10 +150,8 @@ namespace MultiGlycanTDLibrary.engine.search
                         double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
 
                         if (!glycanCandid.ContainsKey(glycan))
-                        {
-                            UpdateMatchInfo(unreal, glycan, i, glycans.Count, peak.GetMZ(), expectMZ);
                             continue;
-                        }  
+                         
                         UpdateMatchInfo(matched, glycan, i, glycans.Count, peak.GetMZ(), expectMZ);
                     }
                 }
@@ -161,26 +159,6 @@ namespace MultiGlycanTDLibrary.engine.search
 
             // compute score
             Dictionary<string, SearchResult> results = ComputeResults(matched, glycanCandid, peaks);
-
-            //double bestScore = 0;
-            //foreach (string isomer in unreal.Keys)
-            //{
-            //    double score = ComputeScore(peaks, unreal[isomer]);
-            //    // compare score
-            //    if (score > bestScore)
-            //    {
-            //        bestScore = score;
-            //    }
-            //}
-
-            //foreach (string glycan in results.Keys)
-            //{
-            //    SearchResult result = results[glycan];
-            //    if (result.Score() >= bestScore)
-            //    {
-            //        Console.WriteLine("yes");
-            //    }
-            //}
             return results.Values.ToList();
         }
 
