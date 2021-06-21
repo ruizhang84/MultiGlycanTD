@@ -13,6 +13,16 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
+    public class MatchInfo
+    {
+        public HashSet<int> Peaks { get; set; }
+            = new HashSet<int>();
+        public Dictionary<int, double> Expects { get; set; }
+            = new Dictionary<int, double>();
+        public Dictionary<int, int> Ambiguous { get; set; }
+            = new Dictionary<int, int>();
+    }
+
     public class GlycanSearch
     {
         ISearch<string> searcher_;
@@ -55,8 +65,9 @@ namespace MultiGlycanTDLibrary.engine.search
             }
 
             // search peaks glycan_id -> peak_index -> expect mz
-            Dictionary<string, Dictionary<int, double>> matched =
-                new Dictionary<string, Dictionary<int, double>>();
+            Dictionary<string, MatchInfo> matched = 
+                new Dictionary<string, MatchInfo>();
+            HashSet<int> coverage = new HashSet<int>();
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
@@ -66,23 +77,35 @@ namespace MultiGlycanTDLibrary.engine.search
                        ion, charge);
 
                     List<Point<string>> glycans = searcher_.Search(mass);
+
+                    // make records
                     foreach (Point<string> pt in glycans)
                     {
                         string glycan = pt.Content();
-                        double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
                         if (!glycanCandid.ContainsKey(glycan))
                             continue;
 
                         if (!matched.ContainsKey(glycan))
                         {
-                            matched[glycan] = new Dictionary<int, double>();
+                            matched[glycan] = new MatchInfo();
+                        }
+
+                        // updat info
+                        matched[glycan].Peaks.Add(i);
+
+                        // update peak uniqueness
+                        if (!matched[glycan].Ambiguous.ContainsKey(i) ||
+                            glycans.Count < matched[glycan].Ambiguous[i])
+                        {
+                            matched[glycan].Ambiguous[i] = glycans.Count;
                         }
 
                         // update matching peaks and expected mass
-                        if (!matched[glycan].ContainsKey(i) ||
-                            Math.Abs(peak.GetMZ() - expectMZ) < Math.Abs(peak.GetMZ() - matched[glycan][i]))
+                        double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
+                        if (!matched[glycan].Expects.ContainsKey(i) ||
+                            Math.Abs(peak.GetMZ() - expectMZ) < Math.Abs(peak.GetMZ() - matched[glycan].Expects[i]))
                         {
-                            matched[glycan][i] = expectMZ;
+                            matched[glycan].Expects[i] = expectMZ;
                         }
                     }
                 }
@@ -94,8 +117,8 @@ namespace MultiGlycanTDLibrary.engine.search
             foreach (string isomer in matched.Keys)
             {
                 string glycan = glycanCandid[isomer];
-                double score = matched[isomer].Select(pair =>
-                    Math.Log10(peaks[pair.Key].GetIntensity())).Sum();
+                double score = matched[isomer].Peaks.Select(index =>
+                    Math.Log10(peaks[index].GetIntensity())).Sum();
                 // compare score
                 if (score > bestScore)
                 {
@@ -107,17 +130,13 @@ namespace MultiGlycanTDLibrary.engine.search
                     continue;
                 }
                 // check number of matches
-                if (matched[isomer].Count < minMatches)
+                if (matched[isomer].Peaks.Count < minMatches)
                     continue;
 
                 // build up results
                 if (!results.ContainsKey(glycan))
                 {
                     results[glycan] = new SearchResult();
-                    //results[glycan].set_matches(
-                    //    matched[isomer].ToDictionary(entry => entry.Value,
-                    //    entry => 
-                    //    new GeneralPeak(peaks[entry.Key].GetMZ(), Math.Sqrt(peaks[entry.Key].GetIntensity())/sum) as IPeak));
                     results[glycan].set_glycan(glycan);
                     results[glycan].set_score(ComputeScore(peaks, matched[isomer]));
                 }
@@ -136,13 +155,15 @@ namespace MultiGlycanTDLibrary.engine.search
             return Math.Abs(expect - obs);
         }
 
-        public double ComputeScore(List<IPeak> peaks, Dictionary<int, double> matches)
+        public double ComputeScore(List<IPeak> peaks, MatchInfo match)
         {
             double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-            double score = matches.Select(
-                    pair => 
-                    Math.Sqrt(peaks[pair.Key].GetIntensity())
-                    * (1 - Math.Pow(Difference(pair.Value, peaks[pair.Key].GetMZ()) / tol, 4))
+            int max = match.Ambiguous.Select(a => a.Value).Max();
+            double score = match.Peaks.Select(
+                    index => 
+                    Math.Sqrt(peaks[index].GetIntensity())
+                    * (1 - Math.Pow(Difference(match.Expects[index], peaks[index].GetMZ()) / tol, 4))
+                    * (1 - match.Ambiguous[index] / max)
                     ).Sum();
             return score / sum;
         }
