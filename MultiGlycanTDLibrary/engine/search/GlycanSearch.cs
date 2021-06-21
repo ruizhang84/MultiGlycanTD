@@ -19,8 +19,6 @@ namespace MultiGlycanTDLibrary.engine.search
             = new HashSet<int>();
         public Dictionary<int, double> Expects { get; set; }
             = new Dictionary<int, double>();
-        public Dictionary<int, int> Ambiguous { get; set; }
-            = new Dictionary<int, int>();
     }
 
     public class GlycanSearch
@@ -52,7 +50,7 @@ namespace MultiGlycanTDLibrary.engine.search
         }
 
         protected void UpdateMatchInfo(Dictionary<string, MatchInfo> matched,
-            string glycan, int index, int feasible, double observedMZ, double expectMZ)
+            string glycan, int index, double observedMZ, double expectMZ)
         {
             if (!matched.ContainsKey(glycan))
             {
@@ -61,13 +59,6 @@ namespace MultiGlycanTDLibrary.engine.search
 
             // updat info
             matched[glycan].Peaks.Add(index);
-
-            // update peak uniqueness
-            if (!matched[glycan].Ambiguous.ContainsKey(index) ||
-                feasible < matched[glycan].Ambiguous[index])
-            {
-                matched[glycan].Ambiguous[index] = feasible;
-            }
 
             // update matching peaks and expected mass
             if (!matched[glycan].Expects.ContainsKey(index) ||
@@ -152,7 +143,7 @@ namespace MultiGlycanTDLibrary.engine.search
                         if (!glycanCandid.ContainsKey(glycan))
                             continue;
                          
-                        UpdateMatchInfo(matched, glycan, i, glycans.Count, peak.GetMZ(), expectMZ);
+                        UpdateMatchInfo(matched, glycan, i, peak.GetMZ(), expectMZ);
                     }
                 }
             }
@@ -174,12 +165,10 @@ namespace MultiGlycanTDLibrary.engine.search
         public double ComputeScore(List<IPeak> peaks, MatchInfo match)
         {
             double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-            int max = match.Ambiguous.Select(a => a.Value).Max();
             double score = match.Peaks.Select(
                     index => 
                     Math.Sqrt(peaks[index].GetIntensity())
                     * (1 - Math.Pow(Difference(match.Expects[index], peaks[index].GetMZ()) / tol, 4))
-                    * (1 - match.Ambiguous[index] / max)
                     ).Sum();
             return score / sum;
         }
