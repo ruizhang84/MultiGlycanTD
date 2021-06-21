@@ -40,8 +40,8 @@ namespace MultiGlycanTD
         // for glycan delta_M < max_d, since glycan fragmetns
         // differ by monosaccradie can be very similar.
         ToleranceBy DistanceType = ToleranceBy.Dalton;   // decoy distance dalton or ppm
-        int minDistance = 50;   // d, delta M > d
-        int maxDistance = 500;  // max distance to consider
+        int minDistance = 1;   // d, delta M > d
+        int maxDistance = 50;  // max distance to consider
         int randomSeed = 2;   // deterministic results.
 
         public int Seed { get; set; } = 2;
