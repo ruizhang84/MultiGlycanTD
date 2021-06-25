@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SpectrumData;
 using SpectrumData.Reader;
 using System;
 using System.Collections.Generic;
@@ -9,23 +10,31 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class SpectrumCountUnitTest
+    public class SpectrumFrequencyUnitTest
     {
         [Test]
-        public void CountPeaksFreqTest()
+        public void CountPeaksTest()
         {
             // read spectrum
             string path = @"C:\Users\iruiz\Downloads\MSMS\HBS1_dextrinspkd_C18_10252018.raw";
-            string output = @"C:\Users\iruiz\Downloads\MSMS\peaks2.csv";
+            string output = @"C:\Users\iruiz\Downloads\MSMS\peaks.csv";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
-            Dictionary<int, int> counts = new Dictionary<int, int>();
+            Dictionary<double, int> counts = new Dictionary<double, int>();
             for(int i = reader.GetFirstScan(); i <= reader.GetLastScan(); i++)
             {
                 if (reader.GetMSnOrder(i) == 2)
                 {
-                    counts[i] = reader.GetSpectrum(i).GetPeaks().Count;
+                    foreach (IPeak peak in reader.GetSpectrum(i).GetPeaks())
+                    {
+                        double mz = Math.Round(peak.GetMZ(), 1);
+                        if (!counts.ContainsKey(mz))
+                        {
+                            counts[mz] = 0;
+                        }
+                        counts[mz] += 1;
+                    }
                 }
 
             }
@@ -34,11 +43,11 @@ namespace NUnitTestProject
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
-                    writer.WriteLine("scan,#peaks");
-                    foreach (int scan in counts.Keys)
+                    writer.WriteLine("mz,#peaks");
+                    foreach (double mz in counts.Keys)
                     {
-                        writer.WriteLine(scan.ToString() + "," +
-                            counts[scan].ToString());
+                        writer.WriteLine(mz.ToString() + "," +
+                            counts[mz].ToString());
                     }
                 }
             }

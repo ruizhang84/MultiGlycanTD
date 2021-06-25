@@ -194,88 +194,85 @@ namespace MultiGlycanTD
             }
 
             // split spectrum on charges
-            Parallel.For(1, maxCharge + 1, charge =>
-              {
-                  // init searcher to find all spectrum within delta < d
-                  ISearch<SearchTask> searcher = new BucketSearch<SearchTask>(DistanceType, maxDistance);
-                  List<Point<SearchTask>> points = new List<Point<SearchTask>>();
-                  foreach (SearchTask task in tasks)
-                  {
-                      if (task.Charge == charge)
-                      {
-                          Point<SearchTask> point = new Point<SearchTask>(task.PrecursorMZ, task);
-                          points.Add(point);
-                      }
-                  }
-                  searcher.Init(points);
+            for (int charge = 0; charge <= maxCharge; charge++)
+            {
+                // init searcher to find all spectrum within delta < d
+                ISearch<SearchTask> searcher = new BucketSearch<SearchTask>(DistanceType, maxDistance);
+                List<Point<SearchTask>> points = new List<Point<SearchTask>>();
+                foreach (SearchTask task in tasks)
+                {
+                    if (task.Charge == charge)
+                    {
+                        Point<SearchTask> point = new Point<SearchTask>(task.PrecursorMZ, task);
+                        points.Add(point);
+                    }
+                }
+                searcher.Init(points);
 
-                  // init randomness
-                  Random random = new Random(randomSeed);
+                // init randomness
+                Random random = new Random(randomSeed);
 
-                  HashSet<int> swappedScans = new HashSet<int>();
-                  // precursor swap, swap any spectrums within d, set precursor mz
-                  foreach (SearchTask task in tasks)
-                  {
-                      if (task.Charge != charge)
-                          continue;
+                HashSet<int> swappedScans = new HashSet<int>();
+                // precursor swap, swap any spectrums within d, set precursor mz
+                foreach (SearchTask task in tasks)
+                {
+                    if (task.Charge != charge)
+                        continue;
 
-                      // avoid duplicate
-                      if (swappedScans.Contains(task.Spectrum.GetScanNum()))
-                          continue;
+                    // avoid duplicate
+                    if (swappedScans.Contains(task.Spectrum.GetScanNum()))
+                        continue;
 
-                      List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ);
-                      foreach (SearchTask selectTask in candidates)
-                      {
-                          // avoid duplicate
-                          if (swappedScans.Contains(selectTask.Spectrum.GetScanNum()))
-                              continue;
+                    List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ);
+                    foreach (SearchTask selectTask in candidates)
+                    {
+                        // avoid duplicate
+                        if (swappedScans.Contains(selectTask.Spectrum.GetScanNum()))
+                            continue;
 
-                          // distance bound by minDistance
-                          if (DistanceType == ToleranceBy.PPM)
-                          {
-                              if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ)
-                                    / task.PrecursorMZ * 1000000.0 <= minDistance)
-                                  continue;
-                          }
-                          else
-                          {
-                              if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) < minDistance)
-                                  continue;
-                          }
+                        // distance bound by minDistance
+                        if (DistanceType == ToleranceBy.PPM)
+                        {
+                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ)
+                                / task.PrecursorMZ * 1000000.0 <= minDistance)
+                                continue;
+                        }
+                        else
+                        {
+                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) < minDistance)
+                                continue;
+                        }
 
-                          // random picked
-                          int r = random.Next(0, 2);
-                          if (r % 2 == 0) continue;
+                        // random picked
+                        int r = random.Next(0, 2);
+                        if (r % 2 == 0) continue;
 
-                          // swap
-                          ISpectrum taskSpectrum = task.Spectrum.Clone();
-                          ISpectrum selectTaskSepctrum = selectTask.Spectrum.Clone();
-                          double delta = selectTask.PrecursorMZ - task.PrecursorMZ;
-                          foreach (IPeak pk in taskSpectrum.GetPeaks())
-                          {
-                              if (pk.GetMZ() + delta < 2000 && pk.GetMZ() + delta > 0)
-                                pk.SetMZ(pk.GetMZ() + delta);
-                          }
-                          foreach (IPeak pk in selectTaskSepctrum.GetPeaks())
-                          {
-                              if (pk.GetMZ() - delta < 2000 && pk.GetMZ() - delta > 0)
-                                  pk.SetMZ(pk.GetMZ() - delta);
-                          }
-
-                          decoyTasks.Enqueue(new SearchTask(taskSpectrum, selectTask.PrecursorMZ, charge));
-                          decoyTasks.Enqueue(new SearchTask(selectTaskSepctrum, task.PrecursorMZ, charge));
-                          swappedScans.Add(task.Spectrum.GetScanNum());
-                          swappedScans.Add(selectTask.Spectrum.GetScanNum());
-                          break;
-                      }
-                  }
-              });
+                        // swap
+                        ISpectrum taskSpectrum = task.Spectrum.Clone();
+                        ISpectrum selectTaskSepctrum = selectTask.Spectrum.Clone();
+                        //double delta = selectTask.PrecursorMZ - task.PrecursorMZ;
+                        //foreach (IPeak pk in taskSpectrum.GetPeaks())
+                        //{
+                        //    pk.SetMZ(pk.GetMZ() + delta);
+                        //}
+                        //foreach (IPeak pk in selectTaskSepctrum.GetPeaks())
+                        //{
+                        //    pk.SetMZ(pk.GetMZ() - delta);
+                        //}
+                        decoyTasks.Enqueue(new SearchTask(taskSpectrum, selectTask.PrecursorMZ, charge));
+                        decoyTasks.Enqueue(new SearchTask(selectTaskSepctrum, task.PrecursorMZ, charge));
+                        swappedScans.Add(task.Spectrum.GetScanNum());
+                        swappedScans.Add(selectTask.Spectrum.GetScanNum());
+                        break;
+                    }
+                }
+            };
         }
 
         void TaskSearch(ref List<SearchResult> results,
             SearchTask task,
             GlycanPrecursorMatch precursorMatch,
-            GlycanSearch glycanSearch,
+            GlycanSearchV2 glycanSearch,
             SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
@@ -316,7 +313,7 @@ namespace MultiGlycanTD
             ISearch<string> searcher2 = new BucketSearch<string>(
                 SearchingParameters.Access.MS2ToleranceBy, 
                 SearchingParameters.Access.MSMSTolerance);
-            GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
+            GlycanSearchV2 glycanSearch = new GlycanSearchV2(searcher2, glycanJson);
 
             SearchMetaData searchInfo = new SearchMetaData();
 

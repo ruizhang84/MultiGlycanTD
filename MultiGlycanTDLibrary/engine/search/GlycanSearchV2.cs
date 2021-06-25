@@ -13,8 +13,15 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
+    public class MatchInfo
+    {
+        public HashSet<int> Peaks { get; set; }
+            = new HashSet<int>();
+        public Dictionary<int, double> Expects { get; set; }
+            = new Dictionary<int, double>();
+    }
 
-    public class GlycanSearch
+    public class GlycanSearchV2
     {
         ISearch<string> searcher_;
         Dictionary<string, List<string>> id_map_;
@@ -24,7 +31,7 @@ namespace MultiGlycanTDLibrary.engine.search
         private double tol;
         private ToleranceBy by;
 
-        public GlycanSearch(ISearch<string> searcher, GlycanJson glycanJson)
+        public GlycanSearchV2(ISearch<string> searcher, GlycanJson glycanJson)
         {
             searcher_ = searcher;
             id_map_ = glycanJson.IDMap;
@@ -73,6 +80,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 string glycan = glycanCandid[isomer];
                 double score = matched[isomer].Peaks.Select(index =>
                     Math.Log10(peaks[index].GetIntensity())).Sum();
+
                 // compare score
                 if (score > bestScore)
                 {
@@ -96,6 +104,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
                 results[glycan].Add(isomer);
             }
+
             return results;
         }
 
@@ -115,8 +124,6 @@ namespace MultiGlycanTDLibrary.engine.search
             // search peaks glycan_id -> peak_index -> expect mz
             Dictionary<string, MatchInfo> matched = 
                 new Dictionary<string, MatchInfo>();
-            Dictionary<string, MatchInfo> unreal =
-                new Dictionary<string, MatchInfo>();
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
@@ -134,7 +141,10 @@ namespace MultiGlycanTDLibrary.engine.search
                         double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
 
                         if (!glycanCandid.ContainsKey(glycan))
+                        {
                             continue;
+                        }
+                            
                          
                         UpdateMatchInfo(matched, glycan, i, peak.GetMZ(), expectMZ);
                     }

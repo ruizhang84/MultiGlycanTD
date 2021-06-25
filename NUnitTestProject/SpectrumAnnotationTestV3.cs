@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class SpectrumAnnotationTestV2
+    public class SpectrumAnnotationTestV3
     {
         object obj = new object();
 
@@ -249,8 +249,9 @@ namespace NUnitTestProject
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3, 
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
-            int targetScan = 3427;
-            double targetMZ = 1300.68176269531;
+            int targetScan = 2518;
+            double targetMZ = -1;
+            double delta = 0; //  809.428345 - 799.423218;
 
             foreach (var scanPair in scanGroup)
             {
@@ -279,7 +280,10 @@ namespace NUnitTestProject
                         if (ms2.GetPeaks().Count <= 30)
                             continue;
                         ms2 = process.Process(ms2);
-
+                        foreach (IPeak pk in ms2.GetPeaks())
+                        {
+                            pk.SetMZ(pk.GetMZ() + delta);
+                        }
                         if (targetMZ > 0)
                             mz = targetMZ;
                         List<string> candidates = precursorMatch.Match(mz, charge);
