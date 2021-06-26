@@ -43,7 +43,7 @@ namespace NUnitTestProject
             //        //if (map.ContainsKey(id))
             //        //{
             //        //    var glycan = map[id];
-            //        //    foreach (var g in glycan.Fragments())
+            //        //    foreach (var g in glycan.FragmentMap())
             //        //    {
             //        //        int diff = GlycanFragmentBuilderHelper.CountYCut(g, glycan, 10);
             //        //        //2 3 0 0 3 1 0 0 3 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0

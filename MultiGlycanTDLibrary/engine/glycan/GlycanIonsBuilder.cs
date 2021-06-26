@@ -110,6 +110,57 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return new List<double>();
         }
 
+        public List<IGlycan> FragmentsBuild(IGlycan glycan, FragmentTypes type)
+        {
+            switch (type)
+            {
+                case FragmentTypes.B:
+                case FragmentTypes.C:
+                    return GlycanFragmentBuilder.BionsLikeFragments(glycan);
+                case FragmentTypes.Y:
+                case FragmentTypes.Z:
+                    return GlycanFragmentBuilder.YionsLikeFragments(glycan);
+                case FragmentTypes.BY:
+                case FragmentTypes.BZ:
+                case FragmentTypes.CY:
+                    return GlycanFragmentBuilder.BYionsLikeFragments(glycan);
+                case FragmentTypes.YY:
+                case FragmentTypes.YZ:
+                case FragmentTypes.ZZ:
+                    return GlycanFragmentBuilder.YYionsLikeFragments(glycan);
+
+            }
+            return new List<IGlycan>();
+        }
+
+        public double ComputeIonMass(IGlycan subGlycan, FragmentTypes type)
+        {
+            switch (type)
+            {
+                case FragmentTypes.B:
+                    return GlycanIonsBuilder.Build.Bion(subGlycan);
+                case FragmentTypes.C:
+                    return GlycanIonsBuilder.Build.Cion(subGlycan);
+                case FragmentTypes.Y:
+                    return GlycanIonsBuilder.Build.Yion(subGlycan);
+                case FragmentTypes.Z:
+                    return GlycanIonsBuilder.Build.Zion(subGlycan);
+                case FragmentTypes.BY:
+                    return GlycanIonsBuilder.Build.BYion(subGlycan);
+                case FragmentTypes.BZ:
+                    return GlycanIonsBuilder.Build.BZion(subGlycan);
+                case FragmentTypes.CY:
+                    return GlycanIonsBuilder.Build.CYion(subGlycan);
+                case FragmentTypes.YY:
+                    return GlycanIonsBuilder.Build.YYion(subGlycan);
+                case FragmentTypes.YZ:
+                    return GlycanIonsBuilder.Build.YZion(subGlycan);
+                case FragmentTypes.ZZ:
+                    return GlycanIonsBuilder.Build.ZZion(subGlycan);
+            }
+            return 0;
+        }
+
         public double Yion(IGlycan glycan)
         {
             if (Permethylated)

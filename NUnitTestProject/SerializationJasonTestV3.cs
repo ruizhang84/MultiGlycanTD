@@ -182,7 +182,7 @@ namespace NUnitTestProject
             {
                 Compound = compdJson,
                 IDMap = id_map,
-                Fragments = fragments
+                FragmentMap = fragments
             };
 
             string fileName = @"C:\Users\iruiz\Downloads\massList.json";
@@ -191,7 +191,7 @@ namespace NUnitTestProject
 
             string jsonStringRead = File.ReadAllText(fileName);
             GlycanJson glycanJsonRead = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
-            //Assert.AreEqual(map.Count, glycanJsonRead.Fragments.Count);
+            //Assert.AreEqual(map.Count, glycanJsonRead.FragmentMap.Count);
 
 
         }

@@ -325,7 +325,7 @@ namespace GlycanCalculator
             {
                 Compound = compdJson,
                 IDMap = id_map,
-                Fragments = fragments
+                FragmentMap = fragments
             };
             string jsonString = JsonSerializer.Serialize(glycanJson);
             File.WriteAllText(fileName, jsonString);

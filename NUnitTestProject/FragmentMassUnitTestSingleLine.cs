@@ -54,7 +54,7 @@ namespace NUnitTestProject
                 if (!id.StartsWith("2 1 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"))
                     continue;
                 var glycan = pair.Value;
-                //foreach(IGlycan g in glycan.Fragments())
+                //foreach(IGlycan g in glycan.FragmentMap())
                 //{
                 //    Console.WriteLine(g.ID());
                 //}

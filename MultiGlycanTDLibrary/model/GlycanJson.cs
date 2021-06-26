@@ -14,7 +14,7 @@ namespace MultiGlycanTDLibrary.model
         // name(composition) -> id (structure)
         public Dictionary<string, List<string>> IDMap { get; set; }
 
-        // fragments mass -> fragmenttype -> (intact) glycan 
-        public Dictionary<double, Dictionary<FragmentTypes, List<string>>> Fragments { get; set; }
+        // fragments mass -> fragmenttype -> (intact/parent) glycan 
+        public Dictionary<double, Dictionary<FragmentTypes, List<string>>> FragmentMap { get; set; }
     }
 }

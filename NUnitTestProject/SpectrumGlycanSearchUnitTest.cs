@@ -98,7 +98,7 @@ namespace NUnitTestProject
             {
                 Compound = compdJson,
                 IDMap = id_map,
-                Fragments = fragments
+                FragmentMap = fragments
             };
 
             // read spectrum

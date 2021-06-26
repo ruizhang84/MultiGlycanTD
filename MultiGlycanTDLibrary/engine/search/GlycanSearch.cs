@@ -38,9 +38,9 @@ namespace MultiGlycanTDLibrary.engine.search
         {
             searcher_ = searcher;
             id_map_ = glycanJson.IDMap;
-            foreach (double mass in glycanJson.Fragments.Keys)
+            foreach (double mass in glycanJson.FragmentMap.Keys)
             {
-                fragments_map_[mass] = glycanJson.Fragments[mass][FragmentTypes.Y];
+                fragments_map_[mass] = glycanJson.FragmentMap[mass][FragmentTypes.Y];
             }
             
             List<Point<string>> points = new List<Point<string>>();
