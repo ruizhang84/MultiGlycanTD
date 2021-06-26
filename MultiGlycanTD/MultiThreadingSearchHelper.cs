@@ -97,14 +97,14 @@ namespace MultiGlycanTD
         }
         public static void ReportResults(
             string path, 
-            List<SearchResult> results)
+            List<ReportResult> results)
         {
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
                     writer.WriteLine("scan,retention,glycan,precursor_mz,score");
-                    foreach (SearchResult r in results.OrderBy(p => p.Scan()))
+                    foreach (ReportResult r in results.OrderBy(p => p.Scan()))
                     {
                         string output = r.Scan().ToString() + ","
                             + r.Retention().ToString() + ","

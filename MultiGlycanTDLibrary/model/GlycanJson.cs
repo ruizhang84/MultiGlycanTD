@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.model
 {
+    using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
 
     public class GlycanJson
     {
@@ -15,6 +16,6 @@ namespace MultiGlycanTDLibrary.model
         public Dictionary<string, List<string>> IDMap { get; set; }
 
         // fragments mass -> fragmenttype -> (intact/parent) glycan 
-        public Dictionary<double, Dictionary<FragmentTypes, List<string>>> FragmentMap { get; set; }
+        public Dictionary<double, GlycanFragments> FragmentMap { get; set; }
     }
 }

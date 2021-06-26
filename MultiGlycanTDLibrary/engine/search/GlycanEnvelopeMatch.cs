@@ -164,10 +164,10 @@ namespace MultiGlycanTDLibrary.engine.search
             return Score(alignedDistr, alignedPeaks.Select(p => p.GetIntensity()).ToList());       
         }
 
-        public List<SearchResult> Match(List<SearchResult> searched, 
+        public List<ReportResult> Match(List<ReportResult> searched, 
             List<IPeak> peaks, double mz, int charge)
         {
-            List<SearchResult> results = new List<SearchResult>();
+            List<ReportResult> results = new List<ReportResult>();
             processor.Init(peaks);
             SortedDictionary<int, List<IPeak>> cluster = processor.Cluster(mz, charge);
             if (cluster.Count == 0)
@@ -175,7 +175,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
             double maxScore = 0;
             List<SortedDictionary<int, IPeak>> clustered = Combinator(cluster);
-            foreach (SearchResult r in searched)
+            foreach (ReportResult r in searched)
             {
                 string compose = r.Glycan();
                 List<double> distr = distr_map[compose];

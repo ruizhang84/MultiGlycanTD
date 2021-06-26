@@ -68,11 +68,11 @@ namespace MultiGlycanTDLibrary.engine.analysis
             return distance;
         }
 
-        public void Init(List<SearchResult> target)
+        public void Init(List<ReportResult> target)
         {
             searcher = new BucketSearch<PeakSupport>(by, tol);
             List<Point<PeakSupport>> points = new List<Point<PeakSupport>>();
-            foreach(SearchResult result in target)
+            foreach(ReportResult result in target)
             {
                 int scan = result.Scan();
                 Dictionary<double, IPeak> matched = result.Matches();
@@ -91,15 +91,15 @@ namespace MultiGlycanTDLibrary.engine.analysis
             searcher.Init(points);
         }
 
-        public void Analyze(List<SearchResult> results)
+        public void Analyze(List<ReportResult> results)
         {
-            foreach(SearchResult result in results)
+            foreach(ReportResult result in results)
             {
                 Analyze(result);
             }
         }
 
-        public void Analyze(SearchResult result)
+        public void Analyze(ReportResult result)
         {
             double bestScore = 0;
             List<string> bestIsomers = new List<string>();

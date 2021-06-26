@@ -276,8 +276,8 @@ namespace NUnitTestProject
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
-                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
-                        List<SearchResult> results = analyzer.Commit(searched, mz, scan, ms2.GetRetention());
+                        List<ReportResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
+                        List<ReportResult> results = analyzer.Commit(searched, mz, scan, ms2.GetRetention());
                         List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
 
                         //EnvelopeProcess envelopeProcess = new EnvelopeProcess(ToleranceBy.Dalton, 0.01);

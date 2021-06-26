@@ -36,12 +36,12 @@ namespace MultiGlycanTDLibrary.engine.annotation
         }
 
         public List<PeakAnnotated> Annotated(List<IPeak> peaks, int precursorCharge,
-            List<SearchResult> candidates, bool decoy = false, double ion = 1.0078)
+            List<ReportResult> candidates, bool decoy = false, double ion = 1.0078)
         {
             // init
             List<PeakAnnotated> peakAnnotateds = new List<PeakAnnotated>();
             HashSet<string> glycanCandid = new HashSet<string>();
-            foreach (SearchResult r in candidates)
+            foreach (ReportResult r in candidates)
             {
                 glycanCandid.UnionWith(r.Isomers());
             }

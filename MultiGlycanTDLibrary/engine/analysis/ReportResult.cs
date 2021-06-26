@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.analysis
 {
-    public class SearchResult
+    public class ReportResult
     {
         int scan_;
         double retention_;

@@ -9,10 +9,10 @@ namespace MultiGlycanTDLibrary.engine.analysis
 {
     public class SearchMetaData
     {
-        public List<SearchResult> Commit(List<SearchResult> results,
+        public List<ReportResult> Commit(List<ReportResult> results,
             double mz, int scan, double retention)
         {
-            foreach (SearchResult r in results)
+            foreach (ReportResult r in results)
             {
                 r.set_scan(scan);
                 r.set_mz(mz);

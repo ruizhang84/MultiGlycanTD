@@ -109,7 +109,7 @@ namespace NUnitTestProject
 
 
             // search
-            List<SearchResult> final = new List<SearchResult>();
+            List<ReportResult> final = new List<ReportResult>();
 
             ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.Dalton, 1.0);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
@@ -129,8 +129,8 @@ namespace NUnitTestProject
                 if (candidates.Count == 0)
                     continue;
 
-                List<SearchResult> searched = glycanSearch.Search(spectrum.GetPeaks(), charge, candidates);
-                List<SearchResult> results = analyzer.Commit(searched, mz, scan, 0);
+                List<ReportResult> searched = glycanSearch.Search(spectrum.GetPeaks(), charge, candidates);
+                List<ReportResult> results = analyzer.Commit(searched, mz, scan, 0);
                 final.AddRange(results);
                 
             }
@@ -143,7 +143,7 @@ namespace NUnitTestProject
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
                     writer.WriteLine("scan,glycan,mz,score");
-                    foreach (SearchResult r in final.OrderBy(p => p.Scan()))
+                    foreach (ReportResult r in final.OrderBy(p => p.Scan()))
                     {
                         string output = r.Scan().ToString() + ","
                             + r.Glycan() + ","

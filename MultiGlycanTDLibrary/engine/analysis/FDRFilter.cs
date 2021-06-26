@@ -10,8 +10,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
     {
         double fdr_;
         double cutoff_;
-        List<SearchResult> target_ = new List<SearchResult>();
-        List<SearchResult> decoy_ = new List<SearchResult>();
+        List<ReportResult> target_ = new List<ReportResult>();
+        List<ReportResult> decoy_ = new List<ReportResult>();
         public FDRFilter(double fdr)
         {
             fdr_ = fdr;
@@ -69,15 +69,15 @@ namespace MultiGlycanTDLibrary.engine.analysis
             cutoff_ = int.MaxValue;
         }
 
-        public List<SearchResult> Filter()
+        public List<ReportResult> Filter()
         {
             return target_
                 .Where(p => p.Score() >= cutoff_)
                 .OrderBy(p => p.Scan()).ToList();
         }
 
-        public void set_data(List<SearchResult> targets,
-            List<SearchResult> decoys)
+        public void set_data(List<ReportResult> targets,
+            List<ReportResult> decoys)
         {
             // acquire the best score of the scan
             Dictionary<int, double> score_map = new Dictionary<int, double>();
@@ -135,8 +135,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
 
 
 
-        //public List<SearchResult> Target() { return target_; }
-        //public List<SearchResult> Decoy() { return decoy_; }
+        //public List<ReportResult> Target() { return target_; }
+        //public List<ReportResult> Decoy() { return decoy_; }
         public double Cutoff() { return cutoff_; }
 
         public void set_cutoff(double cutoff) { cutoff_ = cutoff; }

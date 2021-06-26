@@ -67,7 +67,7 @@ namespace MultiGlycanTD
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath, List<SearchResult> targets, List<SearchResult> decoys)
+        private void Analyze(string msPath, List<ReportResult> targets, List<ReportResult> decoys)
         {
             //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
@@ -81,7 +81,7 @@ namespace MultiGlycanTD
             FDRFilter filter = new FDRFilter(SearchingParameters.Access.FDR);
             filter.set_data(targets, decoys);
             filter.Init();
-            List<SearchResult> results = filter.Filter();
+            List<ReportResult> results = filter.Filter();
             string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
             MultiThreadingSearchHelper.ReportResults(path, results);
