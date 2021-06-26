@@ -233,6 +233,7 @@ namespace GlycanCalculator
                         break;
                 }
             }
+            GlycanIonsBuilder.Build.Types = types;
 
             // build
             IGlycanBuilder glycanBuilder;
@@ -267,15 +268,12 @@ namespace GlycanCalculator
 
             // fragmentation maps
             object obj = new object();
-            Dictionary<double, List<string>> fragments =
-                new Dictionary<double, List<string>>();
-            List<Tuple<string, List<double>>> fragmentsContainer =
-                new List<Tuple<string, List<double>>>();
+            Dictionary<double, Dictionary<FragmentTypes, List<string>>> fragments
+                = new Dictionary<double, Dictionary<FragmentTypes, List<string>>>();
+            List<Tuple<string, FragmentTypes, List<double>>> fragmentsContainer
+                = new List<Tuple<string, FragmentTypes, List<double>>>();
             var map = glycanBuilder.GlycanMaps();
 
-            GlycanIonsBuilder.Build.Permethylated = permethylated;
-            GlycanIonsBuilder.Build.Reduced = reduced;
-            GlycanIonsBuilder.Build.Types = types;
 
             Parallel.ForEach(map, pair =>
             {
@@ -283,23 +281,34 @@ namespace GlycanCalculator
                 var glycan = pair.Value;
                 if (glycan.IsValid())
                 {
-                    List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                                        .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
+                    List<Tuple<string, FragmentTypes, List<double>>> fragmentMass
+                        = new List<Tuple<string, FragmentTypes, List<double>>>();
+                    foreach (FragmentTypes type in GlycanIonsBuilder.Build.Types)
+                    {
+                        List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan, type)
+                                        .Select(m => Math.Round(m, 4)).ToList();
+                        fragmentMass.Add(Tuple.Create(id, type, massList));
+                    }
+
                     lock (obj)
                     {
-                        fragmentsContainer.Add(Tuple.Create(id, massList));
+                        fragmentsContainer.AddRange(fragmentMass);
                     }
                 }
             });
 
-            foreach (Tuple<string, List<double>> item in fragmentsContainer)
+            foreach (Tuple<string, FragmentTypes, List<double>> item in fragmentsContainer)
             {
                 string id = item.Item1;
-                foreach (double mass in item.Item2)
+                FragmentTypes type = item.Item2;
+
+                foreach (double mass in item.Item3)
                 {
                     if (!fragments.ContainsKey(mass))
-                        fragments[mass] = new List<string>();
-                    fragments[mass].Add(id);
+                        fragments[mass] = new Dictionary<FragmentTypes, List<string>>();
+                    if (!fragments[mass].ContainsKey(type))
+                        fragments[mass][type] = new List<string>();
+                    fragments[mass][type].Add(id);
                 }
             }
 

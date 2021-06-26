@@ -272,7 +272,7 @@ namespace MultiGlycanTD
         void TaskSearch(ref List<SearchResult> results,
             SearchTask task,
             GlycanPrecursorMatch precursorMatch,
-            GlycanSearchV2 glycanSearch,
+            GlycanSearch glycanSearch,
             SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
@@ -313,7 +313,7 @@ namespace MultiGlycanTD
             ISearch<string> searcher2 = new BucketSearch<string>(
                 SearchingParameters.Access.MS2ToleranceBy, 
                 SearchingParameters.Access.MSMSTolerance);
-            GlycanSearchV2 glycanSearch = new GlycanSearchV2(searcher2, glycanJson);
+            GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
 
             SearchMetaData searchInfo = new SearchMetaData();
 

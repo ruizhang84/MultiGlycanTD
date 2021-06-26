@@ -57,47 +57,57 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<double> Fragments(IGlycan glycan)
         {
             List<double> fragments = new List<double>();
-            if (Types.Contains(FragmentTypes.B) || Types.Contains(FragmentTypes.C))
+            foreach(FragmentTypes type in Types)
+            {
+                fragments.AddRange(Fragments(glycan, type));
+            }
+            return fragments.Distinct().ToList();
+        }
+
+        public List<double> Fragments(IGlycan glycan, FragmentTypes type)
+        {
+
+            if (type == FragmentTypes.B || type == FragmentTypes.C)
             {
                 List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.BionsLikeFragments(glycan);
-                if (Types.Contains(FragmentTypes.B))
-                    fragments.AddRange(Bions(bionsLikeFragments));
-                if (Types.Contains(FragmentTypes.C))
-                    fragments.AddRange(Cions(bionsLikeFragments));
+                if (type ==  FragmentTypes.B)
+                    return Bions(bionsLikeFragments);
+                if (type == FragmentTypes.C)
+                    return Cions(bionsLikeFragments);
             }
 
-            if (Types.Contains(FragmentTypes.Y) || Types.Contains(FragmentTypes.Z))
+            if (type == FragmentTypes.Y || type == FragmentTypes.Z)
             {
                 List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.YionsLikeFragments(glycan);
-                if (Types.Contains(FragmentTypes.Y))
-                    fragments.AddRange(Yions(yionsLikeFragments));
-                if (Types.Contains(FragmentTypes.Z))
-                    fragments.AddRange(Zions(yionsLikeFragments));
+                if (type == FragmentTypes.Y)
+                    return Yions(yionsLikeFragments);
+                if (type == FragmentTypes.Z)
+                    return Zions(yionsLikeFragments);
             }
 
-            if (Types.Contains(FragmentTypes.BY) || Types.Contains(FragmentTypes.BZ) || Types.Contains(FragmentTypes.CY))
+            if (type == FragmentTypes.BY || type == FragmentTypes.BZ || type == FragmentTypes.CY)
             {
                 List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.BYionsLikeFragments(glycan);
-                if (Types.Contains(FragmentTypes.BY))
-                    fragments.AddRange(BYions(byionsLikeFragments));
-                if (Types.Contains(FragmentTypes.BZ))
-                    fragments.AddRange(BZions(byionsLikeFragments));
-                if (Types.Contains(FragmentTypes.CY))
-                    fragments.AddRange(CYions(byionsLikeFragments));
+                if (type == FragmentTypes.BY)
+                    return BYions(byionsLikeFragments);
+                if (type == FragmentTypes.BZ)
+                    return BZions(byionsLikeFragments);
+                if (type == FragmentTypes.CY)
+                    return CYions(byionsLikeFragments);
             }
 
-            if (Types.Contains(FragmentTypes.YY) || Types.Contains(FragmentTypes.YZ) || Types.Contains(FragmentTypes.ZZ))
+            if (type == FragmentTypes.YY || type == FragmentTypes.YZ || type == FragmentTypes.ZZ)
             {
                 List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.YYionsLikeFragments(glycan);
-                if (Types.Contains(FragmentTypes.YY))
-                    fragments.AddRange(YYions(yyionsLikeFragments));
-                if (Types.Contains(FragmentTypes.YZ))
-                    fragments.AddRange(YZions(yyionsLikeFragments));
-                if (Types.Contains(FragmentTypes.ZZ))
-                    fragments.AddRange(ZZions(yyionsLikeFragments));
+                if (type == FragmentTypes.YY)
+                    return YYions(yyionsLikeFragments);
+                if (type == FragmentTypes.YZ)
+                    return YZions(yyionsLikeFragments);
+                if (type == FragmentTypes.ZZ)
+                    return ZZions(yyionsLikeFragments);
             }
 
-            return fragments.Distinct().ToList();
+            return new List<double>();
         }
 
         public double Yion(IGlycan glycan)
