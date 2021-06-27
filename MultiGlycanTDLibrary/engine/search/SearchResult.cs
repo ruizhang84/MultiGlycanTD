@@ -13,7 +13,7 @@ namespace MultiGlycanTDLibrary.engine.search
         // matched peak
         public IPeak Peak { get; set; }
         // difference between theortical and observed peaks m/z
-        public double Diff { get; set; } = int.MaxValue;
+        public double TheoreticMZ { get; set; } = int.MaxValue;
         // potential matched to other glycans
         public int Potentials { get; set; } = int.MaxValue;
         // fragment ion types
@@ -24,9 +24,13 @@ namespace MultiGlycanTDLibrary.engine.search
     public class SearchResult
     {
         public int Scan { get; set; }
+        public double Retention { get; set; }
+        public double PrecursorMZ { get; set; }
+        public int Charge { get; set; }
         public string Glycan { get; set; }
-        public string Composite { get; set; }
+        public string Composition { get; set; }
         public Dictionary<int, PeakMatch> Matches
             = new Dictionary<int, PeakMatch>();
+        public double Score { get; set; }
     }
 }

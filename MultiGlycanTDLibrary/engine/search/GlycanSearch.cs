@@ -42,14 +42,15 @@ namespace MultiGlycanTDLibrary.engine.search
             FragmentTypes type, int potentialMatches, double expectMZ)
         {
             double diff = Math.Abs(expectMZ - peaks.GetMZ());
-            if (match.Diff > diff)
+            double prevDiff = Math.Abs(match.TheoreticMZ - peaks.GetMZ());
+            if (prevDiff > diff)
             {
-                match.Diff = diff;
+                match.TheoreticMZ = expectMZ;
                 match.Potentials = potentialMatches;
                 match.IonTypes.Clear();
                 match.IonTypes.Add(type);
             }
-            else if (match.Diff == diff)
+            else if (prevDiff == diff)
             {
                 match.Potentials = Math.Min(match.Potentials, potentialMatches);
                 match.IonTypes.Add(type);
@@ -57,23 +58,22 @@ namespace MultiGlycanTDLibrary.engine.search
 
         }
 
-        protected Dictionary<string, SearchResult> PickTop(
+        protected List<SearchResult> PickTop(
             Dictionary<string, SearchResult> results)
         {
-            Dictionary<string, SearchResult> topResults =
-                new Dictionary<string, SearchResult>();
+            List<SearchResult> topResults = new List<SearchResult>();
             foreach (string glycan in results.Keys)
             {
                 SearchResult result = results[glycan];
                 if (result.Matches.Count < minMatches)
                     continue;
-                topResults[glycan] = result;
+                topResults.Add(result);
             }
 
             return topResults;
         }
 
-        public Dictionary<string, SearchResult> Search(ISpectrum spectrum, int precursorCharge,
+        public List<SearchResult> Search(List<IPeak> peaks, int precursorCharge,
             List<string> candidates, double ion = 1.0078)
         {
             // process composition, id -> compos
@@ -89,8 +89,6 @@ namespace MultiGlycanTDLibrary.engine.search
             // search peaks glycan_id->peak_index
             Dictionary<string, SearchResult> results
                 = new Dictionary<string, SearchResult>();
-            List<IPeak> peaks = spectrum.GetPeaks();
-            int scan = spectrum.GetScanNum();
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
@@ -117,9 +115,8 @@ namespace MultiGlycanTDLibrary.engine.search
                                 if (!results.ContainsKey(glycan))
                                 {
                                     results[glycan] = new SearchResult();
-                                    results[glycan].Scan = scan;
                                     results[glycan].Glycan = glycan;
-                                    results[glycan].Composite = glycanCandid[glycan];
+                                    results[glycan].Composition = glycanCandid[glycan];
                                 }
 
                                 if (!results[glycan].Matches.ContainsKey(i))
@@ -138,21 +135,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
             // pick the top candidates
             return PickTop(results);
-        }
-
-
-        
-
-        //public double ComputeScore(List<IPeak> peaks, MatchInfo match)
-        //{
-        //    double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-        //    double score = match.Peaks.Select(
-        //            index =>
-        //            Math.Sqrt(peaks[index].GetIntensity())
-        //            * (1 - Math.Pow(Difference(match.Expects[index], peaks[index].GetMZ()) / tol, 4))
-        //            ).Sum();
-        //    return score / sum;
-        //}
+        }       
 
     }
 }

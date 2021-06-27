@@ -1,6 +1,7 @@
 ﻿using MultiGlycanClassLibrary.util.mass;
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
+using MultiGlycanTDLibrary.engine.search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,24 +68,24 @@ namespace MultiGlycanTD
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath, List<ReportResult> targets, List<ReportResult> decoys)
+        private void Analyze(string msPath, List<SearchResult> targets, List<SearchResult> decoys)
         {
             //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_targets.csv");
-            MultiThreadingSearchHelper.ReportResults(targetpath, targets.Where(r => r.Score() > 0).ToList());
+            MultiThreadingSearchHelper.Report(targetpath, targets.Where(r => r.Score > 0).ToList());
             string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
-            MultiThreadingSearchHelper.ReportResults(decoyPath, decoys.Where(r => r.Score() > 0).ToList());
+            MultiThreadingSearchHelper.Report(decoyPath, decoys.Where(r => r.Score > 0).ToList());
 
             //FMMFDRFilter filter = new FMMFDRFilter(0.01);
             FDRFilter filter = new FDRFilter(SearchingParameters.Access.FDR);
             filter.set_data(targets, decoys);
             filter.Init();
-            List<ReportResult> results = filter.Filter();
+            List<SearchResult> results = filter.Filter();
             string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
-            MultiThreadingSearchHelper.ReportResults(path, results);
+            MultiThreadingSearchHelper.Report(path, results);
         }
 
         private void UpdateSignal(string signal)

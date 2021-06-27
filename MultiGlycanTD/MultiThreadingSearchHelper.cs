@@ -1,4 +1,5 @@
 ﻿using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using System;
 using System.Collections.Generic;
@@ -95,22 +96,23 @@ namespace MultiGlycanTD
             }
             return res;
         }
-        public static void ReportResults(
+        public static void Report(
             string path, 
-            List<ReportResult> results)
+            List<SearchResult> results)
         {
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
-                    writer.WriteLine("scan,retention,glycan,precursor_mz,score");
-                    foreach (ReportResult r in results.OrderBy(p => p.Scan()))
+                    writer.WriteLine("scan,retention,glycan,struct,precursor_mz,score");
+                    foreach (SearchResult r in results)
                     {
-                        string output = r.Scan().ToString() + ","
-                            + r.Retention().ToString() + ","
-                            + r.Glycan() + ","
-                            + r.MZ().ToString() + ","
-                            + r.Score().ToString();
+                        string output = r.Scan.ToString() + ","
+                            + r.Retention.ToString() + ","
+                            + r.Composition + ","
+                            + r.Glycan + ","
+                            + r.PrecursorMZ.ToString() + ","
+                            + r.Score.ToString();
                         writer.WriteLine(output);
                     }
                     writer.Flush();

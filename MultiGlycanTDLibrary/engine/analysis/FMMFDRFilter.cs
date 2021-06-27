@@ -1,5 +1,6 @@
 ﻿using FiniteMixtureModel.ECM;
 using FiniteMixtureModel.FMM;
+using MultiGlycanTDLibrary.engine.search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
     {
         double fdr_;
         double cutoff_;
-        List<ReportResult> target_ = new List<ReportResult>();
-        List<ReportResult> decoy_ = new List<ReportResult>();
+        List<SearchResult> target_ = new List<SearchResult>();
+        List<SearchResult> decoy_ = new List<SearchResult>();
         public FMMFDRFilter(double fdr)
         {
             fdr_ = fdr;
@@ -29,8 +30,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
                 return;
             }
 
-            List<double> target = target_.Select(p => p.Score()).ToList();
-            List<double> decoy = decoy_.Select(p => p.Score()).ToList();
+            List<double> target = target_.Select(p => p.Score).ToList();
+            List<double> decoy = decoy_.Select(p => p.Score).ToList();
 
             // fit gamma
             ECMAlgorithm bestEcm = null;
@@ -78,33 +79,33 @@ namespace MultiGlycanTDLibrary.engine.analysis
             }
         }
 
-        public List<ReportResult> Filter()
+        public List<SearchResult> Filter()
         {
             return target_
-                .Where(p => p.Score() >= cutoff_)
-                .OrderBy(p => p.Scan()).ToList();
+                .Where(p => p.Score >= cutoff_)
+                .OrderBy(p => p.Scan).ToList();
         }
 
-        public void set_data(List<ReportResult> targets,
-            List<ReportResult> decoys)
+        public void set_data(List<SearchResult> targets,
+            List<SearchResult> decoys)
         {
             // acquire the best score of the scan
             Dictionary<int, double> score_map = new Dictionary<int, double>();
-            targets = targets.Where(p => p.Score() > 0).ToList();
-            decoys = decoys.Where(p => p.Score() > 0).ToList();
+            targets = targets.Where(p => p.Score > 0).ToList();
+            decoys = decoys.Where(p => p.Score > 0).ToList();
             // acquire the best score of the scan
             foreach (var it in targets)
             {
-                int scan = it.Scan();
+                int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
                 {
-                    score_map[scan] = it.Score();
+                    score_map[scan] = it.Score;
                 }
                 else
                 {
-                    if (score_map[scan] < it.Score())
+                    if (score_map[scan] < it.Score)
                     {
-                        score_map[scan] = it.Score();
+                        score_map[scan] = it.Score;
                     }
                 }
             }
@@ -112,31 +113,31 @@ namespace MultiGlycanTDLibrary.engine.analysis
             // the one with higher score is picked.
             foreach (var it in decoys)
             {
-                int scan = it.Scan();
+                int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
                 {
-                    score_map[scan] = it.Score();
+                    score_map[scan] = it.Score;
                 }
                 else
                 {
-                    if (score_map[scan] < it.Score())
+                    if (score_map[scan] < it.Score)
                     {
-                        score_map[scan] = it.Score();
+                        score_map[scan] = it.Score;
                     }
                 }
             }
 
             foreach (var it in targets)
             {
-                int scan = it.Scan();
-                if (score_map[scan] > it.Score())
+                int scan = it.Scan;
+                if (score_map[scan] > it.Score)
                     continue;
                 target_.Add(it);
             }
             foreach (var it in decoys)
             {
-                int scan = it.Scan();
-                if (score_map[scan] > it.Score())
+                int scan = it.Scan;
+                if (score_map[scan] > it.Score)
                     continue;
                 decoy_.Add(it);
             }

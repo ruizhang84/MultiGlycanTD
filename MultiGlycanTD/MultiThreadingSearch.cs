@@ -1,5 +1,7 @@
 ﻿using MultiGlycanTDLibrary.algorithm;
 using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.engine.glycan;
+using MultiGlycanTDLibrary.engine.score;
 using MultiGlycanTDLibrary.engine.search;
 using MultiGlycanTDLibrary.model;
 using SpectrumData;
@@ -16,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTD
 {
-
+    using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
     public class MultiThreadingSearch
     {
         Counter readingCounter;
@@ -26,9 +28,11 @@ namespace MultiGlycanTD
 
         ConcurrentQueue<SearchTask> tasks;
         ConcurrentQueue<SearchTask> decoyTasks;
+        ConcurrentDictionary<int, ISpectrum> tandemSpectra;
+
         string msPath;
-        List<ReportResult> targets = new List<ReportResult>();
-        List<ReportResult> decoys = new List<ReportResult>();
+        List<SearchResult> targets = new List<SearchResult>();
+        List<SearchResult> decoys = new List<SearchResult>();
         private readonly object resultLock = new object();
         private readonly double searchRange = 1;
         int taskSize = 0;
@@ -59,18 +63,19 @@ namespace MultiGlycanTD
             // read spectrum
             tasks = new ConcurrentQueue<SearchTask>();
             decoyTasks = new ConcurrentQueue<SearchTask>();
+            tandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
             GenerateTasks();
             GenerateDecoyTasks();
             taskSize = tasks.Count + decoyTasks.Count;
         }
 
-        public List<ReportResult> Target()
+        public List<SearchResult> Target()
             { return targets; }
 
-        public List<ReportResult> Decoy()
+        public List<SearchResult> Decoy()
             { return decoys; }
 
-        void UpdateTask(List<ReportResult> t, List<ReportResult> d)
+        void UpdateTask(List<SearchResult> t, List<SearchResult> d)
         {
             lock (resultLock)
             {
@@ -84,12 +89,24 @@ namespace MultiGlycanTD
             List<Task> searches = new List<Task>();
             for (int i = 0; i < SearchingParameters.Access.ThreadNums; i++)
             {
-                Task LastTask = new Task(() => Search());
+                Task LastTask = new Task(() => LocalSearch());
                 LastTask.Start();
                 searches.Add(LastTask);
             }
-
             Task.WaitAll(searches.ToArray());
+
+            Dictionary<int, ISpectrum> spectra = new Dictionary<int, ISpectrum>(tandemSpectra);
+            GlycanScorer scorer = new GlycanScorer(spectra, targets,
+                SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance);
+            scorer.Run();
+            targets = scorer.Result();
+
+            scorer = new GlycanScorer(spectra, decoys,
+                SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance);
+            scorer.Run();
+            decoys = scorer.Result();
         }
 
         void GenerateTasks()
@@ -108,6 +125,7 @@ namespace MultiGlycanTD
 
                     readingCounter.Add(spectraData.Count);
 
+                    tandemSpectra[scan] = spectrum;
                     SearchTask searchTask = new SearchTask(spectrum,
                         spectrum.PrecursorMZ(), spectrum.PrecursorCharge());
                     tasks.Enqueue(searchTask);
@@ -173,6 +191,7 @@ namespace MultiGlycanTD
                                 if (ms2.GetPeaks().Count <= minPeaks)
                                     continue;
                                 ms2 = process.Process(ms2);
+                                tandemSpectra[i] = ms2;
                                 SearchTask searchTask = new SearchTask(ms2, mz, charge);
                                 tasks.Enqueue(searchTask);
                                 
@@ -248,19 +267,8 @@ namespace MultiGlycanTD
                         if (r % 2 == 0) continue;
 
                         // swap
-                        ISpectrum taskSpectrum = task.Spectrum.Clone();
-                        ISpectrum selectTaskSepctrum = selectTask.Spectrum.Clone();
-                        //double delta = selectTask.PrecursorMZ - task.PrecursorMZ;
-                        //foreach (IPeak pk in taskSpectrum.GetPeaks())
-                        //{
-                        //    pk.SetMZ(pk.GetMZ() + delta);
-                        //}
-                        //foreach (IPeak pk in selectTaskSepctrum.GetPeaks())
-                        //{
-                        //    pk.SetMZ(pk.GetMZ() - delta);
-                        //}
-                        decoyTasks.Enqueue(new SearchTask(taskSpectrum, selectTask.PrecursorMZ, charge));
-                        decoyTasks.Enqueue(new SearchTask(selectTaskSepctrum, task.PrecursorMZ, charge));
+                        decoyTasks.Enqueue(new SearchTask(task.Spectrum, selectTask.PrecursorMZ, charge));
+                        decoyTasks.Enqueue(new SearchTask(selectTask.Spectrum, task.PrecursorMZ, charge));
                         swappedScans.Add(task.Spectrum.GetScanNum());
                         swappedScans.Add(selectTask.Spectrum.GetScanNum());
                         break;
@@ -269,11 +277,9 @@ namespace MultiGlycanTD
             };
         }
 
-        void TaskSearch(ref List<ReportResult> results,
-            SearchTask task,
-            GlycanPrecursorMatch precursorMatch,
-            GlycanSearch glycanSearch,
-            SearchMetaData searchInfo)
+        void TaskLocalSearch(ref List<SearchResult> results,
+            SearchTask task, GlycanPrecursorMatch precursorMatch,
+            GlycanSearch glycanSearch, SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
             {
@@ -282,26 +288,23 @@ namespace MultiGlycanTD
                 if (candidates.Count > 0)
                 {
                     // spectrum search
-                    List<ReportResult> searched = glycanSearch.Search(
+                    List<SearchResult> searched = glycanSearch.Search(
                         task.Spectrum.GetPeaks(), task.Charge, candidates, ion);
 
                     if (searched.Count > 0)
                     {
-                        // add meta data
-                        List<ReportResult> temp = searchInfo.Commit(
-                            searched, task.PrecursorMZ,
-                            task.Spectrum.GetScanNum(),
-                            task.Spectrum.GetRetention());
-                        results.AddRange(temp);
+                        searchInfo.Commit(searched, task.PrecursorMZ, task.Charge,
+                            task.Spectrum.GetScanNum(), task.Spectrum.GetRetention());
+                        results.AddRange(searched);
                     }
                 }
             }
         }
 
-        void Search()
+        void LocalSearch()
         {
-            List<ReportResult> tempResults = new List<ReportResult>();
-            List<ReportResult> tempDecoyResults = new List<ReportResult>();
+            List<SearchResult> tempResults = new List<SearchResult>();
+            List<SearchResult> tempDecoyResults = new List<SearchResult>();
 
             ISearch<string> searcher = new BucketSearch<string>(
                 SearchingParameters.Access.MS1ToleranceBy, 
@@ -310,7 +313,7 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.Cutoff);
           
 
-            ISearch<string> searcher2 = new BucketSearch<string>(
+            ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(
                 SearchingParameters.Access.MS2ToleranceBy, 
                 SearchingParameters.Access.MSMSTolerance);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
@@ -320,7 +323,7 @@ namespace MultiGlycanTD
             // targets
             while (tasks.TryDequeue(out SearchTask task))
             {
-                TaskSearch(ref tempResults, task,
+                TaskLocalSearch(ref tempResults, task,
                     precursorMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
@@ -329,7 +332,7 @@ namespace MultiGlycanTD
             // decoys
             while (decoyTasks.TryDequeue(out SearchTask task))
             {
-                TaskSearch(ref tempDecoyResults, task,
+                TaskLocalSearch(ref tempDecoyResults, task,
                     precursorMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);

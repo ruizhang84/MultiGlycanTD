@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiGlycanTDLibrary.engine.search;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
     {
         double fdr_;
         double cutoff_;
-        List<ReportResult> target_ = new List<ReportResult>();
-        List<ReportResult> decoy_ = new List<ReportResult>();
+        List<SearchResult> target_ = new List<SearchResult>();
+        List<SearchResult> decoy_ = new List<SearchResult>();
         public FDRFilter(double fdr)
         {
             fdr_ = fdr;
@@ -28,23 +29,23 @@ namespace MultiGlycanTDLibrary.engine.analysis
             }
 
             List<double> scores = new List<double>();
-            scores.AddRange(target_.Select(p => p.Score()).ToList());
-            scores.AddRange(decoy_.Select(p => p.Score()).ToList());
+            scores.AddRange(target_.Select(p => p.Score).ToList());
+            scores.AddRange(decoy_.Select(p => p.Score).ToList());
             scores.Sort();
-            target_ = target_.OrderBy(p => p.Score()).ToList();
-            decoy_ = decoy_.OrderBy(p => p.Score()).ToList();
+            target_ = target_.OrderBy(p => p.Score).ToList();
+            decoy_ = decoy_.OrderBy(p => p.Score).ToList();
 
             // compare and compute
             int i = 0, j = 0, k = 0;
             while (k < target_.Count + decoy_.Count)
             {
                 double score = scores[k];
-                while (i < target_.Count && target_[i].Score() < score)
+                while (i < target_.Count && target_[i].Score < score)
                 {
                     i++;
                 }
                 // decoy score is no less than targets
-                while (j < decoy_.Count && decoy_[j].Score() < score)
+                while (j < decoy_.Count && decoy_[j].Score < score)
                 {
                     j++;
                 }
@@ -69,33 +70,33 @@ namespace MultiGlycanTDLibrary.engine.analysis
             cutoff_ = int.MaxValue;
         }
 
-        public List<ReportResult> Filter()
+        public List<SearchResult> Filter()
         {
             return target_
-                .Where(p => p.Score() >= cutoff_)
-                .OrderBy(p => p.Scan()).ToList();
+                .Where(p => p.Score >= cutoff_)
+                .OrderBy(p => p.Scan).ToList();
         }
 
-        public void set_data(List<ReportResult> targets,
-            List<ReportResult> decoys)
+        public void set_data(List<SearchResult> targets,
+            List<SearchResult> decoys)
         {
             // acquire the best score of the scan
             Dictionary<int, double> score_map = new Dictionary<int, double>();
-            targets = targets.Where(p => p.Score() > 0).ToList();
-            decoys = decoys.Where(p => p.Score() > 0).ToList();
+            targets = targets.Where(p => p.Score > 0).ToList();
+            decoys = decoys.Where(p => p.Score > 0).ToList();
             // acquire the best score of the scan
             foreach (var it in targets)
             {
-                int scan = it.Scan();
+                int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
                 {
-                    score_map[scan] = it.Score();
+                    score_map[scan] = it.Score;
                 }
                 else
                 {
-                    if (score_map[scan] < it.Score())
+                    if (score_map[scan] < it.Score)
                     {
-                        score_map[scan] = it.Score();
+                        score_map[scan] = it.Score;
                     }
                 }
             }
@@ -103,31 +104,31 @@ namespace MultiGlycanTDLibrary.engine.analysis
             // the one with higher score is picked.
             foreach (var it in decoys)
             {
-                int scan = it.Scan();
+                int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
                 {
-                    score_map[scan] = it.Score();
+                    score_map[scan] = it.Score;
                 }
                 else
                 {
-                    if (score_map[scan] < it.Score())
+                    if (score_map[scan] < it.Score)
                     {
-                        score_map[scan] = it.Score();
+                        score_map[scan] = it.Score;
                     }
                 }
             }
 
             foreach (var it in targets)
             {
-                int scan = it.Scan();
-                if (score_map[scan] > it.Score())
+                int scan = it.Scan;
+                if (score_map[scan] > it.Score)
                     continue;
                 target_.Add(it);
             }
             foreach (var it in decoys)
             {
-                int scan = it.Scan();
-                if (score_map[scan] > it.Score())
+                int scan = it.Scan;
+                if (score_map[scan] > it.Score)
                     continue;
                 decoy_.Add(it);
             }
@@ -135,8 +136,8 @@ namespace MultiGlycanTDLibrary.engine.analysis
 
 
 
-        //public List<ReportResult> Target() { return target_; }
-        //public List<ReportResult> Decoy() { return decoy_; }
+        //public List<SearchResult> Target() { return target_; }
+        //public List<SearchResult> Decoy() { return decoy_; }
         public double Cutoff() { return cutoff_; }
 
         public void set_cutoff(double cutoff) { cutoff_ = cutoff; }
