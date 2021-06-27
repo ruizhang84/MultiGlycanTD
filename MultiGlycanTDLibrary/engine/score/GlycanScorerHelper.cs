@@ -60,7 +60,6 @@ namespace MultiGlycanTDLibrary.engine.score
 
         public static double ComputeScore(SearchResult result, double sum, ToleranceBy by, double tol)
         {
-
             double score = 0;
             foreach (int index in result.Matches.Keys)
             {
