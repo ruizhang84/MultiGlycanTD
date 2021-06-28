@@ -70,9 +70,12 @@ namespace MultiGlycanTDLibrary.engine.score
             {
                 ISpectrum spectrum = Spectra[scan];
                 double sum = spectrum.GetPeaks().Select(p => Math.Sqrt(p.GetIntensity())).Sum();
+                double sum2 = spectrum.GetPeaks()
+                    .Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
                 foreach (SearchResult result in SpectrumResults[scan])
                 {
                     result.Score = GlycanScorerHelper.ComputeScore(result, sum, by, tol);
+                    result.Fit = GlycanScorerHelper.ComputeFit(result, sum2);
                 }
             }
         }
@@ -93,9 +96,9 @@ namespace MultiGlycanTDLibrary.engine.score
                     if (ScoreResults.ContainsKey(result.Scan))
                         continue;
 
-                    if (result.Score > bestScore)
+                    if (result.Fit > bestScore)
                     {
-                        bestScore = result.Score;
+                        bestScore = result.Fit;
                         bestResult = result;
                     }
                 }

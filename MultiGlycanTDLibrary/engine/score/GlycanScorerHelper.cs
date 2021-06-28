@@ -72,6 +72,13 @@ namespace MultiGlycanTDLibrary.engine.score
             return score / sum;
         }
 
+        public static double ComputeFit(SearchResult result, double sum)
+        {
+            return result.Matches
+                .Select(r => r.Value)
+                .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
+        }
+
 
     }
 }
