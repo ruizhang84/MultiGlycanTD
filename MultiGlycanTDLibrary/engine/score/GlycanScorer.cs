@@ -89,7 +89,7 @@ namespace MultiGlycanTDLibrary.engine.score
             {
                 // find best score
                 double bestScore = 0;
-                SearchResult bestResult = null;
+                List<SearchResult> bestResults = new List<SearchResult>();
                 foreach (SearchResult result in GlycanResults[glycan])
                 {
                     // already assigned
@@ -99,41 +99,49 @@ namespace MultiGlycanTDLibrary.engine.score
                     if (result.Fit > bestScore)
                     {
                         bestScore = result.Fit;
-                        bestResult = result;
+                        bestResults.Clear();
+                    }
+                    if (result.Fit == bestScore)
+                    {
+                        bestResults.Add(result);
                     }
                 }
-                if (bestResult is null)
+                if (bestResults.Count == 0)
                     continue;
 
                 // assign spectrum
-                if (!SpectrumResults.ContainsKey(bestResult.Scan))
+                foreach (SearchResult bestResult in bestResults)
                 {
-                    SpectrumResults[bestResult.Scan] = new List<SearchResult>();
-                }
-                SpectrumResults[bestResult.Scan].Add(bestResult);
-
-                // compute similarity and assign more
-                foreach (SearchResult result in GlycanResults[glycan])
-                {
-                    if (result.Score == 0)
-                        continue;
-                    if (result.Scan == bestResult.Scan)
-                        continue;
-                    if (ScoreResults.ContainsKey(result.Scan))
-                        continue;
-
-                    double cosine = GlycanScorerHelper.CosineSim(
-                        Spectra[bestResult.Scan].GetPeaks(),
-                        Spectra[result.Scan].GetPeaks());
-                    if (cosine >= similar)
+                    if (!SpectrumResults.ContainsKey(bestResult.Scan))
                     {
-                        if (!SpectrumResults.ContainsKey(result.Scan))
+                        SpectrumResults[bestResult.Scan] = new List<SearchResult>();
+                    }
+                    SpectrumResults[bestResult.Scan].Add(bestResult);
+
+                    // compute similarity and assign more
+                    foreach (SearchResult result in GlycanResults[glycan])
+                    {
+                        if (result.Score == 0)
+                            continue;
+                        if (result.Scan == bestResult.Scan)
+                            continue;
+                        if (ScoreResults.ContainsKey(result.Scan))
+                            continue;
+
+                        double cosine = GlycanScorerHelper.CosineSim(
+                            Spectra[bestResult.Scan].GetPeaks(),
+                            Spectra[result.Scan].GetPeaks());
+                        if (cosine >= similar)
                         {
-                            SpectrumResults[result.Scan] = new List<SearchResult>();
+                            if (!SpectrumResults.ContainsKey(result.Scan))
+                            {
+                                SpectrumResults[result.Scan] = new List<SearchResult>();
+                            }
+                            SpectrumResults[result.Scan].Add(result);
                         }
-                        SpectrumResults[result.Scan].Add(result);
                     }
                 }
+
             }
         }
 
@@ -143,20 +151,29 @@ namespace MultiGlycanTDLibrary.engine.score
             foreach (int scan in SpectrumResults.Keys)
             {
                 double bestScore = 0;
-                SearchResult bestResult = null;
+                List<SearchResult> bestResults = new List<SearchResult>();
                 foreach (SearchResult result in SpectrumResults[scan])
                 {
                     if (result.Score > bestScore)
                     {
                         bestScore = result.Score;
-                        bestResult = result;
+                        bestResults.Clear();
                     }
+                    if (result.Score == bestScore)
+                    {
+                        bestResults.Add(result);
+                    }
+
                 }
-                if (bestResult is null)
+                if (bestResults.Count == 0)
                     continue;
-                ScoreResults[scan] = bestResult;
-                if (GlycanResults.ContainsKey(bestResult.Glycan))
-                    GlycanResults.Remove(bestResult.Glycan);
+
+                foreach (SearchResult bestResult in bestResults)
+                {
+                    ScoreResults[scan] = bestResult;
+                    if (GlycanResults.ContainsKey(bestResult.Glycan))
+                        GlycanResults.Remove(bestResult.Glycan);
+                }
             }
         }
 
