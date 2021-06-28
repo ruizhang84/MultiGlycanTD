@@ -58,17 +58,18 @@ namespace MultiGlycanTDLibrary.engine.score
             return Math.Abs(expect - obs);
         }
 
-        public static double ComputeScore(SearchResult result, double sum, ToleranceBy by, double tol)
+        public static double ComputeScore(
+            SearchResult result, double sum, ToleranceBy by, double tol)
         {
             double score = 0;
+
             foreach (int index in result.Matches.Keys)
             {
                 PeakMatch match = result.Matches[index];
-                double weight = 1 - Math.Pow(Difference(match.TheoreticMZ, match.Peak.GetMZ(), by), 4);
-                //weight *= 1 - Math.Pow(match.Potentials / 1000, 4);
+                double weight = 1 - Math.Pow(Difference(match.TheoreticMZ, match.Peak.GetMZ(), by) / tol, 4);
                 score += Math.Sqrt(match.Peak.GetIntensity()) * weight;
-
             }
+
             return score / sum;
         }
 

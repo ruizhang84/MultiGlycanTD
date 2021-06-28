@@ -44,6 +44,7 @@ namespace MultiGlycanTDLibrary.engine.score
                 SpectrumResults[scan].Add(result);
                 GlycanResults[glycan].Add(result);
             }
+
         }
 
         public void Run()
