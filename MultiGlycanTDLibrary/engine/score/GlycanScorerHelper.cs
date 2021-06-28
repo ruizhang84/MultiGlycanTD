@@ -48,7 +48,6 @@ namespace MultiGlycanTDLibrary.engine.score
             return numerator / denominator;
         }
 
-
         public static double Difference(double expect, double obs, ToleranceBy by)
         {
             if (by == ToleranceBy.PPM)
@@ -67,7 +66,7 @@ namespace MultiGlycanTDLibrary.engine.score
             {
                 PeakMatch match = result.Matches[index];
                 double weight = 1 - Math.Pow(Difference(match.TheoreticMZ, match.Peak.GetMZ(), by) / tol, 4);
-                score += Math.Sqrt(match.Peak.GetIntensity()) * weight;
+                score += Math.Sqrt(match.Peak.GetIntensity()) * weight ;
             }
 
             return score / sum;

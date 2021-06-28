@@ -32,6 +32,5 @@ namespace MultiGlycanTDLibrary.engine.search
         public Dictionary<int, PeakMatch> Matches
             = new Dictionary<int, PeakMatch>();
         public double Score { get; set; }
-        public bool Decoy { get; set; }
     }
 }
