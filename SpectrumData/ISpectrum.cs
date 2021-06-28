@@ -16,6 +16,9 @@ namespace SpectrumData
         void Clear();
         int GetScanNum();
         double GetRetention();
+        void set_scan(int scan);
+        void set_retention(double retention);
+
         ISpectrum Clone();
     }
 }

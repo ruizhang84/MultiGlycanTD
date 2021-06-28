@@ -83,5 +83,15 @@ namespace SpectrumData.Spectrum
         {
             this.peaks = peaks;
         }
+
+        public void set_scan(int scan)
+        {
+            scanNum = scan;
+        }
+
+        public void set_retention(double retention)
+        {
+            this.retention = retention;
+        }
     }
 }
