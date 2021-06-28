@@ -96,6 +96,7 @@ namespace MultiGlycanTD
             Task.WaitAll(searches.ToArray());
 
             Dictionary<int, ISpectrum> spectra = new Dictionary<int, ISpectrum>(tandemSpectra);
+
             GlycanScorer scorer = new GlycanScorer(spectra, targets,
                 SearchingParameters.Access.MS2ToleranceBy,
                 SearchingParameters.Access.MSMSTolerance);
