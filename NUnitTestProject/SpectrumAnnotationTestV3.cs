@@ -250,7 +250,7 @@ namespace NUnitTestProject
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
             int targetScan = 2866;
-            double targetMZ = 1423.24597167968;
+            double targetMZ = 1423.24584960937;
             double delta = 0; //  809.428345 - 799.423218;
 
             foreach (var scanPair in scanGroup)
