@@ -14,7 +14,7 @@ namespace MultiGlycanTDLibrary.engine.score
         Dictionary<int, ISpectrum> Spectra;
         Dictionary<int, List<SearchResult>> SpectrumResults;
         Dictionary<string, List<SearchResult>> GlycanResults;
-        Dictionary<int, SearchResult> ScoreResults;
+        Dictionary<int, List<SearchResult>> ScoreResults;
         ToleranceBy by;
         double tol;
         double similar = 0.9;
@@ -25,7 +25,7 @@ namespace MultiGlycanTDLibrary.engine.score
             Spectra = spectra;
             SpectrumResults = new Dictionary<int, List<SearchResult>>();
             GlycanResults = new Dictionary<string, List<SearchResult>>();
-            ScoreResults = new Dictionary<int, SearchResult>();
+            ScoreResults = new Dictionary<int, List<SearchResult>>();
             this.by = by;
             this.tol = tol;
 
@@ -61,7 +61,7 @@ namespace MultiGlycanTDLibrary.engine.score
 
         public List<SearchResult> Result()
         {
-            return ScoreResults.Select(p => p.Value).OrderBy(r => r.Scan).ToList();
+            return ScoreResults.SelectMany(p => p.Value).OrderBy(r => r.Scan).ToList();
         }
 
         public void AssignScore()
@@ -170,7 +170,9 @@ namespace MultiGlycanTDLibrary.engine.score
 
                 foreach (SearchResult bestResult in bestResults)
                 {
-                    ScoreResults[scan] = bestResult;
+                    if (!ScoreResults.ContainsKey(scan))
+                        ScoreResults[scan] = new List<SearchResult>();
+                    ScoreResults[scan].Add(bestResult);
                     if (GlycanResults.ContainsKey(bestResult.Glycan))
                         GlycanResults.Remove(bestResult.Glycan);
                 }
