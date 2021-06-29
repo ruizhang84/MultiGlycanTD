@@ -24,7 +24,6 @@ namespace MultiGlycanTD
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
 
         // result
-        public double Cutoff { get; set; } = 0.01;
         public double FDR { get; set; } = 0.01;
 
         // file
@@ -41,7 +40,6 @@ namespace MultiGlycanTD
             MSMSTolerance = ConfigureParameters.Access.MSMSTolerance;
             MS1ToleranceBy = ConfigureParameters.Access.MS1ToleranceBy;
             MS2ToleranceBy = ConfigureParameters.Access.MS2ToleranceBy;
-            Cutoff = ConfigureParameters.Access.Cutoff;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
             FDR = ConfigureParameters.Access.FDR;
             Ions = ConfigureParameters.Access.Ions;
@@ -70,7 +68,6 @@ namespace MultiGlycanTD
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
 
         //result
-        public double Cutoff { get; set; } = 0.01;
         public double FDR { get; set; } = 0.01;
 
         protected static readonly Lazy<ConfigureParameters>

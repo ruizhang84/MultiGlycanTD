@@ -39,7 +39,8 @@ namespace MultiGlycanTD
         // It is not likely that a target spectrum has very high charge
         // for glycan or very few peaks for fragments.
         int minPeaks = 30;   // sequencable spectrum with min num peaks
-        int maxCharge = 3;   // max charge of spectrum to consider
+        int minCharage = 2;
+        int maxCharge = 4;   // max charge of spectrum to consider
         // Generate decoy by delta_M > d
         // for glycan delta_M < max_d, since glycan fragmetns
         // differ by monosaccradie can be very similar.
@@ -135,7 +136,6 @@ namespace MultiGlycanTD
 
             // read spectrum
             ISpectrumReader reader = new ThermoRawSpectrumReader();
-            IProcess picking = new LocalNeighborPicking();
             IProcess process = new WeightedAveraging(new LocalNeighborPicking());
 
             reader.Init(msPath);
@@ -179,12 +179,11 @@ namespace MultiGlycanTD
                                     MultiThreadingSearchHelper.FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                                 if (ms1Peaks.Count() == 0)
                                     continue;
-                                ms1Peaks = picking.Process(ms1Peaks);
 
                                 // charage
                                 ICharger charger = new Patterson();
                                 int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
-                                if (charge > maxCharge)
+                                if (charge > maxCharge || charge < minCharage)
                                     continue;
 
                                 // search
@@ -310,8 +309,7 @@ namespace MultiGlycanTD
             ISearch<string> searcher = new BucketSearch<string>(
                 SearchingParameters.Access.MS1ToleranceBy, 
                 SearchingParameters.Access.MS1Tolerance);
-            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 
-                SearchingParameters.Access.Cutoff);
+            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
           
 
             ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(

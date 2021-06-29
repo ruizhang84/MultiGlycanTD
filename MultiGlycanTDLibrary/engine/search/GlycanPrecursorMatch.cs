@@ -15,25 +15,29 @@ namespace MultiGlycanTDLibrary.engine.search
         // distributions
         Dictionary<string, List<double>> mass_map_;
         Dictionary<string, List<double>> distr_map_;
-        protected double cutoff_;
+        protected double cutoff_ = 0.05;
+        protected int top_ = 3;
 
-        public GlycanPrecursorMatch(ISearch<string> searcher, CompdJson compdJson,
-            double cutoff = 0.01)
+        public GlycanPrecursorMatch(ISearch<string> searcher, CompdJson compdJson)
         {
             searcher_ = searcher;
-            distr_map_ = compdJson.DistrMap;
             mass_map_ = compdJson.MassMap;
-            cutoff_ = cutoff;
+            distr_map_ = compdJson.DistrMap;
 
             List<Point<string>> glycans_ = new List<Point<string>>();
             foreach (string compose in mass_map_.Keys)
             {
-                for(int i = 0; i < mass_map_[compose].Count; i++)
+                // take top 3 highest peaks with at least 0.05 distr
+                var sorted = distr_map_[compose]
+                    .Select((x, i) => new KeyValuePair<double, int>(x, i))
+                    .OrderByDescending(x => x.Key)
+                    .Take(top_).Where(x => x.Key > cutoff_)
+                    .ToList();
+                List<int> idx = sorted.Select(x => x.Value).ToList();
+
+                foreach (int i in idx)
                 {
                     double mass = mass_map_[compose][i];
-                    double distr = distr_map_[compose][i];
-                    if (distr < cutoff)
-                        continue;
                     Point<string> glycan = new Point<string>(mass, compose);
                     glycans_.Add(glycan);
                 }

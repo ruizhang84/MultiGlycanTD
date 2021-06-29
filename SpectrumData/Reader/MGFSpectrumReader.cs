@@ -17,7 +17,7 @@ namespace SpectrumData.Reader
         //Regex end = new Regex("END\\s+IONS", RegexOptions.Compiled);
         //Regex title = new Regex("TITLE=(.*)", RegexOptions.Compiled);
         Regex pepmass = new Regex("PEPMASS=(\\d+\\.?\\d*)", RegexOptions.Compiled);
-        Regex charge = new Regex("CHARGE=(\\d+)", RegexOptions.Compiled);
+        Regex charge = new Regex("CHARGE=([+-]?\\d+)", RegexOptions.Compiled);
         Regex rt_second = new Regex("RTINSECONDS=(\\d+\\.?\\d*)", RegexOptions.Compiled);
         Regex instrument = new Regex("INSTRUMENT=(.*)");
         Regex scan = new Regex("SCANS=(\\d+)", RegexOptions.Compiled);

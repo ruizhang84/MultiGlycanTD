@@ -174,7 +174,14 @@ namespace MultiGlycanTDLibrary.engine.score
                         ScoreResults[scan] = new List<SearchResult>();
                     ScoreResults[scan].Add(bestResult);
                     if (GlycanResults.ContainsKey(bestResult.Glycan))
-                        GlycanResults.Remove(bestResult.Glycan);
+                    {
+                        GlycanResults[bestResult.Glycan]
+                            = GlycanResults[bestResult.Glycan].Where(
+                                r => r.Charge != bestResult.Charge).ToList();
+                        if (GlycanResults[bestResult.Glycan].Count == 0)
+                            GlycanResults.Remove(bestResult.Glycan);
+                    }
+                        
                 }
             }
         }

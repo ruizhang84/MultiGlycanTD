@@ -54,7 +54,6 @@ namespace MultiGlycanTD
 
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
 
-            Cutoff.Text = (SearchingParameters.Access.Cutoff * 100.0).ToString();
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
         }
 
@@ -136,15 +135,6 @@ namespace MultiGlycanTD
 
         private bool SaveOutput()
         {
-            if (double.TryParse(Cutoff.Text, out double cutoff) && cutoff >= 0 && cutoff <= 100)
-            {
-                ConfigureParameters.Access.Cutoff = cutoff * 0.01;
-            }
-            else
-            {
-                MessageBox.Show("Cutoff level is invalid!");
-                return false;
-            }
 
             if (double.TryParse(FDR.Text, out double rate) && rate >= 0 && rate <= 100)
             {

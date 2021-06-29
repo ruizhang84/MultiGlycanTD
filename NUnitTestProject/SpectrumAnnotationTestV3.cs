@@ -241,7 +241,7 @@ namespace NUnitTestProject
             Dictionary<int, List<PeakAnnotated>> final = new Dictionary<int, List<PeakAnnotated>>();
 
             ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
-            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
+            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
             ISearch<Dictionary<FragmentTypes, List<string>>> searcher2 = new BucketSearch<Dictionary<FragmentTypes, List<string>>>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
             ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);

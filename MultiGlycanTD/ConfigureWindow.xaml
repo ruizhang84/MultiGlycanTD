@@ -49,10 +49,6 @@
                         <Label Content="Number of Threads"/>
                         <TextBox Name="ThreadNums" Text="4" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Min Isotopic Distribution (%)" />
-                        <TextBox Name="Cutoff" Text="1" VerticalAlignment="Top" FontSize="12" Width="40" Margin="0,4,0,0"/>
-                    </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
                     <StackPanel Orientation="Horizontal">

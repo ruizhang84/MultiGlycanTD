@@ -115,7 +115,7 @@ namespace NUnitTestProject
             double searchRange = 1.0;
 
             ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
-            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson, 0.01);
+            GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
 
             List<int> scanMSMS = new List<int>();
             foreach (var scanPair in scanGroup)
