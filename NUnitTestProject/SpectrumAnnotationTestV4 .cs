@@ -9,6 +9,7 @@ using MultiGlycanTDLibrary.model.glycan;
 using NUnit.Framework;
 using SpectrumData;
 using SpectrumData.Reader;
+using SpectrumData.Spectrum;
 using SpectrumProcess;
 using System;
 using System.Collections.Concurrent;
@@ -21,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class SpectrumAnnotationTestV3
+    public class SpectrumAnnotationTestV4
     {
         object obj = new object();
 
@@ -58,51 +59,6 @@ namespace NUnitTestProject
                     return "ZZ";
             }
             return "";
-        }
-
-        List<IPeak> FilterPeaks(List<IPeak> peaks, double target, double range)
-        {
-            if (peaks.Count == 0)
-            {
-                return peaks;
-            }
-
-            int start = 0;
-            int end = peaks.Count - 1;
-            int middle = 0;
-            if (peaks[start].GetMZ() > target - range)
-            {
-                middle = start;
-            }
-            else
-            {
-                while (start + 1 < end)
-                {
-                    middle = (end - start) / 2 + start;
-                    double mz = peaks[middle].GetMZ() + range;
-                    if (mz == target)
-                    {
-                        break;
-                    }
-                    else if (mz < target)
-                    {
-                        start = middle;
-                    }
-                    else
-                    {
-                        end = middle - 1;
-                    }
-                }
-            }
-
-            List<IPeak> res = new List<IPeak>();
-            while (middle < peaks.Count)
-            {
-                if (peaks[middle].GetMZ() > target + range)
-                    break;
-                res.Add(peaks[middle++]);
-            }
-            return res;
         }
 
         List<IGlycan> FragmentsBuild(FragmentTypes type, IGlycan glycan)
@@ -186,28 +142,11 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\HBS1_dextrinspkd_C18_10252018.raw";
+            string path = @"D:\Data\peptide_standard.mgf";
             string database = @"C:\Users\iruiz\Downloads\MSMS\database.json";
-            ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
-            reader.Init(path);
+            MGFSpectrumReader mgfReader = new MGFSpectrumReader();
+            mgfReader.Init(path);
 
-            int start = reader.GetFirstScan();
-            int end = reader.GetLastScan();
-            Dictionary<int, List<int>> scanGroup = new Dictionary<int, List<int>>();
-            int current = -1;
-            for (int i = start; i < end; i++)
-            {
-                if (reader.GetMSnOrder(i) == 1)
-                {
-                    current = i;
-                    scanGroup[i] = new List<int>();
-                }
-                else if (reader.GetMSnOrder(i) == 2
-                    && reader.GetActivation(i) == TypeOfMSActivation.CID)
-                {
-                    scanGroup[current].Add(i);
-                }
-            }
 
             // init
             string jsonStringRead = File.ReadAllText(database);
@@ -234,6 +173,10 @@ namespace NUnitTestProject
                 }
             });
 
+
+           
+
+
             // search
             double searchRange = 1.0;
             LocalNeighborPicking picking = new LocalNeighborPicking();
@@ -249,59 +192,43 @@ namespace NUnitTestProject
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3,
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
-            int targetScan = 4420;
-            double targetMZ = 1465.75219726562;
+            int targetScan = 55488;
+            double targetMZ = 447.9912;
             double delta = 0; //  809.428345 - 799.423218;
 
-            foreach (var scanPair in scanGroup)
+
+            Dictionary<int, MS2Spectrum> spectraData = mgfReader.GetSpectrum();
+            foreach (int scan in spectraData.Keys)
             {
-                if (scanPair.Value.Count > 0)
+                if (scan != targetScan)
+                    continue;
+
+                MS2Spectrum ms2 = spectraData[scan];
+
+                if (ms2.GetPeaks().Count <= 30)
+                    continue;
+                ms2 = process.Process(ms2) as MS2Spectrum;
+                foreach (IPeak pk in ms2.GetPeaks())
                 {
-                    int scan1 = scanPair.Key;
-                    ISpectrum ms1 = reader.GetSpectrum(scan1);
-
-                    foreach (int scan in scanPair.Value)
-                    {
-                        if (scan != targetScan)
-                            continue;
-
-                        double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
-                        List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
-                        if (ms1Peaks.Count() == 0)
-                            continue;
-
-
-                        ICharger charger = new Patterson();
-                        int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
-
-                        // search
-                        ISpectrum ms2 = reader.GetSpectrum(scan);
-                        if (ms2.GetPeaks().Count <= 30)
-                            continue;
-                        ms2 = process.Process(ms2);
-                        foreach (IPeak pk in ms2.GetPeaks())
-                        {
-                            pk.SetMZ(pk.GetMZ() + delta);
-                        }
-                        if (targetMZ > 0)
-                            mz = targetMZ;
-                        List<string> candidates = precursorMatch.Match(mz, charge);
-                        if (candidates.Count == 0)
-                            continue;
-                        List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
-                        List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
-                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
-
-                        final[scan] = annotateds;
-                    }
-
+                    pk.SetMZ(pk.GetMZ() + delta);
                 }
+                double mz = ms2.PrecursorMZ();
+                int charge = ms2.PrecursorCharge();
+
+                if (targetMZ > 0)
+                    mz = targetMZ;
+                List<string> candidates = precursorMatch.Match(mz, charge);
+                if (candidates.Count == 0)
+                    continue;
+                List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
+                List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
+                List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
+
+                final[scan] = annotateds;
             }
 
-
-
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec"
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec2"
                     + (targetMZ > 0 ? "_decoy" : "_target") + ".csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))

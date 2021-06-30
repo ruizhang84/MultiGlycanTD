@@ -15,6 +15,7 @@ namespace MultiGlycanTDLibrary.engine.score
         Dictionary<int, List<SearchResult>> SpectrumResults;
         Dictionary<string, List<SearchResult>> GlycanResults;
         Dictionary<int, List<SearchResult>> ScoreResults;
+        Dictionary<double, double> PeakFreq;
         ToleranceBy by;
         double tol;
         double similar = 0.9;
@@ -26,6 +27,7 @@ namespace MultiGlycanTDLibrary.engine.score
             SpectrumResults = new Dictionary<int, List<SearchResult>>();
             GlycanResults = new Dictionary<string, List<SearchResult>>();
             ScoreResults = new Dictionary<int, List<SearchResult>>();
+            PeakFreq = new Dictionary<double, double>();
             this.by = by;
             this.tol = tol;
 
@@ -44,7 +46,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 SpectrumResults[scan].Add(result);
                 GlycanResults[glycan].Add(result);
             }
-
         }
 
         public void Run()

@@ -65,8 +65,7 @@ namespace MultiGlycanTDLibrary.engine.score
             foreach (int index in result.Matches.Keys)
             {
                 PeakMatch match = result.Matches[index];
-                double weight = 1 - Math.Pow(Difference(match.TheoreticMZ, match.Peak.GetMZ(), by) / tol, 4);
-                score += Math.Sqrt(match.Peak.GetIntensity()) * weight ;
+                score += Math.Sqrt(match.Peak.GetIntensity());
             }
 
             return score / sum;
