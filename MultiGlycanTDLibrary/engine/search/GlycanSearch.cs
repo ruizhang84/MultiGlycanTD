@@ -1,10 +1,7 @@
-﻿using MultiGlycanTDLibrary.algorithm;
-using MultiGlycanTDLibrary.engine.analysis;
-using MultiGlycanTDLibrary.engine.glycan;
+﻿using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
-using MultiGlycanTDLibrary.model.glycan;
 using SpectrumData;
-using SpectrumData.Spectrum;
+using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
 using System.Linq;

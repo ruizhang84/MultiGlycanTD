@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NUnitTestProject
 {
-    public class Tests
+    public class GlycanBuilderTest
     {
         [SetUp]
         public void Setup()

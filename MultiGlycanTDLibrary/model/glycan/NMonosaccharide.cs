@@ -1,4 +1,4 @@
-﻿using MultiGlycanTDLibrary.util.brain;
+﻿using SpectrumProcess.brain;
 using System;
 using System.Collections.Generic;
 using System.Linq;

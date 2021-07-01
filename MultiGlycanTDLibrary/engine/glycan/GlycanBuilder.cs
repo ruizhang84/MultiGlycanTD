@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiGlycanTDLibrary.util.brain;
 using System.Collections.Concurrent;
+using SpectrumProcess.brain;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {

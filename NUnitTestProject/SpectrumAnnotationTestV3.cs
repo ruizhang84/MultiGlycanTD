@@ -1,5 +1,5 @@
 ﻿using MultiGlycanClassLibrary.util.mass;
-using MultiGlycanTDLibrary.algorithm;
+using SpectrumProcess.algorithm;
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.annotation;
 using MultiGlycanTDLibrary.engine.glycan;

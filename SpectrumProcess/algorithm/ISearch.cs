@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiGlycanTDLibrary.algorithm
+namespace SpectrumProcess.algorithm
 {
     public enum ToleranceBy
     { Dalton, PPM }

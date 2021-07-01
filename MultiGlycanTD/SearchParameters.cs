@@ -1,4 +1,4 @@
-﻿using MultiGlycanTDLibrary.algorithm;
+﻿using SpectrumProcess.algorithm;
 using MultiGlycanTDLibrary.model;
 using System;
 using System.Collections.Generic;

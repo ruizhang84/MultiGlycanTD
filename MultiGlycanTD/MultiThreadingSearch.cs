@@ -1,4 +1,4 @@
-﻿using MultiGlycanTDLibrary.algorithm;
+﻿using SpectrumProcess.algorithm;
 using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.score;

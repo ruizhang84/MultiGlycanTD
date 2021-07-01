@@ -1,7 +1,7 @@
 ﻿using MultiGlycanClassLibrary.util.mass;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model.glycan;
-using MultiGlycanTDLibrary.util.brain;
+using SpectrumProcess.brain;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

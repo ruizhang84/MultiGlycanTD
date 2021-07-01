@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace MultiGlycanTDLibrary.util.brain
+namespace SpectrumProcess.brain
 {
     public class EquationSolver
     {
