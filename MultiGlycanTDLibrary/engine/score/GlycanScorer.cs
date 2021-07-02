@@ -15,7 +15,7 @@ namespace MultiGlycanTDLibrary.engine.score
         Dictionary<int, List<SearchResult>> SpectrumResults;
         Dictionary<string, List<SearchResult>> GlycanResults;
         Dictionary<int, List<SearchResult>> ScoreResults;
-        Dictionary<double, double> PeakFreq;
+
         ToleranceBy by;
         double tol;
         double similar = 0.9;
@@ -27,7 +27,7 @@ namespace MultiGlycanTDLibrary.engine.score
             SpectrumResults = new Dictionary<int, List<SearchResult>>();
             GlycanResults = new Dictionary<string, List<SearchResult>>();
             ScoreResults = new Dictionary<int, List<SearchResult>>();
-            PeakFreq = new Dictionary<double, double>();
+
             this.by = by;
             this.tol = tol;
 
@@ -52,11 +52,11 @@ namespace MultiGlycanTDLibrary.engine.score
         {
             AssignScore();
 
-            AssignSpectrumResults();
-            while (SpectrumResults.Count > 0)
+            AssignGlycanResults();
+            while (GlycanResults.Count > 0)
             {
-                AssignGlycanResults();
                 AssignSpectrumResults();
+                AssignGlycanResults();
             }
         }
 
@@ -93,10 +93,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 List<SearchResult> bestResults = new List<SearchResult>();
                 foreach (SearchResult result in GlycanResults[glycan])
                 {
-                    // already assigned
-                    if (ScoreResults.ContainsKey(result.Scan))
-                        continue;
-
                     if (result.Fit > bestScore)
                     {
                         bestScore = result.Fit;
@@ -169,11 +165,21 @@ namespace MultiGlycanTDLibrary.engine.score
                 if (bestResults.Count == 0)
                     continue;
 
+                // Remove the assigned glycans
                 foreach (SearchResult bestResult in bestResults)
                 {
                     if (!ScoreResults.ContainsKey(scan))
                         ScoreResults[scan] = new List<SearchResult>();
+                    else
+                    {
+                        // make score always highest
+                        double score = ScoreResults[scan].First().Score;
+                        if (score < bestResult.Score)
+                            ScoreResults[scan].Clear();
+                    }
                     ScoreResults[scan].Add(bestResult);
+
+
                     if (GlycanResults.ContainsKey(bestResult.Glycan))
                     {
                         GlycanResults[bestResult.Glycan]
@@ -181,8 +187,7 @@ namespace MultiGlycanTDLibrary.engine.score
                                 r => r.Charge != bestResult.Charge).ToList();
                         if (GlycanResults[bestResult.Glycan].Count == 0)
                             GlycanResults.Remove(bestResult.Glycan);
-                    }
-                        
+                    } 
                 }
             }
         }
