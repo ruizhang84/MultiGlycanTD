@@ -25,7 +25,7 @@ namespace NUnitTestProject
             reader.Init(path);
 
             // read target spectrum
-            int targetScan = 1385;
+            int targetScan = 1933;
 
             IProcess process = new WeightedAveraging(new LocalNeighborPicking());
             ISpectrum ms2 = reader.GetSpectrum(targetScan);
