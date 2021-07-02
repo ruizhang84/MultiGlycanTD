@@ -10,22 +10,25 @@ namespace SpectrumProcess.deisotoping
 {
     public class AveragineDeisotopingHelper
     {
-        public static Tuple<double, List<int>> Search(List<List<int>> cluster, List<IPeak> peaks,
+        public static Tuple<double, List<int>, int> Search(List<List<int>> cluster, List<IPeak> peaks,
             Averagine averagine, int charge, double ion = 1.0078)
         {
             List<List<int>> clustered = Combinator(cluster);
 
             double maxScore = 0;
+            int bestShift = 0;
             List<int> best = new List<int>();
             foreach (List<int> sequence in clustered)
             {
-                double score = Fit(peaks, sequence, averagine, charge, ion);
-                if (score >= maxScore)
+                Tuple<int, double> shiftScore = Fit(peaks, sequence, averagine, charge, ion);
+                if (shiftScore.Item2 >= maxScore)
                 {
-                    maxScore = score;
+                    maxScore = shiftScore.Item2;
+                    bestShift = shiftScore.Item1;
+                    best = sequence;
                 }
             }
-            return Tuple.Create(maxScore, best);
+            return Tuple.Create(maxScore, best, bestShift);
         }
 
         // Create a isotopic cluster: list of peak lists -> list of peak sequences
@@ -126,7 +129,7 @@ namespace SpectrumProcess.deisotoping
         }
 
         // Fit the isotopic cluster
-        public static double Fit(List<IPeak> peaks, List<int> isotopics,
+        public static Tuple<int, double> Fit(List<IPeak> peaks, List<int> isotopics,
             Averagine averagine, int charge, double ion = 1.0078)
         {
             // find the average mass by most abundant peak
@@ -152,9 +155,13 @@ namespace SpectrumProcess.deisotoping
             }
 
             // find the max intensity peak
-            int maxIndex = 
-                isotopics.OrderByDescending(index => peaks[index].GetIntensity()).First();
+            int maxValue = isotopics.OrderByDescending(index => peaks[index].GetIntensity()).First();
+            int maxIndex = isotopics.IndexOf(maxValue);
 
+
+            // corner case
+            if (maxIndex > maxDistrIndex)
+                return Tuple.Create(0, 0.0);
 
             //align data
             List<double> alignedDistr = new List<double>();
@@ -164,7 +171,8 @@ namespace SpectrumProcess.deisotoping
                 alignedDistr, alignedIntensity);
 
             // compute correlation
-            return Score(alignedDistr, alignedIntensity); 
+            int shift = maxIndex - maxDistrIndex;
+            return Tuple.Create(shift, Score(alignedDistr, alignedIntensity)); 
         }
 
 

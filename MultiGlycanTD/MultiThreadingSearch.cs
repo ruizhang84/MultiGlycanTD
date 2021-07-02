@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpectrumProcess.deisotoping;
 
 namespace MultiGlycanTD
 {
@@ -279,7 +280,7 @@ namespace MultiGlycanTD
 
         void TaskLocalSearch(ref List<SearchResult> results,
             SearchTask task, GlycanPrecursorMatch precursorMatch,
-            GlycanSearch glycanSearch, SearchMetaData searchInfo)
+            IGlycanSearch glycanSearch, SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
             {
@@ -289,7 +290,7 @@ namespace MultiGlycanTD
                 {
                     // spectrum search
                     List<SearchResult> searched = glycanSearch.Search(
-                        task.Spectrum.GetPeaks(), task.Charge, candidates, ion);
+                        candidates, task.Spectrum.GetPeaks(), task.Charge, ion);
 
                     if (searched.Count > 0)
                     {
@@ -315,7 +316,17 @@ namespace MultiGlycanTD
             ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(
                 SearchingParameters.Access.MS2ToleranceBy, 
                 SearchingParameters.Access.MSMSTolerance);
-            GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
+
+            Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
+            if (glycanJson.Derivation == DerivationType.Native)
+            {
+                averagine = new Averagine(AveragineType.Glycan);
+            }
+            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
+                maxCharge, SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance);
+            IGlycanSearch glycanSearch 
+                = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
 
             SearchMetaData searchInfo = new SearchMetaData();
 

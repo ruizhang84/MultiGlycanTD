@@ -2,8 +2,11 @@
 using SpectrumData;
 using SpectrumData.Reader;
 using SpectrumProcess;
+using SpectrumProcess.algorithm;
+using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

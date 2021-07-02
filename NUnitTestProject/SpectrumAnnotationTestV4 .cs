@@ -178,7 +178,6 @@ namespace NUnitTestProject
 
 
             // search
-            double searchRange = 1.0;
             LocalNeighborPicking picking = new LocalNeighborPicking();
             IProcess process = new WeightedAveraging(new LocalNeighborPicking());
             Dictionary<int, List<PeakAnnotated>> final = new Dictionary<int, List<PeakAnnotated>>();
@@ -220,7 +219,7 @@ namespace NUnitTestProject
                 List<string> candidates = precursorMatch.Match(mz, charge);
                 if (candidates.Count == 0)
                     continue;
-                List<SearchResult> searched = glycanSearch.Search(ms2.GetPeaks(), charge, candidates);
+                List<SearchResult> searched = glycanSearch.Search(candidates, ms2.GetPeaks(), charge);
                 List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
                 List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
 

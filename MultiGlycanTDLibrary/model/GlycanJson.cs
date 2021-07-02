@@ -9,8 +9,14 @@ namespace MultiGlycanTDLibrary.model
 {
     using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
 
+    public enum DerivationType
+    {
+        Permethylated, Native
+    }
+
     public class GlycanJson
     {
+        public DerivationType Derivation { get; set; }
         public CompdJson Compound { get; set; }
         // name(composition) -> id (structure)
         public Dictionary<string, List<string>> IDMap { get; set; }

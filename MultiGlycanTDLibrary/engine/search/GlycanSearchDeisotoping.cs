@@ -2,6 +2,7 @@
 using MultiGlycanTDLibrary.model;
 using SpectrumData;
 using SpectrumProcess.algorithm;
+using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,19 @@ namespace MultiGlycanTDLibrary.engine.search
 {
     using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
 
-    public class GlycanSearch : IGlycanSearch
+    public class GlycanSearchDeisotoping : IGlycanSearch
     {
         ISearch<GlycanFragments> searcher_;
+        AveragineDeisotoping deisotoping_;
         Dictionary<string, List<string>> id_map_;
         readonly double minMZ = 200.0; // it is not useful matched at low m/z
         readonly int maxCharge = 3; // it is not likely a higher charge for fragments.
         readonly int minMatches = 5; // it is not likely only match a few peaks.
 
-        public GlycanSearch(
+        public GlycanSearchDeisotoping(
             ISearch<GlycanFragments> searcher, 
-            GlycanJson glycanJson)
+            GlycanJson glycanJson,
+            AveragineDeisotoping deisotoping)
         {
             searcher_ = searcher;
             List<Point<GlycanFragments>> points
@@ -34,6 +37,7 @@ namespace MultiGlycanTDLibrary.engine.search
             }
             searcher_.Init(points);
             id_map_ = glycanJson.IDMap;
+            deisotoping_ = deisotoping;
         }
 
         protected void UpdateMatch(PeakMatch match, IPeak peaks,
@@ -71,6 +75,50 @@ namespace MultiGlycanTDLibrary.engine.search
             return topResults;
         }
 
+        protected void SearchPeaks(int index, List<DeisotopingPeak> peaks,
+            double ion, int charge,
+            Dictionary<string, string> glycanCandid, 
+            Dictionary<string, SearchResult> results)
+        {
+            IPeak peak = peaks[index];
+            double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
+                       ion, charge);
+            List<Point<GlycanFragments>> glycans = searcher_.Search(mass);
+
+            // make records
+            foreach (Point<GlycanFragments> pt in glycans)
+            {
+                GlycanFragments fragments = pt.Content();
+                double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
+                foreach (FragmentTypes type in fragments.Keys)
+                {
+                    foreach (string glycan in fragments[type])
+                    {
+                        if (!glycanCandid.ContainsKey(glycan))
+                        {
+                            continue;
+                        }
+
+                        if (!results.ContainsKey(glycan))
+                        {
+                            results[glycan] = new SearchResult();
+                            results[glycan].Glycan = glycan;
+                            results[glycan].Composition = glycanCandid[glycan];
+                        }
+
+                        if (!results[glycan].Matches.ContainsKey(index))
+                        {
+                            results[glycan].Matches[index] = new PeakMatch();
+                            results[glycan].Matches[index].Peak = peaks[index];
+                        }
+
+                        UpdateMatch(results[glycan].Matches[index],
+                            peaks[index], type, fragments[type].Count, expectMZ);
+                    }
+                }
+            }
+        }
+
         public List<SearchResult> Search(List<string> candidates, List<IPeak> peaks,
             int precursorCharge, double ion = 1.0078)
         {
@@ -83,53 +131,26 @@ namespace MultiGlycanTDLibrary.engine.search
                     glycanCandid[glycan] = composition;
                 }
             }
+            // deisotoping
+            List<DeisotopingPeak> deisotopingPeaks =  deisotoping_.Process(peaks, ion);
 
             // search peaks glycan_id->peak_index
             Dictionary<string, SearchResult> results
                 = new Dictionary<string, SearchResult>();
-            for (int i = 0; i < peaks.Count; i++)
+            for (int i = 0; i < deisotopingPeaks.Count; i++)
             {
-                IPeak peak = peaks[i];
+                DeisotopingPeak peak = deisotopingPeaks[i];
                 if (peak.GetMZ() < minMZ)
                     continue;
-
-                for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
+                if (peak.ChargeAssigned())
                 {
-                    double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
-                       ion, charge);
-                    List<Point<GlycanFragments>> glycans = searcher_.Search(mass);
-
-                    // make records
-                    foreach (Point<GlycanFragments> pt in glycans)
+                    SearchPeaks(i, deisotopingPeaks, ion, peak.Charge, glycanCandid, results);
+                }
+                else
+                {
+                    for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
                     {
-                        GlycanFragments fragments = pt.Content();
-                        double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
-                        foreach (FragmentTypes type in fragments.Keys)
-                        {
-                            foreach (string glycan in fragments[type])
-                            {
-                                if (!glycanCandid.ContainsKey(glycan))
-                                {
-                                    continue;
-                                }
-
-                                if (!results.ContainsKey(glycan))
-                                {
-                                    results[glycan] = new SearchResult();
-                                    results[glycan].Glycan = glycan;
-                                    results[glycan].Composition = glycanCandid[glycan];
-                                }
-
-                                if (!results[glycan].Matches.ContainsKey(i))
-                                {
-                                    results[glycan].Matches[i] = new PeakMatch();
-                                    results[glycan].Matches[i].Peak = peaks[i];
-                                }
-
-                                UpdateMatch(results[glycan].Matches[i], 
-                                    peaks[i], type, fragments[type].Count, expectMZ);
-                            }
-                        }
+                        SearchPeaks(i, deisotopingPeaks, ion, charge, glycanCandid, results);
                     }
                 }
             }

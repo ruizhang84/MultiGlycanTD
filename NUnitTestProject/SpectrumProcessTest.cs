@@ -34,7 +34,7 @@ namespace NUnitTestProject
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
                     writer.WriteLine("mz,intensity");
-                    foreach(IPeak pk in ms1Peaks)
+                    foreach (IPeak pk in ms1Peaks)
                     {
                         writer.WriteLine(pk.GetMZ().ToString() + "," +
                             pk.GetIntensity().ToString());

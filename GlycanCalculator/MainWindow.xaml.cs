@@ -321,8 +321,15 @@ namespace GlycanCalculator
             }
 
             // serialization
+            DerivationType derivation = DerivationType.Native;
+            if (permethylated)
+            {
+                derivation = DerivationType.Permethylated;
+            }
+
             GlycanJson glycanJson = new GlycanJson()
             {
+                Derivation = derivation,
                 Compound = compdJson,
                 IDMap = id_map,
                 FragmentMap = fragments

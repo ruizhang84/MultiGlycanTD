@@ -8,25 +8,20 @@ using System.Threading.Tasks;
 
 namespace SpectrumProcess.deisotoping
 {
-    
-
     public class AveragineDeisotoping 
     {
         ISearch<int> searcher;
         Averagine averagine;
-        double ion;
         int maxCharge;
         double cutoff = 0.8;
 
-        public AveragineDeisotoping(double ion = 1.0078, 
-            int maxCharge = 4, 
-            ToleranceBy by = ToleranceBy.Dalton, 
-            double tol = 0.2)
+        public AveragineDeisotoping(Averagine averagine,
+            int maxCharge = 4, ToleranceBy by = ToleranceBy.Dalton,
+            double tol = 0.1)
         {
             searcher = new BucketSearch<int>(by, tol);
             this.maxCharge = maxCharge;
-            this.ion = ion;
-            averagine = new Averagine();
+            this.averagine = averagine;
         }
 
         protected List<List<int>> Cluster(int current, 
@@ -40,7 +35,9 @@ namespace SpectrumProcess.deisotoping
             while (current + index < peaks.Count)
             {
                 double target = peak.GetMZ() + steps * index;
-                List<int> isotopics = searcher.SearchContent(target);
+                List<int> isotopics = 
+                    searcher.SearchContent(target)
+                    .Where(index => peaks[index].GetIntensity() > 0).ToList();
                 if (isotopics.Count == 0)
                     break;
                 cluster.Add(isotopics);
@@ -50,7 +47,7 @@ namespace SpectrumProcess.deisotoping
             return cluster;
         }
 
-        public List<DeisotopingPeak> Process(List<IPeak> peaks)
+        public List<DeisotopingPeak> Process(List<IPeak> peaks, double ion)
         {
             // init search
             List<Point<int>> points = new List<Point<int>>();
@@ -73,6 +70,8 @@ namespace SpectrumProcess.deisotoping
                 // find cluster
                 double bestScore = 0;
                 List<int> bestFitted = new List<int>();
+                int bestShift = 0;
+                int bestCharge = 0;
                 for (int charge = 1; charge <= maxCharge; charge++)
                 {
                     List<List<int>> clusters = Cluster(i, peaks, charge);
@@ -80,12 +79,14 @@ namespace SpectrumProcess.deisotoping
                         continue;
 
                     // fit the score
-                    Tuple<double, List<int>> fitted = AveragineDeisotopingHelper.Search(
+                    Tuple<double, List<int>, int> fitted = AveragineDeisotopingHelper.Search(
                         clusters, peaks, averagine, charge, ion);
                     if (fitted.Item1 > bestScore)
                     {
                         bestScore = fitted.Item1;
                         bestFitted = fitted.Item2;
+                        bestShift = fitted.Item3;
+                        bestCharge = charge;
                     }
                 }
 
@@ -97,17 +98,21 @@ namespace SpectrumProcess.deisotoping
                 if (bestFitted.Count == 0 || bestScore < cutoff)
                     continue;
 
+                deisotoping.SetMZ(peaks[i].GetMZ() + 1.0 / bestCharge * bestShift);
+                deisotoping
+                    .SetIntensity(bestFitted.Select(index => peaks[index].GetIntensity()).Sum());
+                deisotoping.Charge = bestCharge;
+
+                // remove the isotopic peaks
                 processed.UnionWith(bestFitted);
                 foreach (int matched in bestFitted)
                 {
                     peaks[matched].SetIntensity(0);
                 }
-                deisotoping
-                    .SetIntensity(bestFitted.Select(index => peaks[index].GetIntensity()).Sum());
             }
 
 
-            return deisotopingPeaks;
+            return deisotopingPeaks.OrderBy(p => p.GetMZ()).ToList();
         }
 
         
