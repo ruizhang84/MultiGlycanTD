@@ -234,7 +234,9 @@ namespace MultiGlycanTD
 
                 HashSet<int> swappedScans = new HashSet<int>();
                 // precursor swap, swap any spectrums within d, set precursor mz
-                foreach (SearchTask task in tasks)
+                List<SearchTask> taskList = 
+                    tasks.ToList().OrderBy(t => t.Spectrum.GetScanNum()).ToList();
+                foreach (SearchTask task in taskList)
                 {
                     if (task.Charge != charge)
                         continue;
@@ -243,7 +245,9 @@ namespace MultiGlycanTD
                     if (swappedScans.Contains(task.Spectrum.GetScanNum()))
                         continue;
 
-                    List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ);
+                    List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ)
+                        .OrderBy(t => Math.Abs(t.PrecursorMZ - task.PrecursorMZ))
+                        .ToList();
                     foreach (SearchTask selectTask in candidates)
                     {
                         // avoid duplicate
@@ -259,7 +263,7 @@ namespace MultiGlycanTD
                         }
                         else
                         {
-                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) < minDistance)
+                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) <= minDistance)
                                 continue;
                         }
 
