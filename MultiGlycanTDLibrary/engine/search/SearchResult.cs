@@ -26,6 +26,7 @@ namespace MultiGlycanTDLibrary.engine.search
         public int Scan { get; set; }
         public double Retention { get; set; }
         public double PrecursorMZ { get; set; }
+        public double Ion { get; set; }
         public int Charge { get; set; }
         public string Glycan { get; set; }
         public string Composition { get; set; }

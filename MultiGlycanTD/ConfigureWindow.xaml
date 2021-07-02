@@ -43,18 +43,22 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical" Grid.Row="0">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Ions Types  " />
+                        <CheckBox Name="Proton" Content="Proton (H)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,4,0"/>
+                        <CheckBox Name="Sodium" Content="Sodium (Na)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
                     <Label Content="Searching"/>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Number of Threads"/>
                         <TextBox Name="ThreadNums" Text="4" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="1">
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Ions Types  " />
-                        <CheckBox Name="Proton" Content="Proton (H)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,4,0"/>
-                        <CheckBox Name="Sodium" Content="Sodium (Na)"  VerticalAlignment="Top" FontSize="12" Margin="0,4,0,0"/>
+                        <Label Content="Minimum Cosine Similarity"/>
+                        <TextBox Name="Similarity" Text="0.9" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">

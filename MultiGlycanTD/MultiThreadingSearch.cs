@@ -97,17 +97,26 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            Dictionary<int, ISpectrum> spectra = new Dictionary<int, ISpectrum>(tandemSpectra);
 
-            GlycanScorer scorer = new GlycanScorer(spectra, targets,
-                SearchingParameters.Access.MS2ToleranceBy,
+            Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
+            if (glycanJson.Derivation == DerivationType.Native)
+            {
+                averagine = new Averagine(AveragineType.Glycan);
+            }
+            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
+                maxCharge, SearchingParameters.Access.MS2ToleranceBy,
                 SearchingParameters.Access.MSMSTolerance);
+
+            IGlycanScorer scorer = new GlycanScorerDeisotoping(tandemSpectra,
+                averagine, maxCharge, SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance, 
+                SearchingParameters.Access.ThreadNums, 
+                SearchingParameters.Access.Similarity);
+            scorer.Init(targets);
             scorer.Run();
             targets = scorer.Result();
 
-            scorer = new GlycanScorer(spectra, decoys,
-                SearchingParameters.Access.MS2ToleranceBy,
-                SearchingParameters.Access.MSMSTolerance);
+            scorer.Init(decoys);
             scorer.Run();
             decoys = scorer.Result();
         }

@@ -1,6 +1,7 @@
 ﻿using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumProcess.algorithm;
+using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace MultiGlycanTDLibrary.engine.score
         }
 
         public static double ComputeScore(
-            SearchResult result, double sum, ToleranceBy by, double tol)
+            SearchResult result, double sum)
         {
             double score = 0;
 
@@ -71,13 +72,35 @@ namespace MultiGlycanTDLibrary.engine.score
             return score / sum;
         }
 
+        public static double ComputeScore(
+           SearchResult result, List<IPeak> peaks)
+        {
+            double score = 0;
+            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
+
+            foreach (int index in result.Matches.Keys)
+            {
+                PeakMatch match = result.Matches[index];
+                score += Math.Sqrt(match.Peak.GetIntensity());
+            }
+
+            return score / sum;
+        }
+
+        public static double ComputeFit(SearchResult result, List<IPeak> peaks)
+        {
+            double sum = peaks.Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
+            return result.Matches
+                .Select(r => r.Value)
+                .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
+        }
+
         public static double ComputeFit(SearchResult result, double sum)
         {
             return result.Matches
                 .Select(r => r.Value)
                 .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
         }
-
 
     }
 }

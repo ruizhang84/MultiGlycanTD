@@ -11,22 +11,31 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
 {
-    public class GlycanScorer : IGlycanScorer
+    public class GlycanScorerDeisotoping : IGlycanScorer
     {
         ConcurrentDictionary<int, ISpectrum> Spectra;
         Dictionary<int, List<SearchResult>> SpectrumResults;
         Dictionary<string, List<SearchResult>> GlycanResults;
         Dictionary<int, List<SearchResult>> ScoreResults;
+        Averagine Averagine;
+        int MaxCharge;
+        ToleranceBy By;
+        double Tol;
 
         double Similar = 0.9;
         int Thread = 4;
 
-        public GlycanScorer(ConcurrentDictionary<int, ISpectrum> spectra,
-            int thread = 4, double similar = 0.9)
+        public GlycanScorerDeisotoping(ConcurrentDictionary<int, ISpectrum> spectra,
+             Averagine averagine, int maxCharge, ToleranceBy by, double tol, 
+             int thread = 4, double similar = 0.9)
         {
             Spectra = spectra;
+            Averagine = averagine;
+            MaxCharge = maxCharge;
+            By = by;
+            Tol = tol;
             Thread = thread;
-            Similar = similar;          
+            Similar = similar;
         }
 
         public void Init(List<SearchResult> results)
@@ -69,29 +78,49 @@ namespace MultiGlycanTDLibrary.engine.score
             return ScoreResults.SelectMany(p => p.Value).OrderBy(r => r.Scan).ToList();
         }
 
+        protected void LocalAssignScore(int scan, 
+            AveragineDeisotoping deisotoping)
+        {
+            foreach (SearchResult result in SpectrumResults[scan])
+            {
+                List<IPeak> peaks = deisotoping
+                    .Process(Spectra[scan].GetPeaks(), result.Ion)
+                    .Select(p => p as IPeak).ToList();
+                result.Score = GlycanScorerHelper.ComputeScore(result, peaks);
+                result.Fit = GlycanScorerHelper.ComputeFit(result, peaks);
+            }
+        }
+
+        protected void AssignScoreTask(ConcurrentQueue<int> ScanQueue)
+        {
+            AveragineDeisotoping deisotoping =
+                new AveragineDeisotoping(Averagine, MaxCharge, By, Tol);
+            while (ScanQueue.TryDequeue(out int scan))
+            {
+                LocalAssignScore(scan, deisotoping);
+            }
+        }
+
         public void AssignScore()
         {
-            Parallel.ForEach(SpectrumResults.Keys,
-                new ParallelOptions { MaxDegreeOfParallelism = Thread },
-                scan =>
-                {
-                    ISpectrum spectrum = Spectra[scan];
-                    double sum = spectrum.GetPeaks().Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-                    double sum2 = spectrum.GetPeaks()
-                        .Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
-                    foreach (SearchResult result in SpectrumResults[scan])
-                    {
-                        result.Score = GlycanScorerHelper.ComputeScore(result, sum);
-                        result.Fit = GlycanScorerHelper.ComputeFit(result, sum2);
-                    }
-                });
+            ConcurrentQueue<int> ScanQueue =
+                new ConcurrentQueue<int>(SpectrumResults.Keys);
+
+            List<Task> scoer = new List<Task>();
+            for (int i = 0; i < Thread; i++)
+            {
+                Task LastTask = new Task(() => AssignScoreTask(ScanQueue));
+                LastTask.Start();
+                scoer.Add(LastTask);
+            }
+            Task.WaitAll(scoer.ToArray());
         }
 
         public void AssignSpectrumResults()
         {
             // Assign glycan to spectrum
             SpectrumResults.Clear();
-           
+
             Dictionary<string, HashSet<int>> AssignedGlycanSpectrurmResults
                 = new Dictionary<string, HashSet<int>>();
             foreach (string glycan in GlycanResults.Keys)
@@ -219,14 +248,10 @@ namespace MultiGlycanTDLibrary.engine.score
                                 r => r.Charge != bestResult.Charge).ToList();
                         if (GlycanResults[bestResult.Glycan].Count == 0)
                             GlycanResults.Remove(bestResult.Glycan);
-                    } 
+                    }
                 }
             }
         }
-
-       
-        
-
 
     }
 }

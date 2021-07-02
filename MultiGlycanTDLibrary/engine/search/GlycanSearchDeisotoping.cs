@@ -102,6 +102,7 @@ namespace MultiGlycanTDLibrary.engine.search
                         if (!results.ContainsKey(glycan))
                         {
                             results[glycan] = new SearchResult();
+                            results[glycan].Ion = ion;
                             results[glycan].Glycan = glycan;
                             results[glycan].Composition = glycanCandid[glycan];
                         }

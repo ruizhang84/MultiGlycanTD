@@ -55,6 +55,7 @@ namespace MultiGlycanTD
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
 
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
+            Similarity.Text = SearchingParameters.Access.Similarity.ToString();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -87,6 +88,15 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Thread value is invalid!");
+                return false;
+            }
+            if (double.TryParse(Similarity.Text, out double sim) && sim >= 0 && sim <= 1.0)
+            {
+                ConfigureParameters.Access.Similarity = sim;
+            }
+            else
+            {
+                MessageBox.Show("Cosine Similarity is invalid!");
                 return false;
             }
             if (Proton.IsChecked == true || Sodium.IsChecked == true)
