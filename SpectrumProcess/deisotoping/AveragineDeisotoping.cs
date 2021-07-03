@@ -13,6 +13,7 @@ namespace SpectrumProcess.deisotoping
         ISearch<int> searcher;
         Averagine averagine;
         int maxCharge;
+        int maxExtend = 7;
         double cutoff = 0.8;
 
         public AveragineDeisotoping(Averagine averagine,
@@ -32,7 +33,7 @@ namespace SpectrumProcess.deisotoping
             double steps =  1.0 / charge;
             IPeak peak = peaks[current];
             int index = 0;
-            while (current + index < peaks.Count)
+            while (current + index < peaks.Count && index < maxExtend)
             {
                 double target = peak.GetMZ() + steps * index;
                 List<int> isotopics = 
