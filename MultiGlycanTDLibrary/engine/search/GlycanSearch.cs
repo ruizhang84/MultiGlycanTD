@@ -16,7 +16,6 @@ namespace MultiGlycanTDLibrary.engine.search
     {
         ISearch<GlycanFragments> searcher_;
         Dictionary<string, List<string>> id_map_;
-        readonly double minMZ = 200.0; // it is not useful matched at low m/z
         readonly int maxCharge = 3; // it is not likely a higher charge for fragments.
         readonly int minMatches = 5; // it is not likely only match a few peaks.
 
@@ -90,8 +89,6 @@ namespace MultiGlycanTDLibrary.engine.search
             for (int i = 0; i < peaks.Count; i++)
             {
                 IPeak peak = peaks[i];
-                if (peak.GetMZ() < minMZ)
-                    continue;
 
                 for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
                 {
