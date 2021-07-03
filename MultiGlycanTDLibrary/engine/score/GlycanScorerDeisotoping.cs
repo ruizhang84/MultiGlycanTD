@@ -66,7 +66,7 @@ namespace MultiGlycanTDLibrary.engine.score
             AssignScore();
 
             AssignGlycanResults();
-            while (GlycanResults.Count > 0)
+            while (SpectrumResults.Count > 0)
             {
                 AssignSpectrumResults();
                 AssignGlycanResults();
@@ -121,8 +121,6 @@ namespace MultiGlycanTDLibrary.engine.score
             // Assign glycan to spectrum
             SpectrumResults.Clear();
 
-            Dictionary<string, HashSet<int>> AssignedGlycanSpectrurmResults
-                = new Dictionary<string, HashSet<int>>();
             foreach (string glycan in GlycanResults.Keys)
             {
                 // find best score
@@ -130,6 +128,10 @@ namespace MultiGlycanTDLibrary.engine.score
                 List<SearchResult> bestResults = new List<SearchResult>();
                 foreach (SearchResult result in GlycanResults[glycan])
                 {
+                    // already assigned
+                    if (ScoreResults.ContainsKey(result.Scan))
+                        continue;
+
                     if (result.Fit > bestScore)
                     {
                         bestScore = result.Fit;
@@ -142,13 +144,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 }
                 if (bestResults.Count == 0)
                     continue;
-
-                // record assigned results
-                AssignedGlycanSpectrurmResults[glycan] = new HashSet<int>();
-                foreach (SearchResult bestResult in bestResults)
-                {
-                    AssignedGlycanSpectrurmResults[glycan].Add(bestResult.Scan);
-                }
 
                 // assign spectrum
                 foreach (SearchResult bestResult in bestResults)
@@ -179,29 +174,10 @@ namespace MultiGlycanTDLibrary.engine.score
                                 SpectrumResults[result.Scan] = new List<SearchResult>();
                             }
                             SpectrumResults[result.Scan].Add(result);
-                            AssignedGlycanSpectrurmResults[glycan].Add(result.Scan);
                         }
                     }
                 }
             }
-
-            // Remove assigned glycan spectrum result
-            Dictionary<string, List<SearchResult>> newGlycanResults
-                = new Dictionary<string, List<SearchResult>>();
-            foreach (string glycan in GlycanResults.Keys)
-            {
-                if (!AssignedGlycanSpectrurmResults.ContainsKey(glycan))
-                    continue;
-                HashSet<int> assigned = AssignedGlycanSpectrurmResults[glycan];
-                newGlycanResults[glycan] = new List<SearchResult>();
-                foreach (SearchResult result in GlycanResults[glycan])
-                {
-                    if (assigned.Contains(result.Scan))
-                        continue;
-                    newGlycanResults[glycan].Add(result);
-                }
-            }
-            GlycanResults = newGlycanResults;
         }
 
         public void AssignGlycanResults()
@@ -232,13 +208,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 {
                     if (!ScoreResults.ContainsKey(scan))
                         ScoreResults[scan] = new List<SearchResult>();
-                    else
-                    {
-                        // make score always highest
-                        double score = ScoreResults[scan].First().Score;
-                        if (score < bestResult.Score)
-                            ScoreResults[scan].Clear();
-                    }
                     ScoreResults[scan].Add(bestResult);
 
                     if (GlycanResults.ContainsKey(bestResult.Glycan))
