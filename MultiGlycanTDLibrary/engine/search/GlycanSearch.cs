@@ -14,10 +14,10 @@ namespace MultiGlycanTDLibrary.engine.search
 
     public class GlycanSearch : IGlycanSearch
     {
-        ISearch<GlycanFragments> searcher_;
-        Dictionary<string, List<string>> id_map_;
-        readonly int maxCharge = 3; // it is not likely a higher charge for fragments.
-        readonly int minMatches = 5; // it is not likely only match a few peaks.
+        protected ISearch<GlycanFragments> searcher_;
+        protected Dictionary<string, List<string>> id_map_;
+        protected readonly int maxCharge = 3; // it is not likely a higher charge for fragments.
+        protected readonly int minMatches = 5; // it is not likely only match a few peaks.
 
         public GlycanSearch(
             ISearch<GlycanFragments> searcher, 
@@ -70,7 +70,52 @@ namespace MultiGlycanTDLibrary.engine.search
             return topResults;
         }
 
-        public List<SearchResult> Search(List<string> candidates, List<IPeak> peaks,
+        protected void SearchPeaks(int index, List<IPeak> peaks,
+            double ion, int charge,
+            Dictionary<string, string> glycanCandid,
+            Dictionary<string, SearchResult> results)
+        {
+            IPeak peak = peaks[index];
+            double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
+                       ion, charge);
+            List<Point<GlycanFragments>> glycans = searcher_.Search(mass);
+
+            // make records
+            foreach (Point<GlycanFragments> pt in glycans)
+            {
+                GlycanFragments fragments = pt.Content();
+                double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
+                foreach (FragmentTypes type in fragments.Keys)
+                {
+                    foreach (string glycan in fragments[type])
+                    {
+                        if (!glycanCandid.ContainsKey(glycan))
+                        {
+                            continue;
+                        }
+
+                        if (!results.ContainsKey(glycan))
+                        {
+                            results[glycan] = new SearchResult();
+                            results[glycan].Ion = ion;
+                            results[glycan].Glycan = glycan;
+                            results[glycan].Composition = glycanCandid[glycan];
+                        }
+
+                        if (!results[glycan].Matches.ContainsKey(index))
+                        {
+                            results[glycan].Matches[index] = new PeakMatch();
+                            results[glycan].Matches[index].Peak = peaks[index];
+                        }
+
+                        UpdateMatch(results[glycan].Matches[index],
+                            peaks[index], type, fragments[type].Count, expectMZ);
+                    }
+                }
+            }
+        }
+
+        public virtual List<SearchResult> Search(List<string> candidates, List<IPeak> peaks,
             int precursorCharge, double ion = 1.0078)
         {
             // process composition, id -> compos
@@ -88,46 +133,9 @@ namespace MultiGlycanTDLibrary.engine.search
                 = new Dictionary<string, SearchResult>();
             for (int i = 0; i < peaks.Count; i++)
             {
-                IPeak peak = peaks[i];
-
                 for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
                 {
-                    double mass = util.mass.Spectrum.To.Compute(peak.GetMZ(),
-                       ion, charge);
-                    List<Point<GlycanFragments>> glycans = searcher_.Search(mass);
-
-                    // make records
-                    foreach (Point<GlycanFragments> pt in glycans)
-                    {
-                        GlycanFragments fragments = pt.Content();
-                        double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
-                        foreach (FragmentTypes type in fragments.Keys)
-                        {
-                            foreach (string glycan in fragments[type])
-                            {
-                                if (!glycanCandid.ContainsKey(glycan))
-                                {
-                                    continue;
-                                }
-
-                                if (!results.ContainsKey(glycan))
-                                {
-                                    results[glycan] = new SearchResult();
-                                    results[glycan].Glycan = glycan;
-                                    results[glycan].Composition = glycanCandid[glycan];
-                                }
-
-                                if (!results[glycan].Matches.ContainsKey(i))
-                                {
-                                    results[glycan].Matches[i] = new PeakMatch();
-                                    results[glycan].Matches[i].Peak = peaks[i];
-                                }
-
-                                UpdateMatch(results[glycan].Matches[i], 
-                                    peaks[i], type, fragments[type].Count, expectMZ);
-                            }
-                        }
-                    }
+                    SearchPeaks(i, peaks, ion, charge, glycanCandid, results);
                 }
             }
 

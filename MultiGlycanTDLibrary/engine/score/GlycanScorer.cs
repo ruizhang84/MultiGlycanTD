@@ -13,13 +13,14 @@ namespace MultiGlycanTDLibrary.engine.score
 {
     public class GlycanScorer : IGlycanScorer
     {
-        ConcurrentDictionary<int, ISpectrum> Spectra;
-        Dictionary<int, List<SearchResult>> SpectrumResults;
-        Dictionary<string, List<SearchResult>> GlycanResults;
-        Dictionary<int, List<SearchResult>> ScoreResults;
+        protected ConcurrentDictionary<int, ISpectrum> Spectra;
+        protected Dictionary<int, List<SearchResult>> SpectrumResults;
+        protected Dictionary<string, List<SearchResult>> GlycanResults;
+        protected Dictionary<int, List<SearchResult>> ScoreResults;
 
-        double Similar = 0.9;
-        int Thread = 4;
+        protected double Similar = 0.9;
+        protected int Thread = 4;
+        readonly protected double BinWidth = 0.1;
 
         public GlycanScorer(ConcurrentDictionary<int, ISpectrum> spectra,
             int thread = 4, double similar = 0.9)
@@ -56,11 +57,11 @@ namespace MultiGlycanTDLibrary.engine.score
         {
             AssignScore();
 
-            AssignGlycanResults();
-            while (GlycanResults.Count > 0)
+            AssignSpectrumResults();
+            while (SpectrumResults.Count > 0)
             {
-                AssignSpectrumResults();
                 AssignGlycanResults();
+                AssignSpectrumResults();
             }
         }
 
@@ -69,7 +70,7 @@ namespace MultiGlycanTDLibrary.engine.score
             return ScoreResults.SelectMany(p => p.Value).OrderBy(r => r.Scan).ToList();
         }
 
-        public void AssignScore()
+        public virtual void AssignScore()
         {
             Parallel.ForEach(SpectrumResults.Keys,
                 new ParallelOptions { MaxDegreeOfParallelism = Thread },
@@ -142,7 +143,7 @@ namespace MultiGlycanTDLibrary.engine.score
 
                         double cosine = GlycanScorerHelper.CosineSim(
                             Spectra[bestResult.Scan].GetPeaks(),
-                            Spectra[result.Scan].GetPeaks());
+                            Spectra[result.Scan].GetPeaks(), BinWidth);
                         if (cosine >= Similar)
                         {
                             if (!SpectrumResults.ContainsKey(result.Scan))

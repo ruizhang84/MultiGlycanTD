@@ -48,7 +48,7 @@ namespace SpectrumProcess.deisotoping
             return cluster;
         }
 
-        public List<DeisotopingPeak> Process(List<IPeak> peaks, double ion)
+        public List<IPeak> Process(List<IPeak> peaks, double ion)
         {
             // init search
             List<Point<int>> points = new List<Point<int>>();
@@ -60,8 +60,7 @@ namespace SpectrumProcess.deisotoping
             searcher.Init(points);
 
             // process peaks
-            List<DeisotopingPeak> deisotopingPeaks =
-                new List<DeisotopingPeak>();
+            List<IPeak> deisotopingPeaks = new List<IPeak>();
             HashSet<int> processed = new HashSet<int>();
             for (int i = 0; i < peaks.Count; i++)
             {

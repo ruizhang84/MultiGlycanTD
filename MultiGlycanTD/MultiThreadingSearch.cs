@@ -97,20 +97,8 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-
-            Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
-            if (glycanJson.Derivation == DerivationType.Native)
-            {
-                averagine = new Averagine(AveragineType.Glycan);
-            }
-            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
-                maxCharge, SearchingParameters.Access.MS2ToleranceBy,
-                SearchingParameters.Access.MSMSTolerance);
-
-            IGlycanScorer scorer = new GlycanScorerDeisotoping(tandemSpectra,
-                averagine, maxCharge, SearchingParameters.Access.MS2ToleranceBy,
-                SearchingParameters.Access.MSMSTolerance, 
-                SearchingParameters.Access.ThreadNums, 
+            IGlycanScorer scorer = new GlycanScorer(tandemSpectra,
+                SearchingParameters.Access.ThreadNums,
                 SearchingParameters.Access.Similarity);
             scorer.Init(targets);
             scorer.Run();
@@ -338,7 +326,7 @@ namespace MultiGlycanTD
             AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
                 maxCharge, SearchingParameters.Access.MS2ToleranceBy,
                 SearchingParameters.Access.MSMSTolerance);
-            IGlycanSearch glycanSearch 
+            IGlycanSearch glycanSearch
                 = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
 
             SearchMetaData searchInfo = new SearchMetaData();

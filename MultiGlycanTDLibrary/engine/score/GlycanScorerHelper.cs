@@ -12,26 +12,26 @@ namespace MultiGlycanTDLibrary.engine.score
 {
     public class GlycanScorerHelper
     {
-        public static double CosineSim(List<IPeak> p1, List<IPeak> p2, double tol = 0.1)
+        public static double CosineSim(List<IPeak> p1, List<IPeak> p2, double binWidth = 0.1)
         {
             if (p1.Count == 0 || p2.Count == 0)
                 return 0;
 
             double lowerBound = Math.Min(p1.Min(x => x.GetMZ()), p2.Min(x => x.GetMZ()));
             double upperBound = Math.Max(p1.Max(x => x.GetMZ()), p2.Max(x => x.GetMZ()));
-            int bucketNums = (int) Math.Ceiling((upperBound - lowerBound + 1) / tol);
+            int bucketNums = (int) Math.Ceiling((upperBound - lowerBound + 1) / binWidth);
 
             double[] q1 = new double[bucketNums];
             double[] q2 = new double[bucketNums];
 
             foreach (IPeak pk in p1)
             {
-                int index = (int)Math.Ceiling((pk.GetMZ() - lowerBound) / tol);
+                int index = (int)Math.Ceiling((pk.GetMZ() - lowerBound) / binWidth);
                 q1[index] = Math.Max(q1[index], pk.GetIntensity());
             }
             foreach (IPeak pk in p2)
             {
-                int index = (int)Math.Ceiling((pk.GetMZ() - lowerBound) / tol);
+                int index = (int)Math.Ceiling((pk.GetMZ() - lowerBound) / binWidth);
                 q2[index] = Math.Max(q2[index], pk.GetIntensity());
             }
 
