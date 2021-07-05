@@ -22,16 +22,16 @@ namespace MultiGlycanTDLibrary.engine.score
         protected int Thread = 4;
         readonly protected double BinWidth = 0.1;
 
-        public GlycanScorer(ConcurrentDictionary<int, ISpectrum> spectra,
-            int thread = 4, double similar = 0.9)
+        public GlycanScorer(int thread = 4, double similar = 0.9)
         {
-            Spectra = spectra;
             Thread = thread;
             Similar = similar;          
         }
 
-        public void Init(List<SearchResult> results)
+        public void Init(ConcurrentDictionary<int, ISpectrum> spectra,
+            List<SearchResult> results)
         {
+            Spectra = spectra;
             SpectrumResults = new Dictionary<int, List<SearchResult>>();
             GlycanResults = new Dictionary<string, List<SearchResult>>();
             ScoreResults = new Dictionary<int, List<SearchResult>>();

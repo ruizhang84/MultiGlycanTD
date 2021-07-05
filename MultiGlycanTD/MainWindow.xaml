@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="MultiGlycanTD" Height="280" Width="800">
+        Title="MultiGlycanTD" Height="300" Width="800">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -17,8 +18,8 @@
         <!-- read File Name of MSMS data-->
         <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="0">
             <StackPanel Orientation="Horizontal">
-                <Label Content="MS/MS Files" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Button x:Name="MSMSFileNames" Content="Open Spectra Files (*.Raw/*.MGF)" Click="MSMSFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                <Label Content="MS/MS Spectra Files" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button x:Name="MSMSFileNames" Content="Open Files (*.Raw/*.MGF)" Click="MSMSFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
         </Border>
         <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="1">
@@ -27,12 +28,18 @@
                 <Button x:Name="DatasetFileNames" Content="Open Json File (*.json)" Click="DatasetFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
         </Border>
-        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="2">
+        <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="2">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="MS/MS Decoys (Optional)" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button x:Name="DecoyMSMSFileNames" Content="Open Decoy Files (*.MGF/*.Raw)" Click="DecoyMSMSFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+            </StackPanel>
+        </Border>
+        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="3">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="10">
                 <ListBox Name="lbFiles" Height="100" Width="700" MouseDoubleClick="DeselectFiles_Click"/>
             </StackPanel>
         </Border>
-        <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Margin="10">
+        <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Margin="10">
             <StackPanel Orientation="Horizontal" Margin="0, 0, 20, 0">
                 <Button x:Name="Search"  Content="Search" HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="75" Click="Search_Click" Margin="10"/>
                 <Button x:Name="Configure"  Content="Configure" HorizontalAlignment="Right" VerticalAlignment="Center" Width="75" Click="Configure_Click" Margin="10"/>

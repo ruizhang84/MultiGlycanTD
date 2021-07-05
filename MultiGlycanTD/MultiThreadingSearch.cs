@@ -30,6 +30,7 @@ namespace MultiGlycanTD
         ConcurrentQueue<SearchTask> tasks;
         ConcurrentQueue<SearchTask> decoyTasks;
         ConcurrentDictionary<int, ISpectrum> tandemSpectra;
+        ConcurrentDictionary<int, ISpectrum> decoyTandemSpectra;
 
         string msPath;
         List<SearchResult> targets = new List<SearchResult>();
@@ -40,15 +41,9 @@ namespace MultiGlycanTD
         // It is not likely that a target spectrum has very high charge
         // for glycan or very few peaks for fragments.
         int minPeaks = 30;   // sequencable spectrum with min num peaks
-        int minCharage = 2;
+        int minCharge = 2;
         int maxCharge = 4;   // max charge of spectrum to consider
-        // Generate decoy by delta_M > d
-        // for glycan delta_M < max_d, since glycan fragmetns
-        // differ by monosaccradie can be very similar.
-        ToleranceBy DistanceType = ToleranceBy.Dalton;   // decoy distance dalton or ppm
-        int minDistance = 3;   // d, delta M > d
-        int maxDistance = 50;  // max distance to consider
-        int randomSeed = 2;   // deterministic results.
+
 
         public int Seed { get; set; } = 2;
 
@@ -66,6 +61,7 @@ namespace MultiGlycanTD
             tasks = new ConcurrentQueue<SearchTask>();
             decoyTasks = new ConcurrentQueue<SearchTask>();
             tandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
+            decoyTandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
             GenerateTasks();
             GenerateDecoyTasks();
             taskSize = tasks.Count + decoyTasks.Count;
@@ -97,186 +93,31 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            IGlycanScorer scorer = new GlycanScorer(tandemSpectra,
-                SearchingParameters.Access.ThreadNums,
+            IGlycanScorer scorer = new GlycanScorer(SearchingParameters.Access.ThreadNums,
                 SearchingParameters.Access.Similarity);
-            scorer.Init(targets);
+
+            scorer.Init(tandemSpectra, targets);
             scorer.Run();
             targets = scorer.Result();
 
-            scorer.Init(decoys);
+            scorer.Init(decoyTandemSpectra, decoys);
             scorer.Run();
             decoys = scorer.Result();
         }
 
+       
+
         void GenerateTasks()
         {
-            if (Path.GetExtension(msPath) == ".mgf")
-            {
-                MGFSpectrumReader mgfReader = new MGFSpectrumReader();
-                mgfReader.Init(msPath);
-
-                Dictionary<int, MS2Spectrum> spectraData = mgfReader.GetSpectrum();
-                foreach (int scan in spectraData.Keys)
-                {
-                    MS2Spectrum spectrum = spectraData[scan];
-                    if (spectrum.GetPeaks().Count <= minPeaks)
-                        continue;
-
-                    readingCounter.Add(spectraData.Count);
-
-                    tandemSpectra[scan] = spectrum;
-                    SearchTask searchTask = new SearchTask(spectrum,
-                        spectrum.PrecursorMZ(), spectrum.PrecursorCharge());
-                    tasks.Enqueue(searchTask);
-                }
-            }
-
-            // read spectrum
-            ISpectrumReader reader = new ThermoRawSpectrumReader();
-            IProcess process = new WeightedAveraging(new LocalNeighborPicking());
-
-            reader.Init(msPath);
-
-            int start = reader.GetFirstScan();
-            int end = reader.GetLastScan();
-
-            Dictionary<int, List<int>> scanGroup = new Dictionary<int, List<int>>();
-            int current = -1;
-            for (int i = start; i < end; i++)
-            {
-                if (reader.GetMSnOrder(i) == 1)
-                {
-                    current = i;
-                    scanGroup[i] = new List<int>();
-                }
-                else if (reader.GetMSnOrder(i) == 2
-                    && reader.GetActivation(i) == TypeOfMSActivation.CID)
-                {
-                    scanGroup[current].Add(i);
-                }
-            }
-
-            Parallel.ForEach(scanGroup,
-                new ParallelOptions { MaxDegreeOfParallelism = SearchingParameters.Access.ThreadNums },
-                (scanPair) =>
-                {
-                    if (scanPair.Value.Count > 0)
-                    {
-                        int scan = scanPair.Key;
-                        ISpectrum ms1 = reader.GetSpectrum(scan);
-                        if (ms1.GetPeaks().Count > 0)
-                        {
-                            foreach (int i in scanPair.Value)
-                            {
-                                // precurosr mz
-                                double mz = reader.GetPrecursorMass(i, reader.GetMSnOrder(i));
-
-                                // read ms1 peaks arouond precursor mz
-                                List<IPeak> ms1Peaks = 
-                                    MultiThreadingSearchHelper.FilterPeaks(ms1.GetPeaks(), mz, searchRange);
-                                if (ms1Peaks.Count() == 0)
-                                    continue;
-
-                                // charage
-                                ICharger charger = new Patterson();
-                                int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
-                                if (charge > maxCharge || charge < minCharage)
-                                    continue;
-
-                                // search
-                                ISpectrum ms2 = reader.GetSpectrum(i);
-                                if (ms2.GetPeaks().Count <= minPeaks)
-                                    continue;
-                                ms2 = process.Process(ms2);
-                                tandemSpectra[i] = ms2;
-                                SearchTask searchTask = new SearchTask(ms2, mz, charge);
-                                tasks.Enqueue(searchTask);
-                                
-                            }
-                        }
-                            
-                    }
-                    readingCounter.Add(scanGroup.Count);
-                });
+            MultiThreadingSearchHelper.GenerateSearchTasks(msPath, tasks,
+                tandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
         }
 
         void GenerateDecoyTasks()
         {
-            // find max precursor charges
-            int maxCharge = 0;
-            foreach (SearchTask task in tasks)
-            {
-                maxCharge = Math.Max(maxCharge, task.Charge);
-            }
-
-            // split spectrum on charges
-            for (int charge = 0; charge <= maxCharge; charge++)
-            {
-                // init searcher to find all spectrum within delta < d
-                ISearch<SearchTask> searcher = new BucketSearch<SearchTask>(DistanceType, maxDistance);
-                List<Point<SearchTask>> points = new List<Point<SearchTask>>();
-                foreach (SearchTask task in tasks)
-                {
-                    if (task.Charge == charge)
-                    {
-                        Point<SearchTask> point = new Point<SearchTask>(task.PrecursorMZ, task);
-                        points.Add(point);
-                    }
-                }
-                searcher.Init(points);
-
-                // init randomness
-                Random random = new Random(randomSeed);
-
-                HashSet<int> swappedScans = new HashSet<int>();
-                // precursor swap, swap any spectrums within d, set precursor mz
-                List<SearchTask> taskList = 
-                    tasks.ToList().OrderBy(t => t.Spectrum.GetScanNum()).ToList();
-                foreach (SearchTask task in taskList)
-                {
-                    if (task.Charge != charge)
-                        continue;
-
-                    // avoid duplicate
-                    if (swappedScans.Contains(task.Spectrum.GetScanNum()))
-                        continue;
-
-                    List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ)
-                        .OrderBy(t => Math.Abs(t.PrecursorMZ - task.PrecursorMZ))
-                        .ToList();
-                    foreach (SearchTask selectTask in candidates)
-                    {
-                        // avoid duplicate
-                        if (swappedScans.Contains(selectTask.Spectrum.GetScanNum()))
-                            continue;
-
-                        // distance bound by minDistance
-                        if (DistanceType == ToleranceBy.PPM)
-                        {
-                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ)
-                                / task.PrecursorMZ * 1000000.0 <= minDistance)
-                                continue;
-                        }
-                        else
-                        {
-                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) <= minDistance)
-                                continue;
-                        }
-
-                        // random picked
-                        int r = random.Next(0, 2);
-                        if (r % 2 == 0) continue;
-
-                        // swap
-                        decoyTasks.Enqueue(new SearchTask(task.Spectrum, selectTask.PrecursorMZ, charge));
-                        decoyTasks.Enqueue(new SearchTask(selectTask.Spectrum, task.PrecursorMZ, charge));
-                        swappedScans.Add(task.Spectrum.GetScanNum());
-                        swappedScans.Add(selectTask.Spectrum.GetScanNum());
-                        break;
-                    }
-                }
-            };
+            MultiThreadingSearchHelper.GenerateSearchTasks(
+                SearchingParameters.Access.DecoyFiles, decoyTasks,
+                decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,

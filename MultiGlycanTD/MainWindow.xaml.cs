@@ -63,6 +63,19 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.Database = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
             }
         }
+
+        private void DecoyMSMSFileNames_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog fileNameDialog = new OpenFileDialog();
+            fileNameDialog.Filter = "MGF File|*.mgf|Raw File|*.raw";
+            fileNameDialog.Title = "Open a MS2 File";
+
+            if (fileNameDialog.ShowDialog() == true)
+            {
+                SearchingParameters.Access.DecoyFiles = fileNameDialog.FileName;
+            }
+        }
+
         private void DeselectFiles_Click(object sender, RoutedEventArgs e)
         {
             if (lbFiles.SelectedItem != null)
@@ -96,5 +109,7 @@ namespace MultiGlycanTD
             Window subWindow = new ConfigureWindow();
             subWindow.Show();
         }
+
+
     }
 }

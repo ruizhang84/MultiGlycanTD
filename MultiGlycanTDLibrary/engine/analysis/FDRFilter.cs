@@ -85,7 +85,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
             targets = targets.Where(p => p.Score > 0).ToList();
             decoys = decoys.Where(p => p.Score > 0).ToList();
             // acquire the best score of the scan
-            foreach (var it in targets)
+            foreach (SearchResult it in targets)
             {
                 int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
@@ -102,7 +102,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
             }
             // when target and decoy are in the same spectrum,
             // the one with higher score is picked.
-            foreach (var it in decoys)
+            foreach (SearchResult it in decoys)
             {
                 int scan = it.Scan;
                 if (!score_map.ContainsKey(scan))
@@ -118,14 +118,14 @@ namespace MultiGlycanTDLibrary.engine.analysis
                 }
             }
 
-            foreach (var it in targets)
+            foreach (SearchResult it in targets)
             {
                 int scan = it.Scan;
                 if (score_map[scan] > it.Score)
                     continue;
                 target_.Add(it);
             }
-            foreach (var it in decoys)
+            foreach (SearchResult it in decoys)
             {
                 int scan = it.Scan;
                 if (score_map[scan] > it.Score)

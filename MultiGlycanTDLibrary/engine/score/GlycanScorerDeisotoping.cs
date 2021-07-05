@@ -18,9 +18,9 @@ namespace MultiGlycanTDLibrary.engine.score
         ToleranceBy By;
         double Tol;
 
-        public GlycanScorerDeisotoping(ConcurrentDictionary<int, ISpectrum> spectra,
-             Averagine averagine, int maxCharge, ToleranceBy by, double tol, 
-             int thread = 4, double similar = 0.9): base(spectra, thread, similar)
+        public GlycanScorerDeisotoping(Averagine averagine,
+             int maxCharge, ToleranceBy by, double tol, int thread = 4,
+             double similar = 0.9) : base(thread, similar)
         {
             Averagine = averagine;
             MaxCharge = maxCharge;

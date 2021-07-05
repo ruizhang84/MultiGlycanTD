@@ -29,11 +29,10 @@ namespace MultiGlycanTD
 
         // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
+        public string DecoyFiles { get; set; } = "peptides_nist.mgf";
         public GlycanJson Database { get; set; } = null;
 
-        SearchingParameters()
-        {
-        }
+        SearchingParameters() { }
 
         public void Update()
         {
