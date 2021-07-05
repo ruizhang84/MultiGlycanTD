@@ -91,11 +91,15 @@ namespace MultiGlycanTD
         {
             if (SearchingParameters.Access.MSMSFiles.Count == 0)
             {
-                MessageBox.Show("Please choose MS/MS files");
+                MessageBox.Show("Please choose a MS/MS files.");
+            }
+            else if (SearchingParameters.Access.DecoyFiles.Length == 0)
+            {
+                MessageBox.Show("Please choose a MS/MS file to build decoys.");
             }
             else if (SearchingParameters.Access.Database is null)
             {
-                MessageBox.Show("Please choose glycan serching (*.JSON) file");
+                MessageBox.Show("Please choose glycan serching (*.JSON) file.");
             }
             else
             {

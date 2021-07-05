@@ -20,7 +20,7 @@ namespace SpectrumData.Reader
         Regex charge = new Regex("CHARGE=([+-]?\\d+)", RegexOptions.Compiled);
         Regex rt_second = new Regex("RTINSECONDS=(\\d+\\.?\\d*)", RegexOptions.Compiled);
         Regex instrument = new Regex("INSTRUMENT=(.*)");
-        Regex scan = new Regex("SCANS=(\\d+)", RegexOptions.Compiled);
+        Regex scan = new Regex("SCANS=(-?\\d+)", RegexOptions.Compiled);
         Regex mz_intensity = new Regex("^(\\d+\\.?\\d*)\\s+(\\d+\\.?\\d*)", RegexOptions.Compiled);
 
         Dictionary<int, MS2Spectrum> spectrumTable = new Dictionary<int, MS2Spectrum>();
