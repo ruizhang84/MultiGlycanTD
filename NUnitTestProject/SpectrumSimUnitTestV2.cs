@@ -26,10 +26,10 @@ namespace NUnitTestProject
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
-            ISpectrum A = reader.GetSpectrum(930);
-            ISpectrum B = reader.GetSpectrum(974);
+            ISpectrum A = reader.GetSpectrum(3333);
+            ISpectrum B = reader.GetSpectrum(3351);
 
-            Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 1.0));
+            Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 0.2));
                    
             Assert.Pass();
         }
