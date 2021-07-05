@@ -46,7 +46,7 @@ namespace MultiGlycanTD
         // for glycan delta_M < max_d, since glycan fragmetns
         // differ by monosaccradie can be very similar.
         ToleranceBy DistanceType = ToleranceBy.Dalton;   // decoy distance dalton or ppm
-        int minDistance = 1;   // d, delta M > d
+        int minDistance = 3;   // d, delta M > d
         int maxDistance = 50;  // max distance to consider
         int randomSeed = 2;   // deterministic results.
 
@@ -97,7 +97,15 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            IGlycanScorer scorer = new GlycanScorer(tandemSpectra,
+            Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
+            if (glycanJson.Derivation == DerivationType.Native)
+            {
+                averagine = new Averagine(AveragineType.Glycan);
+            }
+            IGlycanScorer scorer = new GlycanScorerDeisotoping(tandemSpectra, 
+                averagine, maxCharge,
+                SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance,
                 SearchingParameters.Access.ThreadNums,
                 SearchingParameters.Access.Similarity);
             scorer.Init(targets);

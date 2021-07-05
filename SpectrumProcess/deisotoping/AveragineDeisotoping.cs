@@ -62,6 +62,8 @@ namespace SpectrumProcess.deisotoping
             // process peaks
             List<IPeak> deisotopingPeaks = new List<IPeak>();
             HashSet<int> processed = new HashSet<int>();
+            Dictionary<int, double> Restored 
+                = new Dictionary<int, double>();
             for (int i = 0; i < peaks.Count; i++)
             {
                 if (processed.Contains(i))
@@ -107,10 +109,16 @@ namespace SpectrumProcess.deisotoping
                 processed.UnionWith(bestFitted);
                 foreach (int matched in bestFitted)
                 {
+                    Restored[matched] = peaks[matched].GetIntensity();
                     peaks[matched].SetIntensity(0);
                 }
             }
 
+            // restore original peaks
+            foreach (int matched in Restored.Keys)
+            {
+                peaks[matched].SetIntensity(Restored[matched]);
+            }
 
             return deisotopingPeaks.OrderBy(p => p.GetMZ()).ToList();
         }

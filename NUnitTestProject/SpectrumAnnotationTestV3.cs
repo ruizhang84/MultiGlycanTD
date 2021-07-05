@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using SpectrumProcess.deisotoping;
 
 namespace NUnitTestProject
 {
@@ -27,9 +28,8 @@ namespace NUnitTestProject
 
         List<FragmentTypes> types = new List<FragmentTypes>()
         {
-            FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
-            FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
-            FragmentTypes.YZ, FragmentTypes.ZZ
+            FragmentTypes.B, FragmentTypes.Y,
+            FragmentTypes.BY, FragmentTypes.YY
         };
 
         string TypeToString(FragmentTypes type)
@@ -243,15 +243,18 @@ namespace NUnitTestProject
             ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
             ISearch<Dictionary<FragmentTypes, List<string>>> searcher2 = new BucketSearch<Dictionary<FragmentTypes, List<string>>>(ToleranceBy.Dalton, 0.1);
-            GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
+            
+            Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
+            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
+                4, ToleranceBy.Dalton, 0.1);
+            IGlycanSearch glycanSearch
+                = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
+
+
             ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);
             SearchMetaData analyzer = new SearchMetaData();
             GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3,
                 massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
-
-            int targetScan = 1933;
-            double targetMZ = -1;
-            double delta = 0; //  809.428345 - 799.423218;
 
             foreach (var scanPair in scanGroup)
             {
@@ -262,9 +265,6 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-                        if (scan != targetScan)
-                            continue;
-
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                         if (ms1Peaks.Count() == 0)
@@ -279,18 +279,14 @@ namespace NUnitTestProject
                         if (ms2.GetPeaks().Count <= 30)
                             continue;
                         ms2 = process.Process(ms2);
-                        foreach (IPeak pk in ms2.GetPeaks())
-                        {
-                            pk.SetMZ(pk.GetMZ() + delta);
-                        }
-                        if (targetMZ > 0)
-                            mz = targetMZ;
+
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
                             continue;
-                        List<SearchResult> searched = glycanSearch.Search(candidates, ms2.GetPeaks(), charge);
+                        List<SearchResult> searched = glycanSearch.Search(candidates, ms2.GetPeaks(), charge, 1.0078);
                         List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
-                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(ms2.GetPeaks(), charge, results);
+
+                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(deisotoping.Process(ms2.GetPeaks(), 1.0078), charge, results);
 
                         final[scan] = annotateds;
                     }
@@ -301,8 +297,7 @@ namespace NUnitTestProject
 
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec"
-                    + (targetMZ > 0 ? "_decoy" : "_target") + ".csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\annotated_spec.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {

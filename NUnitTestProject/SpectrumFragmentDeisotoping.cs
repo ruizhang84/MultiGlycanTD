@@ -36,7 +36,7 @@ namespace NUnitTestProject
             AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
                 4, ToleranceBy.Dalton, 0.1);
 
-            List<DeisotopingPeak> peaks = deisotoping.Process(ms2.GetPeaks(), 1.0078);
+            List<IPeak> peaks = deisotoping.Process(ms2.GetPeaks(), 1.0078);
             using (FileStream ostrm = new FileStream(output, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))

@@ -25,7 +25,7 @@ namespace MultiGlycanTD
         public double Similarity = 0.9;
 
         // result
-        public double FDR { get; set; } = 0.01;
+        public double FDR { get; set; } = 0.05;
 
         // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
@@ -71,7 +71,7 @@ namespace MultiGlycanTD
         public double Similarity = 0.9;
 
         //result
-        public double FDR { get; set; } = 0.01;
+        public double FDR { get; set; } = 0.05;
 
         protected static readonly Lazy<ConfigureParameters>
             lazy = new Lazy<ConfigureParameters>(() => new ConfigureParameters());
