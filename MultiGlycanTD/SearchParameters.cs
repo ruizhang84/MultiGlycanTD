@@ -11,7 +11,7 @@ namespace MultiGlycanTD
     public class SearchingParameters
     {
         // spectrum
-        public double MS1Tolerance { get; set; } = 10;
+        public double MS1Tolerance { get; set; } = 5;
         public double MSMSTolerance { get; set; } = 0.1;
         public ToleranceBy MS1ToleranceBy { get; set; } = ToleranceBy.PPM;
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
@@ -57,7 +57,7 @@ namespace MultiGlycanTD
     public class ConfigureParameters
     {
         //spectrum
-        public double MS1Tolerance { get; set; } = 10;
+        public double MS1Tolerance { get; set; } = 5;
         public double MSMSTolerance { get; set; } = 0.1;
         public ToleranceBy MS1ToleranceBy { get; set; } = ToleranceBy.PPM;
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;

@@ -24,7 +24,7 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <Label Content="MS1 Tolerance"/>
-                <TextBox Name="MS1Tol" Text="10" VerticalAlignment="Center" FontSize="12" Width="76"/>
+                <TextBox Name="MS1Tol" Text="5" VerticalAlignment="Center" FontSize="12" Width="76"/>
                 <RadioButton Name="MS1TolByPPM" Content="ppm" VerticalAlignment="Center"  IsChecked="True" Margin="5" Checked="MS1TolByPPM_Checked"/>
                 <RadioButton Name="MS1TolByDalton" Content="Dalton" VerticalAlignment="Center" Margin="5" Checked="MS1TolByDalton_Checked"/>
             </StackPanel>

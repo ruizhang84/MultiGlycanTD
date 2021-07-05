@@ -270,7 +270,6 @@ namespace NUnitTestProject
                         if (ms1Peaks.Count() == 0)
                             continue;
 
-
                         ICharger charger = new Patterson();
                         int charge = charger.Charge(ms1Peaks, mz - searchRange, mz + searchRange);
 
