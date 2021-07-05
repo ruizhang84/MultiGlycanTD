@@ -77,6 +77,7 @@ namespace MultiGlycanTDLibrary.engine.score
                 scan =>
                 {
                     ISpectrum spectrum = Spectra[scan];
+
                     double sum = spectrum.GetPeaks().Select(p => Math.Sqrt(p.GetIntensity())).Sum();
                     double sum2 = spectrum.GetPeaks()
                         .Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
