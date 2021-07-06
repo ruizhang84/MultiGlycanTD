@@ -109,6 +109,16 @@
                     <CheckBox Name="YZions" Content="YZ  "  IsChecked="False" VerticalAlignment="Center"/>
                     <CheckBox Name="ZZions" Content="ZZ-type ions"  IsChecked="False" VerticalAlignment="Center"/>
                 </StackPanel>
+                <StackPanel Margin="4" Orientation="Horizontal" >
+                    <CheckBox Name="BYYions" Content="BYY/CYZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="BYZions" Content="BYZ/CZZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="BZZions" Content="BZZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="CYYions" Content="CYY  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="YYYions" Content="YYY  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="YYZions" Content="YYZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="YZZions" Content="YZZ  "  IsChecked="False" VerticalAlignment="Center"/>
+                    <CheckBox Name="ZZZions" Content="ZZZ-ions  "  IsChecked="False" VerticalAlignment="Center"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="8">

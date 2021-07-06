@@ -174,7 +174,24 @@ namespace GlycanCalculator
             if (YZions.IsChecked == true)
                 types.Add(FragmentType.YZ);
             if (ZZions.IsChecked == true)
-                types.Add(FragmentType.ZZ); 
+                types.Add(FragmentType.ZZ);
+
+            if (BYYions.IsChecked == true)
+                types.Add(FragmentType.BYY);
+            if (BYZions.IsChecked == true)
+                types.Add(FragmentType.BYZ);
+            if (BZZions.IsChecked == true)
+                types.Add(FragmentType.BZZ);
+            if (CYYions.IsChecked == true)
+                types.Add(FragmentType.CYY);
+            if (YYYions.IsChecked == true)
+                types.Add(FragmentType.YYY);
+            if (YYZions.IsChecked == true)
+                types.Add(FragmentType.YYZ);
+            if (YZZions.IsChecked == true)
+                types.Add(FragmentType.YZZ);
+            if (ZZZions.IsChecked == true)
+                types.Add(FragmentType.ZZZ);
             if (types.Count == 0)
             {
                 MessageBox.Show("Select at least one ions!");
