@@ -35,7 +35,7 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = true;
 
             GlycanIonsBuilder.Build.Types = new List<FragmentType>()
-            { FragmentType.BYY };
+            { FragmentType.BZZ };
             //2 1 0 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 0 0 0 0
             string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
@@ -50,7 +50,7 @@ namespace NUnitTestProject
                         if (id.StartsWith("2 1 0 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 0 0 0 0"))
                         {
                             List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
-                                                .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
+                                                .OrderBy(m => m).Select(m => Math.Round(m, 4)).Distinct().ToList();
                             string output = glycan.ID() + "," + glycan.Name() + ","
                                 + string.Join(" ", massList.Select(m => m.ToString()));
                             writer.WriteLine(output);

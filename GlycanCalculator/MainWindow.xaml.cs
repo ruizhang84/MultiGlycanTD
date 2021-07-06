@@ -286,7 +286,7 @@ namespace GlycanCalculator
                     foreach (FragmentType type in GlycanIonsBuilder.Build.Types)
                     {
                         List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan, type)
-                                        .Select(m => Math.Round(m, 4)).ToList();
+                                        .Select(m => Math.Round(m, 4)).Distinct().ToList();
                         fragmentMass.Add(Tuple.Create(id, type, massList));
                     }
 

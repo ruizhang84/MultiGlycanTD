@@ -98,7 +98,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 }
             }
 
-
             return glycanBYYFragment;
         }
 
