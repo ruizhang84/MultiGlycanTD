@@ -1,5 +1,6 @@
 ﻿using MultiGlycanTDLibrary.model.glycan;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public bool HybridInclude { get; set; }
         public bool HighMannoseInclude { get; set; }
 
-        protected Dictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
+        protected ConcurrentDictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
         protected List<Monosaccharide> candidates_;
 
         protected object obj = new object();
@@ -36,7 +37,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             HybridInclude = hybrid;
             HighMannoseInclude = highMannose;
 
-            glycans_map_ = new Dictionary<string, IGlycan>();
+            glycans_map_ = new ConcurrentDictionary<string, IGlycan>();
             candidates_ = new List<Monosaccharide>()
             {
                 Monosaccharide.GlcNAc,

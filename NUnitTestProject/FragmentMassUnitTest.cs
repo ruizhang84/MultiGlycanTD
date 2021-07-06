@@ -41,7 +41,7 @@ namespace NUnitTestProject
             //    FragmentType.BY, FragmentType.BZ, FragmentType.CY, FragmentType.YY,
             //    FragmentType.YZ, FragmentType.ZZ
             //};
-            //2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0 0 0 0 0
+            //2 1 0 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 0 0 0 0
             string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
             {
@@ -52,9 +52,9 @@ namespace NUnitTestProject
                     {
                         var id = pair.Key;
                         var glycan = pair.Value;
-                        if (glycan.IsValid())
+                        if (id.StartsWith("2 1 1 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0"))
                         {
-                            List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan)
+                            List<double> massList = GlycanIonsBuilder.Build.BYYion(glycan)
                                                 .OrderBy(m => m).Select(m => Math.Round(m, 4)).ToList();
                             string output = glycan.ID() + "," + glycan.Name() + ","
                                 + string.Join(" ", massList.Select(m => m.ToString()));

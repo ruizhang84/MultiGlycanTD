@@ -36,6 +36,19 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanYFragment;
         }
+        public static List<IGlycan> YYYionsLikeFragments(IGlycan glycan)
+        {
+            List<IGlycan> glycanYFragment = new List<IGlycan>();
+            foreach (IGlycan sub in glycan.Fragments())
+            {
+                int diff = GlycanFragmentBuilderHelper.CountYCut(sub, glycan, 3);
+                if (diff == 3)
+                {
+                    glycanYFragment.Add(sub);
+                }
+            }
+            return glycanYFragment;
+        }
         public static List<IGlycan> BionsLikeFragments(IGlycan glycan)
         {
             List<IGlycan> glycanBFragment = new List<IGlycan>();
@@ -65,7 +78,18 @@ namespace MultiGlycanTDLibrary.engine.glycan
             }
             return glycanBYFragment;
         }
+        public static List<IGlycan> BYYionsLikeFragments(IGlycan glycan)
+        {
+            List<IGlycan> glycanBYFragment = new List<IGlycan>();
 
+            List<IGlycan> BYionsFragments = BYionsLikeFragments(glycan);
+            foreach (IGlycan sub in BYionsFragments)
+            {
+                List<IGlycan> subYionsFragments = YionsLikeFragments(sub);
+                glycanBYFragment.AddRange(subYionsFragments);
+            }
+            return glycanBYFragment;
+        }
 
 
     }
