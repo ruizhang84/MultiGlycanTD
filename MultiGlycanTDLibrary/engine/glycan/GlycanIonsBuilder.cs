@@ -121,11 +121,11 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 if (type == FragmentType.BZZ)
                     return BZZions(byyionsLikeFragments);
                 if (type == FragmentType.CYY)
-                    return BYYions(byyionsLikeFragments);
+                    return CYYions(byyionsLikeFragments);
                 if (type == FragmentType.CYZ)
-                    return BYZions(byyionsLikeFragments);
+                    return CYZions(byyionsLikeFragments);
                 if (type == FragmentType.CZZ)
-                    return BZZions(byyionsLikeFragments);
+                    return CZZions(byyionsLikeFragments);
             }
 
             if (type == FragmentType.YYY || type == FragmentType.YYZ || type == FragmentType.YZZ || 
@@ -434,7 +434,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public double CYYion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan);
+            return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2 + kWater;
         }
 
         public List<double> CYYions(List<IGlycan> glycans)
@@ -444,22 +444,22 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public double CYZion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan);
+            return BYYion(glycan);
         }
 
         public List<double> CYZions(List<IGlycan> glycans)
         {
-            return glycans.Select(m => CYZion(m)).Distinct().ToList();
+            return BYYions(glycans);
         }
 
         public double CZZion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan);
+            return BYZion(glycan);
         }
 
         public List<double> CZZions(List<IGlycan> glycans)
         {
-            return glycans.Select(m => CZZion(m)).Distinct().ToList();
+            return BYZions(glycans);
         }
 
         public double YYYion(IGlycan glycan)

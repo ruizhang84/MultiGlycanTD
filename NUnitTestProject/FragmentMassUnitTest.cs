@@ -35,7 +35,7 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = true;
 
             GlycanIonsBuilder.Build.Types = new List<FragmentType>()
-            { FragmentType.BZZ };
+            { FragmentType.CZZ };
             //2 1 0 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 0 0 0 0
             string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
