@@ -39,12 +39,12 @@ namespace NUnitTestProject
             GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.kABEE;
             Glycan.To.Derivatization = Glycan.kABEE;
 
-            GlycanIonsBuilder.Build.Types = new List<FragmentTypes>()
-            { FragmentTypes.YZ };
+            GlycanIonsBuilder.Build.Types = new List<FragmentType>()
+            { FragmentType.YZ };
             //{
-            //    FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
-            //    FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
-            //    FragmentTypes.YZ, FragmentTypes.ZZ
+            //    FragmentType.B, FragmentType.C, FragmentType.Y, FragmentType.Z,
+            //    FragmentType.BY, FragmentType.BZ, FragmentType.CY, FragmentType.YY,
+            //    FragmentType.YZ, FragmentType.ZZ
             //};
             foreach(var pair in map)
             {

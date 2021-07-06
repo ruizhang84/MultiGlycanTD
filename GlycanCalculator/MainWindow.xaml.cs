@@ -45,7 +45,7 @@ namespace GlycanCalculator
         protected Derivatization derivatization;
         protected bool permethylated;
         protected bool reduced;
-        protected List<FragmentTypes> types = new List<FragmentTypes>();
+        protected List<FragmentType> types = new List<FragmentType>();
 
         public MainWindow()
         {
@@ -156,25 +156,25 @@ namespace GlycanCalculator
 
             types.Clear();
             if (Bions.IsChecked == true)
-                types.Add(FragmentTypes.B);
+                types.Add(FragmentType.B);
             if (Cions.IsChecked == true)
-                types.Add(FragmentTypes.C);
+                types.Add(FragmentType.C);
             if (Yions.IsChecked == true)
-                types.Add(FragmentTypes.Y);
+                types.Add(FragmentType.Y);
             if (Zions.IsChecked == true)
-                types.Add(FragmentTypes.Z);
+                types.Add(FragmentType.Z);
             if (BYions.IsChecked == true)
-                types.Add(FragmentTypes.BY);
+                types.Add(FragmentType.BY);
             if (BZions.IsChecked == true)
-                types.Add(FragmentTypes.BZ);
+                types.Add(FragmentType.BZ);
             if (CYions.IsChecked == true)
-                types.Add(FragmentTypes.CY);
+                types.Add(FragmentType.CY);
             if (YYions.IsChecked == true)
-                types.Add(FragmentTypes.YY);
+                types.Add(FragmentType.YY);
             if (YZions.IsChecked == true)
-                types.Add(FragmentTypes.YZ);
+                types.Add(FragmentType.YZ);
             if (ZZions.IsChecked == true)
-                types.Add(FragmentTypes.ZZ); 
+                types.Add(FragmentType.ZZ); 
             if (types.Count == 0)
             {
                 MessageBox.Show("Select at least one ions!");
@@ -268,10 +268,10 @@ namespace GlycanCalculator
 
             // fragmentation maps
             object obj = new object();
-            Dictionary<double, Dictionary<FragmentTypes, List<string>>> fragments
-                = new Dictionary<double, Dictionary<FragmentTypes, List<string>>>();
-            List<Tuple<string, FragmentTypes, List<double>>> fragmentsContainer
-                = new List<Tuple<string, FragmentTypes, List<double>>>();
+            Dictionary<double, Dictionary<FragmentType, List<string>>> fragments
+                = new Dictionary<double, Dictionary<FragmentType, List<string>>>();
+            List<Tuple<string, FragmentType, List<double>>> fragmentsContainer
+                = new List<Tuple<string, FragmentType, List<double>>>();
             var map = glycanBuilder.GlycanMaps();
 
 
@@ -281,9 +281,9 @@ namespace GlycanCalculator
                 var glycan = pair.Value;
                 if (glycan.IsValid())
                 {
-                    List<Tuple<string, FragmentTypes, List<double>>> fragmentMass
-                        = new List<Tuple<string, FragmentTypes, List<double>>>();
-                    foreach (FragmentTypes type in GlycanIonsBuilder.Build.Types)
+                    List<Tuple<string, FragmentType, List<double>>> fragmentMass
+                        = new List<Tuple<string, FragmentType, List<double>>>();
+                    foreach (FragmentType type in GlycanIonsBuilder.Build.Types)
                     {
                         List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan, type)
                                         .Select(m => Math.Round(m, 4)).ToList();
@@ -297,15 +297,15 @@ namespace GlycanCalculator
                 }
             });
 
-            foreach (Tuple<string, FragmentTypes, List<double>> item in fragmentsContainer)
+            foreach (Tuple<string, FragmentType, List<double>> item in fragmentsContainer)
             {
                 string id = item.Item1;
-                FragmentTypes type = item.Item2;
+                FragmentType type = item.Item2;
 
                 foreach (double mass in item.Item3)
                 {
                     if (!fragments.ContainsKey(mass))
-                        fragments[mass] = new Dictionary<FragmentTypes, List<string>>();
+                        fragments[mass] = new Dictionary<FragmentType, List<string>>();
                     if (!fragments[mass].ContainsKey(type))
                         fragments[mass][type] = new List<string>();
                     fragments[mass][type].Add(id);
@@ -327,12 +327,26 @@ namespace GlycanCalculator
                 derivation = DerivationType.Permethylated;
             }
 
+            ParameterJson paramters = new ParameterJson()
+            {
+                HexNAc = hexNAc,
+                Hex = hex,
+                Fuc = fuc,
+                NeuAc = neuAc,
+                NeuGc = neuGc,
+                ComplexInclude = complexInclude,
+                HybridInclude = hybridInclude,
+                HighMannoseInclude = highMannoseInclude,
+                FragmentTypes = types
+            };
+
             GlycanJson glycanJson = new GlycanJson()
             {
                 Derivation = derivation,
                 Compound = compdJson,
                 IDMap = id_map,
-                FragmentMap = fragments
+                FragmentMap = fragments,
+                Parameters = paramters
             };
             string jsonString = JsonSerializer.Serialize(glycanJson);
             File.WriteAllText(fileName, jsonString);

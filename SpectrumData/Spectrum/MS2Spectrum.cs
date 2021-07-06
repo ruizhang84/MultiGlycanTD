@@ -27,6 +27,16 @@ namespace SpectrumData.Spectrum
         }
 
 
+        public MS2Spectrum(ISpectrum spectrum, 
+            double mz, int charge)
+        {
+            scanNum = spectrum.GetScanNum();
+            retention = spectrum.GetRetention();
+            precursorMZ = mz;
+            precursorCharge = charge;
+            peaks = spectrum.GetPeaks();
+        }
+
         public TypeOfMSActivation Activation()
         {
             return activation;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
-    using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
+    using GlycanFragments = Dictionary<FragmentType, List<string>>;
 
     public class GlycanSearch : IGlycanSearch
     {
@@ -36,7 +36,7 @@ namespace MultiGlycanTDLibrary.engine.search
         }
 
         protected void UpdateMatch(PeakMatch match, IPeak peaks,
-            FragmentTypes type, int potentialMatches, double expectMZ)
+            FragmentType type, int potentialMatches, double expectMZ)
         {
             double diff = Math.Abs(expectMZ - peaks.GetMZ());
             double prevDiff = Math.Abs(match.TheoreticMZ - peaks.GetMZ());
@@ -85,7 +85,7 @@ namespace MultiGlycanTDLibrary.engine.search
             {
                 GlycanFragments fragments = pt.Content();
                 double expectMZ = util.mass.Spectrum.To.ComputeMZ(pt.Value(), ion, charge);
-                foreach (FragmentTypes type in fragments.Keys)
+                foreach (FragmentType type in fragments.Keys)
                 {
                     foreach (string glycan in fragments[type])
                     {

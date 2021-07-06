@@ -26,93 +26,93 @@ namespace NUnitTestProject
     {
         object obj = new object();
 
-        List<FragmentTypes> types = new List<FragmentTypes>()
+        List<FragmentType> types = new List<FragmentType>()
         {
-            FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
-            FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
-            FragmentTypes.YZ, FragmentTypes.ZZ
+            FragmentType.B, FragmentType.C, FragmentType.Y, FragmentType.Z,
+            FragmentType.BY, FragmentType.BZ, FragmentType.CY, FragmentType.YY,
+            FragmentType.YZ, FragmentType.ZZ
         };
 
-        string TypeToString(FragmentTypes type)
+        string TypeToString(FragmentType type)
         {
             switch (type)
             {
-                case FragmentTypes.B:
+                case FragmentType.B:
                     return "B";
-                case FragmentTypes.C:
+                case FragmentType.C:
                     return "C";
-                case FragmentTypes.Y:
+                case FragmentType.Y:
                     return "Y";
-                case FragmentTypes.Z:
+                case FragmentType.Z:
                     return "Z";
-                case FragmentTypes.BY:
+                case FragmentType.BY:
                     return "BY";
-                case FragmentTypes.BZ:
+                case FragmentType.BZ:
                     return "BZ";
-                case FragmentTypes.CY:
+                case FragmentType.CY:
                     return "CY";
-                case FragmentTypes.YY:
+                case FragmentType.YY:
                     return "YY";
-                case FragmentTypes.YZ:
+                case FragmentType.YZ:
                     return "YZ";
-                case FragmentTypes.ZZ:
+                case FragmentType.ZZ:
                     return "ZZ";
             }
             return "";
         }
 
-        List<IGlycan> FragmentsBuild(FragmentTypes type, IGlycan glycan)
+        List<IGlycan> FragmentsBuild(FragmentType type, IGlycan glycan)
         {
             switch (type)
             {
-                case FragmentTypes.B:
-                case FragmentTypes.C:
+                case FragmentType.B:
+                case FragmentType.C:
                     return GlycanFragmentBuilder.BionsLikeFragments(glycan);
-                case FragmentTypes.Y:
-                case FragmentTypes.Z:
+                case FragmentType.Y:
+                case FragmentType.Z:
                     return GlycanFragmentBuilder.YionsLikeFragments(glycan);
-                case FragmentTypes.BY:
-                case FragmentTypes.BZ:
-                case FragmentTypes.CY:
+                case FragmentType.BY:
+                case FragmentType.BZ:
+                case FragmentType.CY:
                     return GlycanFragmentBuilder.BYionsLikeFragments(glycan);
-                case FragmentTypes.YY:
-                case FragmentTypes.YZ:
-                case FragmentTypes.ZZ:
+                case FragmentType.YY:
+                case FragmentType.YZ:
+                case FragmentType.ZZ:
                     return GlycanFragmentBuilder.YYionsLikeFragments(glycan);
 
             }
             return new List<IGlycan>();
         }
 
-        double MassBuild(FragmentTypes type, IGlycan glycan)
+        double MassBuild(FragmentType type, IGlycan glycan)
         {
             switch (type)
             {
-                case FragmentTypes.B:
+                case FragmentType.B:
                     return GlycanIonsBuilder.Build.Bion(glycan);
-                case FragmentTypes.C:
+                case FragmentType.C:
                     return GlycanIonsBuilder.Build.Cion(glycan);
-                case FragmentTypes.Y:
+                case FragmentType.Y:
                     return GlycanIonsBuilder.Build.Yion(glycan);
-                case FragmentTypes.Z:
+                case FragmentType.Z:
                     return GlycanIonsBuilder.Build.Zion(glycan);
-                case FragmentTypes.BY:
+                case FragmentType.BY:
                     return GlycanIonsBuilder.Build.BYion(glycan);
-                case FragmentTypes.BZ:
+                case FragmentType.BZ:
                     return GlycanIonsBuilder.Build.BZion(glycan);
-                case FragmentTypes.CY:
+                case FragmentType.CY:
                     return GlycanIonsBuilder.Build.CYion(glycan);
-                case FragmentTypes.YY:
+                case FragmentType.YY:
                     return GlycanIonsBuilder.Build.YYion(glycan);
-                case FragmentTypes.YZ:
+                case FragmentType.YZ:
                     return GlycanIonsBuilder.Build.YZion(glycan);
-                case FragmentTypes.ZZ:
+                case FragmentType.ZZ:
                     return GlycanIonsBuilder.Build.ZZion(glycan);
             }
             return 0;
         }
 
-        void BuildMassMap(string id, IGlycan glycan, FragmentTypes type,
+        void BuildMassMap(string id, IGlycan glycan, FragmentType type,
             ref ConcurrentDictionary<double, List<GlycanAnnotated>> massMap)
         {
             if (glycan.IsValid())
@@ -167,7 +167,7 @@ namespace NUnitTestProject
                 = new ConcurrentDictionary<double, List<GlycanAnnotated>>();
             Parallel.ForEach(map, pair =>
             {
-                foreach (FragmentTypes type in types)
+                foreach (FragmentType type in types)
                 {
                     BuildMassMap(pair.Key, pair.Value, type, ref massMap);
                 }
@@ -184,7 +184,7 @@ namespace NUnitTestProject
 
             ISearch<string> searcher = new BucketSearch<string>(ToleranceBy.PPM, 10);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
-            ISearch<Dictionary<FragmentTypes, List<string>>> searcher2 = new BucketSearch<Dictionary<FragmentTypes, List<string>>>(ToleranceBy.Dalton, 0.1);
+            ISearch<Dictionary<FragmentType, List<string>>> searcher2 = new BucketSearch<Dictionary<FragmentType, List<string>>>(ToleranceBy.Dalton, 0.1);
             GlycanSearch glycanSearch = new GlycanSearch(searcher2, glycanJson);
             ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.1);
             SearchMetaData analyzer = new SearchMetaData();

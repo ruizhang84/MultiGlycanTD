@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
-    public enum FragmentTypes
+    public enum FragmentType
     {
         B, C, Y, Z, BY, BZ, CY, YY, YZ, ZZ
     }
@@ -25,12 +25,12 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public bool Reduced { get; set; } = true;
         public bool Permethylated { get; set; } = true;
 
-        public List<FragmentTypes> Types { get; set; }
-            = new List<FragmentTypes>()
+        public List<FragmentType> Types { get; set; }
+            = new List<FragmentType>()
             {
-                FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
-                FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
-                FragmentTypes.YZ, FragmentTypes.ZZ
+                FragmentType.B, FragmentType.C, FragmentType.Y, FragmentType.Z,
+                FragmentType.BY, FragmentType.BZ, FragmentType.CY, FragmentType.YY,
+                FragmentType.YZ, FragmentType.ZZ
             };
 
         // ABEE 149.0841, 2-AA labeled 139.06333, 2-AB labeled 	138.07931
@@ -57,105 +57,105 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public List<double> Fragments(IGlycan glycan)
         {
             List<double> fragments = new List<double>();
-            foreach(FragmentTypes type in Types)
+            foreach(FragmentType type in Types)
             {
                 fragments.AddRange(Fragments(glycan, type));
             }
             return fragments.Distinct().ToList();
         }
 
-        public List<double> Fragments(IGlycan glycan, FragmentTypes type)
+        public List<double> Fragments(IGlycan glycan, FragmentType type)
         {
 
-            if (type == FragmentTypes.B || type == FragmentTypes.C)
+            if (type == FragmentType.B || type == FragmentType.C)
             {
                 List<IGlycan> bionsLikeFragments = GlycanFragmentBuilder.BionsLikeFragments(glycan);
-                if (type ==  FragmentTypes.B)
+                if (type ==  FragmentType.B)
                     return Bions(bionsLikeFragments);
-                if (type == FragmentTypes.C)
+                if (type == FragmentType.C)
                     return Cions(bionsLikeFragments);
             }
 
-            if (type == FragmentTypes.Y || type == FragmentTypes.Z)
+            if (type == FragmentType.Y || type == FragmentType.Z)
             {
                 List<IGlycan> yionsLikeFragments = GlycanFragmentBuilder.YionsLikeFragments(glycan);
-                if (type == FragmentTypes.Y)
+                if (type == FragmentType.Y)
                     return Yions(yionsLikeFragments);
-                if (type == FragmentTypes.Z)
+                if (type == FragmentType.Z)
                     return Zions(yionsLikeFragments);
             }
 
-            if (type == FragmentTypes.BY || type == FragmentTypes.BZ || type == FragmentTypes.CY)
+            if (type == FragmentType.BY || type == FragmentType.BZ || type == FragmentType.CY)
             {
                 List<IGlycan> byionsLikeFragments = GlycanFragmentBuilder.BYionsLikeFragments(glycan);
-                if (type == FragmentTypes.BY)
+                if (type == FragmentType.BY)
                     return BYions(byionsLikeFragments);
-                if (type == FragmentTypes.BZ)
+                if (type == FragmentType.BZ)
                     return BZions(byionsLikeFragments);
-                if (type == FragmentTypes.CY)
+                if (type == FragmentType.CY)
                     return CYions(byionsLikeFragments);
             }
 
-            if (type == FragmentTypes.YY || type == FragmentTypes.YZ || type == FragmentTypes.ZZ)
+            if (type == FragmentType.YY || type == FragmentType.YZ || type == FragmentType.ZZ)
             {
                 List<IGlycan> yyionsLikeFragments = GlycanFragmentBuilder.YYionsLikeFragments(glycan);
-                if (type == FragmentTypes.YY)
+                if (type == FragmentType.YY)
                     return YYions(yyionsLikeFragments);
-                if (type == FragmentTypes.YZ)
+                if (type == FragmentType.YZ)
                     return YZions(yyionsLikeFragments);
-                if (type == FragmentTypes.ZZ)
+                if (type == FragmentType.ZZ)
                     return ZZions(yyionsLikeFragments);
             }
 
             return new List<double>();
         }
 
-        public List<IGlycan> FragmentsBuild(IGlycan glycan, FragmentTypes type)
+        public List<IGlycan> FragmentsBuild(IGlycan glycan, FragmentType type)
         {
             switch (type)
             {
-                case FragmentTypes.B:
-                case FragmentTypes.C:
+                case FragmentType.B:
+                case FragmentType.C:
                     return GlycanFragmentBuilder.BionsLikeFragments(glycan);
-                case FragmentTypes.Y:
-                case FragmentTypes.Z:
+                case FragmentType.Y:
+                case FragmentType.Z:
                     return GlycanFragmentBuilder.YionsLikeFragments(glycan);
-                case FragmentTypes.BY:
-                case FragmentTypes.BZ:
-                case FragmentTypes.CY:
+                case FragmentType.BY:
+                case FragmentType.BZ:
+                case FragmentType.CY:
                     return GlycanFragmentBuilder.BYionsLikeFragments(glycan);
-                case FragmentTypes.YY:
-                case FragmentTypes.YZ:
-                case FragmentTypes.ZZ:
+                case FragmentType.YY:
+                case FragmentType.YZ:
+                case FragmentType.ZZ:
                     return GlycanFragmentBuilder.YYionsLikeFragments(glycan);
 
             }
             return new List<IGlycan>();
         }
 
-        public double ComputeIonMass(IGlycan subGlycan, FragmentTypes type)
+        public double ComputeIonMass(IGlycan subGlycan, FragmentType type)
         {
             switch (type)
             {
-                case FragmentTypes.B:
+                case FragmentType.B:
                     return GlycanIonsBuilder.Build.Bion(subGlycan);
-                case FragmentTypes.C:
+                case FragmentType.C:
                     return GlycanIonsBuilder.Build.Cion(subGlycan);
-                case FragmentTypes.Y:
+                case FragmentType.Y:
                     return GlycanIonsBuilder.Build.Yion(subGlycan);
-                case FragmentTypes.Z:
+                case FragmentType.Z:
                     return GlycanIonsBuilder.Build.Zion(subGlycan);
-                case FragmentTypes.BY:
+                case FragmentType.BY:
                     return GlycanIonsBuilder.Build.BYion(subGlycan);
-                case FragmentTypes.BZ:
+                case FragmentType.BZ:
                     return GlycanIonsBuilder.Build.BZion(subGlycan);
-                case FragmentTypes.CY:
+                case FragmentType.CY:
                     return GlycanIonsBuilder.Build.CYion(subGlycan);
-                case FragmentTypes.YY:
+                case FragmentType.YY:
                     return GlycanIonsBuilder.Build.YYion(subGlycan);
-                case FragmentTypes.YZ:
+                case FragmentType.YZ:
                     return GlycanIonsBuilder.Build.YZion(subGlycan);
-                case FragmentTypes.ZZ:
+                case FragmentType.ZZ:
                     return GlycanIonsBuilder.Build.ZZion(subGlycan);
             }
             return 0;

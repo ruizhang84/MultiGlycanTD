@@ -10,7 +10,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
 {
     public class GlycanAnnotated
     {
-        public FragmentTypes Type { get; set; }
+        public FragmentType Type { get; set; }
         public string Glycan { get; set; }
         public string Parent { get; set; }
     }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
-    using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
+    using GlycanFragments = Dictionary<FragmentType, List<string>>;
 
     public class GlycanSearchDeisotoping : GlycanSearch, IGlycanSearch
     {

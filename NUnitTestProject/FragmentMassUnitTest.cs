@@ -34,12 +34,12 @@ namespace NUnitTestProject
             MultiGlycanClassLibrary.util.mass.Glycan.To.permethylation = false;
             MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = false;
 
-            GlycanIonsBuilder.Build.Types = new List<FragmentTypes>()
-            { FragmentTypes.YZ };
+            GlycanIonsBuilder.Build.Types = new List<FragmentType>()
+            { FragmentType.YZ };
             //{
-            //    FragmentTypes.B, FragmentTypes.C, FragmentTypes.Y, FragmentTypes.Z,
-            //    FragmentTypes.BY, FragmentTypes.BZ, FragmentTypes.CY, FragmentTypes.YY,
-            //    FragmentTypes.YZ, FragmentTypes.ZZ
+            //    FragmentType.B, FragmentType.C, FragmentType.Y, FragmentType.Z,
+            //    FragmentType.BY, FragmentType.BZ, FragmentType.CY, FragmentType.YY,
+            //    FragmentType.YZ, FragmentType.ZZ
             //};
             //2 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 0 0 0 0 0 0
             string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";

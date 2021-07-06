@@ -1,4 +1,6 @@
 ﻿using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.engine.annotation;
+using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumData.Reader;
@@ -138,10 +140,9 @@ namespace MultiGlycanTD
                                 if (ms2.GetPeaks().Count <= minPeaks)
                                     continue;
                                 ms2 = process.Process(ms2);
-                                tandemSpectra[i] = ms2;
+                                tandemSpectra[i] = new MS2Spectrum(ms2, mz, charge);
                                 SearchTask searchTask = new SearchTask(ms2, mz, charge);
                                 searchTasks.Enqueue(searchTask);
-
                             }
                         }
 
@@ -218,5 +219,61 @@ namespace MultiGlycanTD
             }
         }
 
+        static string TypeToString(FragmentType type)
+        {
+            switch (type)
+            {
+                case FragmentType.B:
+                    return "B";
+                case FragmentType.C:
+                    return "C";
+                case FragmentType.Y:
+                    return "Y";
+                case FragmentType.Z:
+                    return "Z";
+                case FragmentType.BY:
+                    return "BY";
+                case FragmentType.BZ:
+                    return "BZ";
+                case FragmentType.CY:
+                    return "CY";
+                case FragmentType.YY:
+                    return "YY";
+                case FragmentType.YZ:
+                    return "YZ";
+                case FragmentType.ZZ:
+                    return "ZZ";
+            }
+            return "";
+        }
+
+        public static void AnnotationReport(
+            string path, Dictionary<int, List<PeakAnnotated>> annotation)
+        {
+            using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                using (StreamWriter writer = new StreamWriter(ostrm))
+                {
+                    writer.WriteLine("scan,mz,intensity,glycan,fragments");
+                    string output = "";
+                    foreach (var pair in annotation.OrderBy(p => p.Key))
+                    {
+                        int scan = pair.Key;
+                        List<PeakAnnotated> peakAnnotateds = pair.Value;
+                        foreach (var pka in peakAnnotateds)
+                        {
+                            output += scan.ToString() + "," +
+                                pka.Peak.GetMZ() + "," +
+                                pka.Peak.GetIntensity() + "," +
+                                pka.Glycan + "," +
+                                string.Join("|", pka.Fragments.Select(f => TypeToString(f.Type) + ":" + f.Glycan)) + "\n";
+
+                        }
+                    }
+                    writer.WriteLine(output);
+                    writer.Flush();
+                }
+            }
+        }
     }
 }

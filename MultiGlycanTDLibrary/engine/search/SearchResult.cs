@@ -17,8 +17,8 @@ namespace MultiGlycanTDLibrary.engine.search
         // potential matched to other glycans
         public int Potentials { get; set; } = int.MaxValue;
         // fragment ion types
-        public HashSet<FragmentTypes> IonTypes { get; set; }
-            = new HashSet<FragmentTypes>();
+        public HashSet<FragmentType> IonTypes { get; set; }
+            = new HashSet<FragmentType>();
     }
 
     public class SearchResult

@@ -39,10 +39,10 @@
 
 //            object obj = new object();
 //            var map = glycanBuilder.GlycanMaps();
-//            Dictionary<double, Dictionary<FragmentTypes, List<string>>> fragments 
-//                = new Dictionary<double, Dictionary<FragmentTypes, List<string>>>();
-//            List<Tuple<string, FragmentTypes, List<double>>> fragmentsContainer
-//                = new List<Tuple<string, FragmentTypes, List<double>>>();
+//            Dictionary<double, Dictionary<FragmentType, List<string>>> fragments 
+//                = new Dictionary<double, Dictionary<FragmentType, List<string>>>();
+//            List<Tuple<string, FragmentType, List<double>>> fragmentsContainer
+//                = new List<Tuple<string, FragmentType, List<double>>>();
 
 //            GlycanIonsBuilder.Build.Permethylated = false;
 //            GlycanIonsBuilder.Build.Derivatization = Glycan.kWater;
@@ -56,9 +56,9 @@
 //                var glycan = pair.Value;
 //                if (glycan.IsValid())
 //                {
-//                    List<Tuple<string, FragmentTypes, List<double>>> fragmentMass
-//                        = new List<Tuple<string, FragmentTypes, List<double>>>();
-//                    foreach(FragmentTypes type in GlycanIonsBuilder.Build.Types)
+//                    List<Tuple<string, FragmentType, List<double>>> fragmentMass
+//                        = new List<Tuple<string, FragmentType, List<double>>>();
+//                    foreach(FragmentType type in GlycanIonsBuilder.Build.Types)
 //                    {
 //                        List<double> massList = GlycanIonsBuilder.Build.Fragments(glycan, type)
 //                                        .Select(m => Math.Round(m, 4)).ToList();
@@ -72,15 +72,15 @@
 //                }
 //            });
 
-//            foreach (Tuple<string, FragmentTypes, List<double>> item in fragmentsContainer)
+//            foreach (Tuple<string, FragmentType, List<double>> item in fragmentsContainer)
 //            {
 //                string id = item.Item1;
-//                FragmentTypes type = item.Item2;
+//                FragmentType type = item.Item2;
 
 //                foreach (double mass in item.Item3)
 //                {
 //                    if (!fragments.ContainsKey(mass))
-//                        fragments[mass] = new Dictionary<FragmentTypes, List<string>>();
+//                        fragments[mass] = new Dictionary<FragmentType, List<string>>();
 //                    if (!fragments[mass].ContainsKey(type))
 //                        fragments[mass][type] = new List<string>();
 //                    fragments[mass][type].Add(id);

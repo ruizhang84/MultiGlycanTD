@@ -1,8 +1,13 @@
 ﻿using MultiGlycanClassLibrary.util.mass;
 using MultiGlycanTDLibrary.engine.analysis;
+using MultiGlycanTDLibrary.engine.annotation;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
+using SpectrumData;
+using SpectrumData.Spectrum;
+using SpectrumProcess.algorithm;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,6 +54,12 @@ namespace MultiGlycanTD
             searchCounter.progressChange += SearchProgressChanged;
 
             int index = 1;
+            ISearch<GlycanAnnotated> searcher = new BucketSearch<GlycanAnnotated>(
+                SearchingParameters.Access.MS2ToleranceBy,
+                SearchingParameters.Access.MSMSTolerance);
+            GlycanAnnotationLazy annotator = new GlycanAnnotationLazy(searcher,
+                SearchingParameters.Access.Database.Parameters);
+            
             foreach (string file in SearchingParameters.Access.MSMSFiles)
             {
                 ReadingCounter = 0;
@@ -61,14 +72,18 @@ namespace MultiGlycanTD
                        SearchingParameters.Access.Database);
                 search.Run();
                 UpdateSignal("Analyzing...");
-                Analyze(file, search.Target(), search.Decoy());
+                ConcurrentDictionary<int, ISpectrum> spectra = search.MSMSSpectra();
+                Analyze(file, spectra, search.Target(), search.Decoy(), annotator);
             }
 
             UpdateSignal("Done");
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath, List<SearchResult> targets, List<SearchResult> decoys)
+        private void Analyze(string msPath, 
+            ConcurrentDictionary<int, ISpectrum> spectra,
+            List<SearchResult> targets, List<SearchResult> decoys,
+            GlycanAnnotationLazy annotator)
         {
             //QuantileFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
@@ -86,7 +101,25 @@ namespace MultiGlycanTD
             string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
             MultiThreadingSearchHelper.Report(path, results);
+
+            //Annotation
+            Dictionary<int, List<PeakAnnotated>> annotations =
+                new Dictionary<int, List<PeakAnnotated>>();
+            foreach (SearchResult result in results)
+            {
+                MS2Spectrum spectrum = spectra[result.Scan] as MS2Spectrum;
+                annotations[result.Scan] = new List<PeakAnnotated>();
+                foreach (double ion in SearchingParameters.Access.Ions)
+                {
+                    annotations[result.Scan].AddRange(annotator.Annotated(spectrum.GetPeaks(), result));
+                }
+            }
+            string annotatedPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+               System.IO.Path.GetFileNameWithoutExtension(msPath) + "_annotated.csv");
+            MultiThreadingSearchHelper.AnnotationReport(annotatedPath, annotations);
+
         }
+
 
         private void UpdateSignal(string signal)
         {

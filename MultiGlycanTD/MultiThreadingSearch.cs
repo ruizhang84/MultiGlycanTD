@@ -19,7 +19,7 @@ using SpectrumProcess.deisotoping;
 
 namespace MultiGlycanTD
 {
-    using GlycanFragments = Dictionary<FragmentTypes, List<string>>;
+    using GlycanFragments = Dictionary<FragmentType, List<string>>;
     public class MultiThreadingSearch
     {
         Counter readingCounter;
@@ -43,9 +43,6 @@ namespace MultiGlycanTD
         int minPeaks = 30;   // sequencable spectrum with min num peaks
         int minCharge = 2;
         int maxCharge = 4;   // max charge of spectrum to consider
-
-
-        public int Seed { get; set; } = 2;
 
         public MultiThreadingSearch(string msPath, 
             Counter readingCounter, Counter searchCounter,
@@ -105,6 +102,10 @@ namespace MultiGlycanTD
             decoys = scorer.Result();
         }
 
+        public ConcurrentDictionary<int, ISpectrum> MSMSSpectra()
+        {
+            return tandemSpectra;
+        }
        
 
         void GenerateTasks()
@@ -165,11 +166,11 @@ namespace MultiGlycanTD
                 averagine = new Averagine(AveragineType.Glycan);
             }
             AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
-                maxCharge, SearchingParameters.Access.MS2ToleranceBy,
-                SearchingParameters.Access.MSMSTolerance);
+                maxCharge, ToleranceBy.Dalton, 0.1);
             IGlycanSearch glycanSearch
                 = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
-
+            //IGlycanSearch glycanSearch
+            //    = new GlycanSearch(searcher2, glycanJson);
             SearchMetaData searchInfo = new SearchMetaData();
 
             // targets

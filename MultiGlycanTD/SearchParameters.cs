@@ -12,7 +12,7 @@ namespace MultiGlycanTD
     {
         // spectrum
         public double MS1Tolerance { get; set; } = 10;
-        public double MSMSTolerance { get; set; } = 0.1;
+        public double MSMSTolerance { get; set; } = 0.5;
         public ToleranceBy MS1ToleranceBy { get; set; } = ToleranceBy.PPM;
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
@@ -57,7 +57,7 @@ namespace MultiGlycanTD
     {
         //spectrum
         public double MS1Tolerance { get; set; } = 10;
-        public double MSMSTolerance { get; set; } = 0.1;
+        public double MSMSTolerance { get; set; } = 0.5;
         public ToleranceBy MS1ToleranceBy { get; set; } = ToleranceBy.PPM;
         public ToleranceBy MS2ToleranceBy { get; set; } = ToleranceBy.Dalton;
 
