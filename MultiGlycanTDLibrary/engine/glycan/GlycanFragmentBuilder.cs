@@ -87,6 +87,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 BYionsLikeFragments(glycan).Select(g => g.ID())); 
             foreach (IGlycan sub in YionsFragments)
             {
+                // Valid if at least a partial core
                 List<IGlycan> subBYionsFragments = BYionsLikeFragments(sub);
                 foreach (IGlycan subSub in subBYionsFragments)
                 {

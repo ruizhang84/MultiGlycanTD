@@ -405,7 +405,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
         // three cleavages
         public double BYYion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2;
+            if (Permethylated)
+                return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2;
+            return Glycan.To.ComputeFragment(glycan);
         }
         public List<double> BYYions(List<IGlycan> glycans)
         {
@@ -414,7 +416,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public double BYZion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2 - kWater;
+            if (Permethylated)
+                return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2 - kWater;
+            return Glycan.To.ComputeFragment(glycan) - kWater;
         }
 
         public List<double> BYZions(List<IGlycan> glycans)
@@ -424,7 +428,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public double BZZion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan) - kWater * 2 - kCarbon - kHydrogen * 2;
+            if (Permethylated)
+                return Glycan.To.ComputeFragment(glycan) - kWater * 2 - kCarbon - kHydrogen * 2;
+            return Glycan.To.ComputeFragment(glycan) - kWater * 2;
         }
 
         public List<double> BZZions(List<IGlycan> glycans)
@@ -434,7 +440,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public double CYYion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2 + kWater;
+            if (Permethylated)
+                return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2 + kWater;
+            return Glycan.To.ComputeFragment(glycan) + kWater;
         }
 
         public List<double> CYYions(List<IGlycan> glycans)
@@ -496,7 +504,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kCarbon * 2 - kHydrogen * 3 - kWater * 3;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization;
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 3;
         }
 
         public List<double> ZZZions(List<IGlycan> glycans)
@@ -516,7 +524,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kCarbon * 2 - kHydrogen * 3 - kWater;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization;
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
         }
         public List<double> YYZions(List<IGlycan> glycans)
         {
@@ -536,7 +544,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return Glycan.To.ComputeFragment(glycan) + kNonReduced - kCarbon * 2 - kHydrogen * 3 - kWater * 2;
                 }
             }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization;
+            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
         }
         public List<double> YZZions(List<IGlycan> glycans)
         {

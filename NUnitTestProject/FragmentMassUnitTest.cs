@@ -29,13 +29,13 @@ namespace NUnitTestProject
             Dictionary<double, List<string>> fragments = new Dictionary<double, List<string>>();
             var map = glycanBuilder.GlycanMaps();
 
-            GlycanIonsBuilder.Build.Permethylated = true;
-            GlycanIonsBuilder.Build.Reduced = true;
-            MultiGlycanClassLibrary.util.mass.Glycan.To.permethylation = true;
-            MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = true;
+            GlycanIonsBuilder.Build.Permethylated = false;
+            GlycanIonsBuilder.Build.Reduced = false;
+            MultiGlycanClassLibrary.util.mass.Glycan.To.permethylation = false;
+            MultiGlycanClassLibrary.util.mass.Glycan.To.reduced = false;
 
             GlycanIonsBuilder.Build.Types = new List<FragmentType>()
-            { FragmentType.ZZZ };
+            { FragmentType.YYY };
             //2 1 0 0 1 1 2 0 2 0 2 0 2 0 1 0 1 0 1 0 1 0 0 0 0 0
             string path = @"C:\Users\iruiz\Downloads\MSMS\test_build.csv";
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
