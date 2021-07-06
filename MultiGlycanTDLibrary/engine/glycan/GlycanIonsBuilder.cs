@@ -10,8 +10,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
     {
         B, C, Y, Z, BY, BZ, CY, YY, YZ, ZZ,
         BYY, BYZ, BZZ, 
-        CYY, CYZ, CZZ,
-        YYY, ZZZ, YYZ, YZZ,
+        CYY, CYZ, CZZ
     }
 
 
@@ -128,20 +127,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return CZZions(byyionsLikeFragments);
             }
 
-            if (type == FragmentType.YYY || type == FragmentType.YYZ || type == FragmentType.YZZ || 
-                type == FragmentType.ZZZ)
-            {
-                List<IGlycan> yyyionsLikeFragments = GlycanFragmentBuilder.YYYionsLikeFragments(glycan);
-                if (type == FragmentType.YYY)
-                    return YYYions(yyyionsLikeFragments);
-                if (type == FragmentType.YYZ)
-                    return YYZions(yyyionsLikeFragments);
-                if (type == FragmentType.YZZ)
-                    return YZZions(yyyionsLikeFragments);
-                if (type == FragmentType.ZZZ)
-                    return ZZZions(yyyionsLikeFragments);
-            }
-
             return new List<double>();
         }
 
@@ -170,11 +155,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 case FragmentType.CYZ:
                 case FragmentType.CZZ:
                     return GlycanFragmentBuilder.BYYionsLikeFragments(glycan);
-                case FragmentType.YYY:
-                case FragmentType.YYZ:
-                case FragmentType.YZZ:
-                case FragmentType.ZZZ:
-                    return GlycanFragmentBuilder.YYYionsLikeFragments(glycan);
             }
             return new List<IGlycan>();
         }
@@ -215,14 +195,6 @@ namespace MultiGlycanTDLibrary.engine.glycan
                     return GlycanIonsBuilder.Build.CYZion(subGlycan);
                 case FragmentType.CZZ:
                     return GlycanIonsBuilder.Build.CZZion(subGlycan);
-                case FragmentType.YYY:
-                    return GlycanIonsBuilder.Build.YYYion(subGlycan);
-                case FragmentType.YYZ:
-                    return GlycanIonsBuilder.Build.YYZion(subGlycan);
-                case FragmentType.YZZ:
-                    return GlycanIonsBuilder.Build.YZZion(subGlycan);
-                case FragmentType.ZZZ:
-                    return GlycanIonsBuilder.Build.ZZZion(subGlycan);
             }
             return 0;
         }
@@ -405,7 +377,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         // three cleavages
         public double BYYion(IGlycan glycan)
         {
-            return Glycan.To.ComputeFragment(glycan) + kWater;
+            return Glycan.To.ComputeFragment(glycan) - kCarbon - kHydrogen * 2;
         }
         public List<double> BYYions(List<IGlycan> glycans)
         {
@@ -462,85 +434,5 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return glycans.Select(m => CZZion(m)).Distinct().ToList();
         }
 
-        public double YYYion(IGlycan glycan)
-        {
-            if (Permethylated)
-            {
-                if (Reduced)
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-                else
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-            }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
-        }
-
-        public List<double> YYYions(List<IGlycan> glycans)
-        {
-            return glycans.Select(m => YYYion(m)).Distinct().ToList();
-        }
-
-        public double ZZZion(IGlycan glycan)
-        {
-            if (Permethylated)
-            {
-                if (Reduced)
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-                else
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-            }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
-        }
-
-        public List<double> ZZZions(List<IGlycan> glycans)
-        {
-            return glycans.Select(m => ZZZion(m)).Distinct().ToList();
-        }
-        public double YYZion(IGlycan glycan)
-        {
-            if (Permethylated)
-            {
-                if (Reduced)
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-                else
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-            }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
-        }
-        public List<double> YYZions(List<IGlycan> glycans)
-        {
-            return glycans.Select(m => YYZion(m)).Distinct().ToList();
-        }
-
-        public double YZZion(IGlycan glycan)
-        {
-            if (Permethylated)
-            {
-                if (Reduced)
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-                else
-                {
-                    return Glycan.To.ComputeFragment(glycan) + kNonReduced - kOxygen * 2 - kCarbon - kHydrogen * 5;
-                }
-            }
-            return Glycan.To.ComputeFragment(glycan) + Derivatization - kWater * 2;
-        }
-        public List<double> YZZions(List<IGlycan> glycans)
-        {
-            return glycans.Select(m => YZZion(m)).Distinct().ToList();
-        }
     }
 }

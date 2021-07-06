@@ -232,6 +232,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return newGlycan;
         }
 
+      
 
         public static bool ContainsCut(IGlycan glycan, IGlycan sub, IGlycan subSub)
         {

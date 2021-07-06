@@ -64,7 +64,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             List<IGlycan> glycanBYFragment = new List<IGlycan>();
 
             List<IGlycan> YionsFragments = YionsLikeFragments(glycan);
-            foreach(IGlycan sub in YionsFragments)
+            foreach (IGlycan sub in YionsFragments)
             {
                 List<IGlycan> subYionsFragments = YionsLikeFragments(sub);
                 foreach(IGlycan subSub in subYionsFragments)
@@ -80,15 +80,26 @@ namespace MultiGlycanTDLibrary.engine.glycan
         }
         public static List<IGlycan> BYYionsLikeFragments(IGlycan glycan)
         {
-            List<IGlycan> glycanBYFragment = new List<IGlycan>();
+            List<IGlycan> glycanBYYFragment = new List<IGlycan>();
 
-            List<IGlycan> BYionsFragments = BYionsLikeFragments(glycan);
-            foreach (IGlycan sub in BYionsFragments)
+            List<IGlycan> YionsFragments = YionsLikeFragments(glycan);
+            HashSet<string> BYionsFragmentSet = new HashSet<string>(
+                BYionsLikeFragments(glycan).Select(g => g.ID())); 
+            foreach (IGlycan sub in YionsFragments)
             {
-                List<IGlycan> subYionsFragments = YionsLikeFragments(sub);
-                glycanBYFragment.AddRange(subYionsFragments);
+                List<IGlycan> subBYionsFragments = BYionsLikeFragments(sub);
+                foreach (IGlycan subSub in subBYionsFragments)
+                {
+                    if (!BYionsFragmentSet.Contains(subSub.ID()))
+                    {
+                        glycanBYYFragment.Add(subSub);
+                        BYionsFragmentSet.Add(subSub.ID());
+                    }
+                }
             }
-            return glycanBYFragment;
+
+
+            return glycanBYYFragment;
         }
 
 
