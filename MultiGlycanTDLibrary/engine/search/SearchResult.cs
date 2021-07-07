@@ -34,5 +34,6 @@ namespace MultiGlycanTDLibrary.engine.search
             = new Dictionary<int, PeakMatch>();
         public double Score { get; set; }
         public double Fit { get; set; }
+        public double Coverage { get; set; }
     }
 }

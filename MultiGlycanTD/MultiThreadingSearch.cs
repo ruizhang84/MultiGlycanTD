@@ -90,7 +90,7 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            IGlycanScorer scorer = new GlycanScorer(SearchingParameters.Access.ThreadNums,
+            IGlycanScorer scorer = new GlycanScorerCluster(SearchingParameters.Access.ThreadNums,
                 SearchingParameters.Access.Similarity);
 
             scorer.Init(tandemSpectra, targets);

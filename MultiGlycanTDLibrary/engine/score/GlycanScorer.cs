@@ -20,12 +20,13 @@ namespace MultiGlycanTDLibrary.engine.score
 
         protected double Similar = 0.9;
         protected int Thread = 4;
-        readonly protected double BinWidth = 0.1;
+        protected double BinWidth = 1.0;
 
-        public GlycanScorer(int thread = 4, double similar = 0.9)
+        public GlycanScorer(int thread = 4, double similar = 0.9, double binWidth = 1.0)
         {
             Thread = thread;
-            Similar = similar;          
+            Similar = similar;
+            BinWidth = binWidth;
         }
 
         public void Init(ConcurrentDictionary<int, ISpectrum> spectra,
@@ -70,7 +71,7 @@ namespace MultiGlycanTDLibrary.engine.score
             return ScoreResults.SelectMany(p => p.Value).OrderBy(r => r.Scan).ToList();
         }
 
-        public virtual void AssignScore()
+        protected virtual void AssignScore()
         {
             Parallel.ForEach(SpectrumResults.Keys,
                 new ParallelOptions { MaxDegreeOfParallelism = Thread },
@@ -89,7 +90,7 @@ namespace MultiGlycanTDLibrary.engine.score
                 });
         }
 
-        public void AssignSpectrumResults()
+        protected virtual void AssignSpectrumResults()
         {
             // Assign glycan to spectrum
             SpectrumResults.Clear();
@@ -177,26 +178,33 @@ namespace MultiGlycanTDLibrary.engine.score
             GlycanResults = newGlycanResults;
         }
 
-        public void AssignGlycanResults()
+        protected virtual List<SearchResult> BestResultsFromSpectrum(int scan)
+        {
+            double bestScore = 0;
+            List<SearchResult> bestResults = new List<SearchResult>();
+            foreach (SearchResult result in SpectrumResults[scan])
+            {
+                if (result.Score > bestScore)
+                {
+                    bestScore = result.Score;
+                    bestResults.Clear();
+                }
+                if (result.Score == bestScore)
+                {
+                    bestResults.Add(result);
+                }
+
+            }
+            return bestResults;
+        }
+
+        protected virtual void AssignGlycanResults()
         {
             // assign the result with highest score in the same spectrum
             foreach (int scan in SpectrumResults.Keys)
             {
-                double bestScore = 0;
-                List<SearchResult> bestResults = new List<SearchResult>();
-                foreach (SearchResult result in SpectrumResults[scan])
-                {
-                    if (result.Score > bestScore)
-                    {
-                        bestScore = result.Score;
-                        bestResults.Clear();
-                    }
-                    if (result.Score == bestScore)
-                    {
-                        bestResults.Add(result);
-                    }
 
-                }
+                List<SearchResult> bestResults = BestResultsFromSpectrum(scan);
                 if (bestResults.Count == 0)
                     continue;
 

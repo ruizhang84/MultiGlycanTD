@@ -22,14 +22,14 @@ namespace NUnitTestProject
         public void CosTest()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\HBS1_dextrinspkd_C18_10252018.raw";
+            string path = @"C:\Users\iruiz\Downloads\MSMS\134144_13_C18_120min_60oC_50cm.raw";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
-            ISpectrum A = reader.GetSpectrum(3333);
-            ISpectrum B = reader.GetSpectrum(3351);
+            ISpectrum A = reader.GetSpectrum(20339);
+            ISpectrum B = reader.GetSpectrum(20456);
 
-            Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 0.2));
+            Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 1.0));
                    
             Assert.Pass();
         }

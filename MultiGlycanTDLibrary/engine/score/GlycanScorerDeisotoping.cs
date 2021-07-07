@@ -20,7 +20,8 @@ namespace MultiGlycanTDLibrary.engine.score
 
         public GlycanScorerDeisotoping(Averagine averagine,
              int maxCharge, ToleranceBy by, double tol, int thread = 4,
-             double similar = 0.9) : base(thread, similar)
+             double similar = 0.9, double binWidth = 1.0) 
+            : base(thread, similar, binWidth)
         {
             Averagine = averagine;
             MaxCharge = maxCharge;
@@ -51,7 +52,7 @@ namespace MultiGlycanTDLibrary.engine.score
             }
         }
 
-        public override void AssignScore() 
+        protected override void AssignScore() 
         {
             ConcurrentQueue<int> ScanQueue =
                 new ConcurrentQueue<int>(SpectrumResults.Keys);
