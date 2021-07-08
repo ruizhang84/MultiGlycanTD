@@ -56,9 +56,16 @@
                         <Label Content="Number of Threads"/>
                         <TextBox Name="ThreadNums" Text="4" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Label Content="Similarity"/>
                     <StackPanel Orientation="Horizontal">
-                        <Label Content="Minimum Cosine Similarity"/>
+                        <Label Content="Minimum Cosine"/>
                         <TextBox Name="Similarity" Text="0.9" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Spectrum Bin Width (Dalton)"/>
+                        <TextBox Name="BinWidth" Text="1.0" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">

@@ -19,7 +19,8 @@ namespace MultiGlycanTD
         // searching
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
-        public double Similarity = 0.9;
+        public double Similarity { get; set; } = 0.9;
+        public double BinWidth { get; set; } = 1.0;
 
         // result
         public double FDR { get; set; } = 0.05;
@@ -39,6 +40,7 @@ namespace MultiGlycanTD
             MS2ToleranceBy = ConfigureParameters.Access.MS2ToleranceBy;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
             Similarity = ConfigureParameters.Access.Similarity;
+            BinWidth = ConfigureParameters.Access.BinWidth;
             FDR = ConfigureParameters.Access.FDR;
             Ions = ConfigureParameters.Access.Ions;
         }
@@ -64,7 +66,8 @@ namespace MultiGlycanTD
         // searching
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
-        public double Similarity = 0.9;
+        public double Similarity { get; set; } = 0.9;
+        public double BinWidth { get; set; } = 1.0;
 
         //result
         public double FDR { get; set; } = 0.05;

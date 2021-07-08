@@ -44,6 +44,7 @@ namespace MultiGlycanTD
 
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
             Similarity.Text = SearchingParameters.Access.Similarity.ToString();
+            BinWidth.Text = SearchingParameters.Access.BinWidth.ToString();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -85,6 +86,15 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Cosine Similarity is invalid!");
+                return false;
+            }
+            if (double.TryParse(BinWidth.Text, out double binWidth) && binWidth > 0)
+            {
+                ConfigureParameters.Access.BinWidth = binWidth;
+            }
+            else
+            {
+                MessageBox.Show("Spectrum BinWidth is invalid!");
                 return false;
             }
             if (Proton.IsChecked == true || Sodium.IsChecked == true)

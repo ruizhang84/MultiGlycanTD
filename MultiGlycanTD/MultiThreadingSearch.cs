@@ -35,6 +35,10 @@ namespace MultiGlycanTD
         int minPeaks = 30;   // sequencable spectrum with min num peaks
         int minCharge = 2;
         int maxCharge = 4;   // max charge of spectrum to consider
+        // cluster
+        int K = 4;
+        int maxIter = 1000;
+        double difference = 0.01;
 
         public MultiThreadingSearch(string msPath,
             Counter readingCounter, Counter searchCounter,
@@ -82,8 +86,11 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            IGlycanScorer scorer = new GlycanScorerCluster(SearchingParameters.Access.ThreadNums,
-                SearchingParameters.Access.Similarity);
+            IGlycanScorer scorer = new GlycanScorerCluster(
+                SearchingParameters.Access.ThreadNums,
+                SearchingParameters.Access.Similarity,
+                SearchingParameters.Access.BinWidth,
+                K, maxIter, difference);
 
             scorer.Init(tandemSpectra, targets);
             scorer.Run();
