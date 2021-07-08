@@ -1,12 +1,9 @@
 ﻿using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
-using SpectrumProcess.algorithm;
-using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
@@ -94,7 +91,7 @@ namespace MultiGlycanTDLibrary.engine.score
         {
             // Assign glycan to spectrum
             SpectrumResults.Clear();
-           
+
             Dictionary<string, HashSet<int>> AssignedGlycanSpectrurmResults
                 = new Dictionary<string, HashSet<int>>();
             foreach (string glycan in GlycanResults.Keys)
@@ -229,13 +226,13 @@ namespace MultiGlycanTDLibrary.engine.score
                                 r => r.Charge != bestResult.Charge).ToList();
                         if (GlycanResults[bestResult.Glycan].Count == 0)
                             GlycanResults.Remove(bestResult.Glycan);
-                    } 
+                    }
                 }
             }
         }
 
-       
-        
+
+
 
 
     }

@@ -1,26 +1,15 @@
-﻿using MultiGlycanClassLibrary.util.mass;
-using MultiGlycanTDLibrary.engine.analysis;
+﻿using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.annotation;
-using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumData.Spectrum;
 using SpectrumProcess.algorithm;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace MultiGlycanTD
@@ -59,7 +48,7 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.MSMSTolerance);
             GlycanAnnotationLazy annotator = new GlycanAnnotationLazy(searcher,
                 SearchingParameters.Access.Database.Parameters);
-            
+
             foreach (string file in SearchingParameters.Access.MSMSFiles)
             {
                 ReadingCounter = 0;
@@ -80,7 +69,7 @@ namespace MultiGlycanTD
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath, 
+        private void Analyze(string msPath,
             ConcurrentDictionary<int, ISpectrum> spectra,
             List<SearchResult> targets, List<SearchResult> decoys,
             GlycanAnnotationLazy annotator)

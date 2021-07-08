@@ -1,10 +1,6 @@
 ﻿using MultiGlycanTDLibrary.engine.glycan;
 using SpectrumData;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.annotation
 {
@@ -18,7 +14,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
     {
         public IPeak Peak { get; set; }
         public string Glycan { get; set; }
-        public List<GlycanAnnotated> Fragments { get; set; } 
+        public List<GlycanAnnotated> Fragments { get; set; }
             = new List<GlycanAnnotated>();
     }
 }

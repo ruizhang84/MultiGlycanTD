@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess.algorithm
 {
@@ -88,7 +86,7 @@ namespace SpectrumProcess.algorithm
             List<Point<T>> searched = new List<Point<T>>();
             if (matchIndx < 0) return searched;
 
-            for (int left = matchIndx; left >= 0 && 
+            for (int left = matchIndx; left >= 0 &&
                 IsMatch(expect, data_[left].Value(), baseValue); left--)
             {
                 searched.Add(data_[left]);

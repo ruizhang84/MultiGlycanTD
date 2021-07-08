@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace SpectrumProcess.brain
 {
@@ -34,10 +33,10 @@ namespace SpectrumProcess.brain
             double middle = Math.Sqrt(Math.Pow((q / 2), 2) + Math.Pow((p / 3), 3));
             Complex w = new Complex(-0.5, Math.Sqrt(3) / 2.0);
 
-            Complex x1 = new Complex(CubeRoot(-q/2 + middle) + CubeRoot(-q/2 - middle), 0);
+            Complex x1 = new Complex(CubeRoot(-q / 2 + middle) + CubeRoot(-q / 2 - middle), 0);
             Complex x2 = w * CubeRoot(-q / 2 + middle) + w * w * CubeRoot(-q / 2 - middle);
             Complex x3 = w * w * CubeRoot(-q / 2 + middle) + w * CubeRoot(-q / 2 - middle);
-            return new List<Complex>() { x1 - b / (3.0 * a), (x2 - b / (3.0 * a)), (x3 - b / (3.0 * a))};
+            return new List<Complex>() { x1 - b / (3.0 * a), (x2 - b / (3.0 * a)), (x3 - b / (3.0 * a)) };
         }
 
         //ax^4 + bx^3 + cx^2 + dx + e
@@ -49,9 +48,9 @@ namespace SpectrumProcess.brain
             double delta0 = c * c - 3 * b * d + 12 * a * e;
             double delta1 = 2 * c * c * c - 9 * b * c * d + 27 * b * b * e + 27 * a * d * d - 72 * a * c * e;
 
-            Complex Q = Complex.Pow((delta1 + Complex.Sqrt(delta1 * delta1 - 4 * Math.Pow(delta0, 3)))/2.0, 1.0/3);
+            Complex Q = Complex.Pow((delta1 + Complex.Sqrt(delta1 * delta1 - 4 * Math.Pow(delta0, 3))) / 2.0, 1.0 / 3);
             Complex S = 0.5 * Complex.Sqrt(-2.0 * p / 3 + (Q + delta0 / Q) / (3 * a));
-            return  new List<Complex>()
+            return new List<Complex>()
             {
                 -0.25 * b / a - S + 0.5 * Complex.Sqrt(-4 * S * S - 2 * p + q / S),
                 -0.25 * b / a - S - 0.5 * Complex.Sqrt(-4 * S * S - 2 * p + q / S),

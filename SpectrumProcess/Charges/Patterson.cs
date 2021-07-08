@@ -1,8 +1,6 @@
 ﻿using SpectrumData;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SpectrumProcess
 {
@@ -13,10 +11,10 @@ namespace SpectrumProcess
 
         protected double GetIntensity(double target, double[] mz, double[] f)
         {
-            if (target < mz[0] || target > mz[mz.Length -1])
+            if (target < mz[0] || target > mz[mz.Length - 1])
                 return 0;
             int start = 0, end = mz.Length - 1;
-            while (start+1 < end)
+            while (start + 1 < end)
             {
                 int mid = (end - start) / 2 + start;
                 if (mz[mid] == target)
@@ -35,7 +33,7 @@ namespace SpectrumProcess
             return Interpolation.Linear(target, mz[start], f[start], mz[end], f[end]);
         }
 
-        protected double RountineFunc(double delta, 
+        protected double RountineFunc(double delta,
             List<IPeak> peaks, double lower, double upper, double precise = 0.005)
         {
             double sum = 0.0;
@@ -47,7 +45,7 @@ namespace SpectrumProcess
             if (mz.Length == 0)
                 return sum;
 
-            for(double m = lower; m <= upper; m += precise)
+            for (double m = lower; m <= upper; m += precise)
             {
                 double left = m - delta / 2;
                 double right = m + delta / 2;
@@ -63,7 +61,7 @@ namespace SpectrumProcess
             int charge = 2;
             double maxVal = 0;
 
-            for(int i = 1; i <= maxCharge; i++)
+            for (int i = 1; i <= maxCharge; i++)
             {
                 double delta = 1.0 / i;
                 double val = RountineFunc(delta, peaks, lower, upper);

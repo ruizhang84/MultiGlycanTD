@@ -1,12 +1,7 @@
 ﻿using MultiGlycanTDLibrary.model.glycan;
-using MultiGlycanClassLibrary.util.mass;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using SpectrumProcess.brain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
@@ -18,10 +13,10 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public GlycanBuilderFiltered(List<SortedDictionary<Monosaccharide, int>> filterList,
             int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true, bool reduced = true, 
-            Derivatization derivatization = Derivatization.Underivatized, int thread = 4) : 
-            base(hexNAc, hex, fuc, neuAc, neuGc, complex, 
-                hybrid, highMannose, order, 
+            bool permethylated = true, bool reduced = true,
+            Derivatization derivatization = Derivatization.Underivatized, int thread = 4) :
+            base(hexNAc, hex, fuc, neuAc, neuGc, complex,
+                hybrid, highMannose, order,
                 permethylated, reduced, derivatization, thread)
         {
             this.filterList = filterList;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SpectrumProcess
 {
@@ -60,7 +59,7 @@ namespace SpectrumProcess
             }
 
             b[0] = 1;
-            for (int i = 1; i < n-1; i++)
+            for (int i = 1; i < n - 1; i++)
             {
                 b[i] = 2 * (h[i - 1] + h[i]);
             }
@@ -76,7 +75,7 @@ namespace SpectrumProcess
                 d[i] = (Y[i + 1] - Y[i]) / h[i] - (Y[i] - Y[i - 1]) / h[i - 1];
             }
 
-            return  MatrixSolver.Thomas(a, b, c, d);
+            return MatrixSolver.Thomas(a, b, c, d);
         }
 
         private static int SearchIndex(double v, List<double> X)
@@ -90,11 +89,11 @@ namespace SpectrumProcess
 
                 if (v < X[mid])
                 {
-                    end = mid-1;
+                    end = mid - 1;
                 }
                 else
                 {
-                    start = mid+1;
+                    start = mid + 1;
                     index = mid;
                 }
             }
@@ -115,7 +114,7 @@ namespace SpectrumProcess
 
             List<double> y = new List<double>();
 
-            foreach(double v in x)
+            foreach (double v in x)
             {
                 int index = SearchIndex(v, X);
                 if (X[index] == v)
@@ -125,8 +124,8 @@ namespace SpectrumProcess
                 }
 
                 double a = Y[index];
-                double b = (Y[index + 1] - Y[index]) / h[index] 
-                    - h[index] * m[index] / 2 - h[index] * (m[index+1] - m[index]) / 6;
+                double b = (Y[index + 1] - Y[index]) / h[index]
+                    - h[index] * m[index] / 2 - h[index] * (m[index + 1] - m[index]) / 6;
                 double c = m[index] / 2;
                 double d = (m[index + 1] - m[index]) / (6 * h[index]);
                 y.Add(a + b * (v - X[index]) + c * Math.Pow(v - X[index], 2) + d * Math.Pow(v - X[index], 3));

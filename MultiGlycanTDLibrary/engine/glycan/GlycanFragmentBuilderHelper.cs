@@ -1,15 +1,11 @@
 ﻿using MultiGlycanTDLibrary.model.glycan;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
     public class GlycanFragmentBuilderHelper
     {
-     
+
         // assume glycan has GlcNAc(2)-man(3) full pentacore and at least 2 chains, at least 3 frgments
         public static int CountYCutComplex(IGlycan sub, IGlycan glycan, int limit)
         {
@@ -29,7 +25,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 diff++;
                 return diff;
             }
-            
+
             // fucose core
             if (subTable[2] != table[2])
                 diff++;
@@ -186,7 +182,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             {
                 diff++;
             }
-            
+
             return diff;
         }
 
@@ -211,7 +207,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             // compose
             SortedDictionary<Monosaccharide, int> compose = newGlycan.Composition();
             SortedDictionary<Monosaccharide, int> subCompose = sub.Composition();
-            foreach(Monosaccharide sugar in subCompose.Keys)
+            foreach (Monosaccharide sugar in subCompose.Keys)
             {
                 compose[sugar] -= subCompose[sugar];
                 if (compose[sugar] == 0)
@@ -222,7 +218,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             // core
             int[] table = newGlycan.Table();
             int[] subTable = sub.Table();
-            for(int i = 0; i < table.Length; i++)
+            for (int i = 0; i < table.Length; i++)
             {
                 table[i] -= subTable[i];
             }
@@ -232,14 +228,14 @@ namespace MultiGlycanTDLibrary.engine.glycan
             return newGlycan;
         }
 
-      
+
 
         public static bool ContainsCut(IGlycan glycan, IGlycan sub, IGlycan subSub)
         {
             int diff1 = CountYCut(sub, glycan, 1);
             int diff2 = CountYCut(subSub, glycan, 1);
 
-            return diff1 == diff2; 
+            return diff1 == diff2;
         }
     }
 }

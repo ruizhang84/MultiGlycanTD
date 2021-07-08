@@ -1,9 +1,6 @@
 ﻿using MultiGlycanTDLibrary.engine.search;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.analysis
 {
@@ -50,7 +47,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
                     j++;
                 }
                 // compute fdr rate
-                double rate = (decoy_.Count - j) * 1.0 / (target_.Count- i + 1);
+                double rate = (decoy_.Count - j) * 1.0 / (target_.Count - i + 1);
                 if (rate <= fdr_)
                 {
                     cutoff_ = score;
@@ -59,7 +56,7 @@ namespace MultiGlycanTDLibrary.engine.analysis
                 else
                 {
                     k++;
-                    while (k < scores.Count - 1 && scores[k] == scores[k+1])
+                    while (k < scores.Count - 1 && scores[k] == scores[k + 1])
                     {
                         k++;
                     }

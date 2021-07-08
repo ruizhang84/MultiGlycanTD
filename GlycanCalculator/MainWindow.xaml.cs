@@ -4,23 +4,12 @@ using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GlycanCalculator
 {
@@ -197,7 +186,7 @@ namespace GlycanCalculator
                 MessageBox.Show("Select at least one ions!");
                 return false;
             }
-            
+
             if (fileName is null || fileName.Length == 0)
             {
                 MessageBox.Show("Name the saving file!");
@@ -217,7 +206,7 @@ namespace GlycanCalculator
             else if (o2AB.IsChecked == true)
             {
                 derivatization = Derivatization.k2AB;
-                
+
             }
             return true;
         }
@@ -257,7 +246,7 @@ namespace GlycanCalculator
             if (glycanFileName.Length > 0)
             {
                 List<SortedDictionary<Monosaccharide, int>> glycanList
-                    =  CalculatorHelper.ReadFilter(glycanFileName);
+                    = CalculatorHelper.ReadFilter(glycanFileName);
 
                 glycanBuilder =
                 new GlycanBuilderFiltered(glycanList, hexNAc, hex, fuc, neuAc, neuGc,

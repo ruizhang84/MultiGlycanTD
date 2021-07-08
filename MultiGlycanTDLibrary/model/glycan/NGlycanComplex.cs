@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MultiGlycanTDLibrary.model.glycan
 {
@@ -44,14 +40,14 @@ namespace MultiGlycanTDLibrary.model.glycan
             if (table_[6] == table_[8] && table_[10] < table_[12])
                 return false;
             if (table_[6] == table_[8] && table_[10] == table_[12]
-                && (table_[14] < table_[16] 
+                && (table_[14] < table_[16]
                 || table_[18] < table_[20] || table_[22] < table_[24]))
                 return false;
             for (int i = 0; i < 2; i++)
             {
                 if (table_[i * 2 + 6] < table_[i * 2 + 7])
                     return false;
-                if (table_[i * 2 + 6] == table_[i * 2 + 7] 
+                if (table_[i * 2 + 6] == table_[i * 2 + 7]
                     && table_[i * 2 + 10] < table_[i * 2 + 11])
                     return false;
                 if (table_[i * 2 + 6] == table_[i * 2 + 7]
@@ -61,7 +57,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     || table_[i * 2 + 22] < table_[i * 2 + 23]))
                     return false;
             }
-            
+
             return base.IsValid();
         }
 
@@ -200,10 +196,10 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddGlcNAcBranch()
         {
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 // atenna attachable
-                if(table_[i + 4] > 0)
+                if (table_[i + 4] > 0)
                 {
                     for (int j = 0; j < 2; j++)
                     {
@@ -295,7 +291,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     }
                 }
             }
-                    
+
             return false;
         }
 
@@ -340,11 +336,11 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         bool ValidAddFucTerminal()
         {
-            for(int i = 0; i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 if (table_[i + 4] > 0)
                 {
-                    for(int j = 0; j < 2; j++)
+                    for (int j = 0; j < 2; j++)
                     {
                         if (table_[i * 2 + j + 14] == 0 && table_[i * 2 + j + 6] > 0)
                         {

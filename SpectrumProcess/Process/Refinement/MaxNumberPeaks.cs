@@ -1,13 +1,10 @@
 ﻿using SpectrumData;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess
 {
-    public class MaxNumberPeaks: IProcess
+    public class MaxNumberPeaks : IProcess
     {
         IProcess process;
         int max;

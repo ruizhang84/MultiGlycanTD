@@ -5,9 +5,6 @@ using SpectrumProcess.algorithm;
 using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
@@ -19,7 +16,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
         public GlycanSearchDeisotoping(
             ISearch<GlycanFragments> searcher, GlycanJson glycanJson,
-            AveragineDeisotoping deisotoping): base(searcher, glycanJson)
+            AveragineDeisotoping deisotoping) : base(searcher, glycanJson)
         {
             deisotoping_ = deisotoping;
         }
@@ -61,7 +58,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
             // pick the top candidates
             return PickTop(results);
-        }       
+        }
 
     }
 }

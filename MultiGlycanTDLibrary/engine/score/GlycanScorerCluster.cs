@@ -1,37 +1,34 @@
 ﻿using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumProcess.algorithm;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
 {
     public class GlycanScorerCluster : GlycanScorer, IGlycanScorer
     {
         ClusterKMeans<IPeak> cluster;
-        public GlycanScorerCluster(int thread = 4, double similar = 0.9, 
-            double binWidth = 1.0, int k = 4, 
-            int maxIter = 1000, double tol = 0.01):  base(thread, similar, binWidth)
+        public GlycanScorerCluster(int thread = 4, double similar = 0.9,
+            double binWidth = 1.0, int k = 4,
+            int maxIter = 1000, double tol = 0.01) : base(thread, similar, binWidth)
         {
             cluster = new ClusterKMeans<IPeak>(k, maxIter, tol);
         }
 
         protected override void AssignScore()
         {
-            foreach(int scan in SpectrumResults.Keys)
+            foreach (int scan in SpectrumResults.Keys)
             {
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
-                List<Point<IPeak>> points = 
+                List<Point<IPeak>> points =
                     peaks.Select(p => new Point<IPeak>(p.GetIntensity(), p)).ToList();
                 cluster.Run(points);
                 double minClusterIntensity = int.MaxValue;
                 int minClusterIndex = 0;
                 foreach (int index in cluster.Clusters.Keys)
                 {
-                    double average = 
+                    double average =
                         cluster.Clusters[index].Average(peaks => peaks.Content().GetIntensity());
                     if (average < minClusterIntensity)
                     {
@@ -44,7 +41,7 @@ namespace MultiGlycanTDLibrary.engine.score
                 {
                     int nTotal = result.Matches.Count;
                     int nMatched = 0;
-                    foreach(int index in result.Matches.Keys)
+                    foreach (int index in result.Matches.Keys)
                     {
                         int clusterIndex = cluster.Index[index];
                         if (clusterIndex == minClusterIndex)

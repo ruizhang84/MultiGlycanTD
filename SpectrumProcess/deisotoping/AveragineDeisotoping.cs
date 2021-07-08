@@ -3,12 +3,10 @@ using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess.deisotoping
 {
-    public class AveragineDeisotoping 
+    public class AveragineDeisotoping
     {
         ISearch<int> searcher;
         Averagine averagine;
@@ -25,18 +23,18 @@ namespace SpectrumProcess.deisotoping
             this.averagine = averagine;
         }
 
-        protected List<List<int>> Cluster(int current, 
+        protected List<List<int>> Cluster(int current,
             List<IPeak> peaks, int charge)
         {
             List<List<int>> cluster = new List<List<int>>();
 
-            double steps =  1.0 / charge;
+            double steps = 1.0 / charge;
             IPeak peak = peaks[current];
             int index = 0;
             while (current + index < peaks.Count && index < maxExtend)
             {
                 double target = peak.GetMZ() + steps * index;
-                List<int> isotopics = 
+                List<int> isotopics =
                     searcher.SearchContent(target)
                     .Where(index => peaks[index].GetIntensity() > 0).ToList();
                 if (isotopics.Count == 0)
@@ -44,7 +42,7 @@ namespace SpectrumProcess.deisotoping
                 cluster.Add(isotopics);
                 index++;
             }
-           
+
             return cluster;
         }
 
@@ -52,7 +50,7 @@ namespace SpectrumProcess.deisotoping
         {
             // init search
             List<Point<int>> points = new List<Point<int>>();
-            for(int i = 0; i < peaks.Count; i++)
+            for (int i = 0; i < peaks.Count; i++)
             {
                 Point<int> point = new Point<int>(peaks[i].GetMZ(), i);
                 points.Add(point);
@@ -62,7 +60,7 @@ namespace SpectrumProcess.deisotoping
             // process peaks
             List<IPeak> deisotopingPeaks = new List<IPeak>();
             HashSet<int> processed = new HashSet<int>();
-            Dictionary<int, double> Restored 
+            Dictionary<int, double> Restored
                 = new Dictionary<int, double>();
             for (int i = 0; i < peaks.Count; i++)
             {
@@ -123,6 +121,6 @@ namespace SpectrumProcess.deisotoping
             return deisotopingPeaks.OrderBy(p => p.GetMZ()).ToList();
         }
 
-        
+
     }
 }

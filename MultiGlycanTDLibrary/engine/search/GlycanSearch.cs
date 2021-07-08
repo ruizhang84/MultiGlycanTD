@@ -4,9 +4,6 @@ using SpectrumData;
 using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
@@ -20,7 +17,7 @@ namespace MultiGlycanTDLibrary.engine.search
         protected readonly int minMatches = 5; // it is not likely only match a few peaks.
 
         public GlycanSearch(
-            ISearch<GlycanFragments> searcher, 
+            ISearch<GlycanFragments> searcher,
             GlycanJson glycanJson)
         {
             searcher_ = searcher;
@@ -141,7 +138,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
             // pick the top candidates
             return PickTop(results);
-        }       
+        }
 
     }
 }

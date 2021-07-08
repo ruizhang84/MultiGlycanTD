@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace SpectrumProcess.brain
 {
-    public enum ElementType 
+    public enum ElementType
     { C, H, O, N, S }
 
     public abstract class Element
@@ -28,7 +25,7 @@ namespace SpectrumProcess.brain
             Name = "Hydrogen";
             Isotope = new List<int>() { 1, 2 };
             Abundance = new SortedDictionary<int, double>() { { 1, 0.999885 }, { 2, 0.000115 } };
-            Mass = new SortedDictionary<int, double>() { { 1, 1.00782503207 }, { 2, 2.0141017778} };
+            Mass = new SortedDictionary<int, double>() { { 1, 1.00782503207 }, { 2, 2.0141017778 } };
             MonoMass = 1.00782503207;
         }
 

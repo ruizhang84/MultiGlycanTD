@@ -2,11 +2,9 @@
 using SpectrumData;
 using SpectrumProcess.algorithm;
 using SpectrumProcess.deisotoping;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
@@ -20,7 +18,7 @@ namespace MultiGlycanTDLibrary.engine.score
 
         public GlycanScorerDeisotoping(Averagine averagine,
              int maxCharge, ToleranceBy by, double tol, int thread = 4,
-             double similar = 0.9, double binWidth = 1.0) 
+             double similar = 0.9, double binWidth = 1.0)
             : base(thread, similar, binWidth)
         {
             Averagine = averagine;
@@ -29,7 +27,7 @@ namespace MultiGlycanTDLibrary.engine.score
             Tol = tol;
         }
 
-        protected void LocalAssignScore(int scan, 
+        protected void LocalAssignScore(int scan,
             AveragineDeisotoping deisotoping)
         {
             foreach (SearchResult result in SpectrumResults[scan])
@@ -52,7 +50,7 @@ namespace MultiGlycanTDLibrary.engine.score
             }
         }
 
-        protected override void AssignScore() 
+        protected override void AssignScore()
         {
             ConcurrentQueue<int> ScanQueue =
                 new ConcurrentQueue<int>(SpectrumResults.Keys);

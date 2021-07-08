@@ -1,9 +1,6 @@
 ﻿using MultiGlycanTDLibrary.model.glycan;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
@@ -11,7 +8,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
     {
         public static List<IGlycan> YionsLikeFragments(IGlycan glycan)
         {
-            List<IGlycan> glycanYFragment = new List<IGlycan>();       
+            List<IGlycan> glycanYFragment = new List<IGlycan>();
             foreach (IGlycan sub in glycan.Fragments())
             {
                 int diff = GlycanFragmentBuilderHelper.CountYCut(sub, glycan, 1);
@@ -19,7 +16,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
                 {
                     glycanYFragment.Add(sub);
                 }
-                
+
             }
             return glycanYFragment;
         }
@@ -67,9 +64,9 @@ namespace MultiGlycanTDLibrary.engine.glycan
             foreach (IGlycan sub in YionsFragments)
             {
                 List<IGlycan> subYionsFragments = YionsLikeFragments(sub);
-                foreach(IGlycan subSub in subYionsFragments)
+                foreach (IGlycan subSub in subYionsFragments)
                 {
-                    if(GlycanFragmentBuilderHelper.ContainsCut(glycan, sub, subSub))
+                    if (GlycanFragmentBuilderHelper.ContainsCut(glycan, sub, subSub))
                     {
                         glycanBYFragment.Add(
                             GlycanFragmentBuilderHelper.ComplementaryFragment(subSub, sub));
@@ -84,7 +81,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
             List<IGlycan> YionsFragments = YionsLikeFragments(glycan);
             HashSet<string> BYionsFragmentSet = new HashSet<string>(
-                BYionsLikeFragments(glycan).Select(g => g.ID())); 
+                BYionsLikeFragments(glycan).Select(g => g.ID()));
             foreach (IGlycan sub in YionsFragments)
             {
                 // Valid if at least a partial core

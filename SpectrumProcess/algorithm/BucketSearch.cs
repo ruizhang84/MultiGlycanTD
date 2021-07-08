@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess.algorithm
 {
@@ -120,7 +118,7 @@ namespace SpectrumProcess.algorithm
         }
 
         public List<Point<T>> Search(double expect)
-        { return Search(expect, expect);  }
+        { return Search(expect, expect); }
 
         public List<Point<T>> Search(double expect, double baseValue)
         {

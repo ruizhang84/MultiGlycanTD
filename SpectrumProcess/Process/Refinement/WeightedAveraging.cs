@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SpectrumData;
+using SpectrumData.Spectrum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SpectrumData;
-using SpectrumData.Spectrum;
 
 namespace SpectrumProcess
 {
@@ -58,7 +57,7 @@ namespace SpectrumProcess
             double weighted = peaks.Select(p => p.GetMZ() * p.GetIntensity()).Sum();
             double intensity_sums = peaks.Select(p => p.GetIntensity()).Sum();
             return new GeneralPeak(
-                Math.Round(weighted / intensity_sums, mzRound), 
+                Math.Round(weighted / intensity_sums, mzRound),
                 Math.Round(target.GetIntensity(), peakRound));
         }
 

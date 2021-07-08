@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SpectrumProcess
 {
@@ -9,20 +7,20 @@ namespace SpectrumProcess
         public static double Normalize(double[] vector)
         {
             double norm = 0;
-            foreach(double x in vector)
+            foreach (double x in vector)
             {
                 norm += x * x;
             }
             return Math.Sqrt(norm);
         }
 
-        public static double[] Jacobi(double[,]a, double[]b, double maxSteps = 500, double epsilon = 1e-3)
+        public static double[] Jacobi(double[,] a, double[] b, double maxSteps = 500, double epsilon = 1e-3)
         {
             double[] X = new double[b.Length];
             double[] converge = new double[b.Length];
             for (int step = 0; step < maxSteps; step++)
             {
-                
+
                 for (int i = 0; i < b.Length; i++)
                 {
                     double sum = 0;
@@ -49,20 +47,20 @@ namespace SpectrumProcess
 
             double[] C = new double[c.Length];
             C[0] = c[0] / b[0];
-            for(int i = 1; i < n-1; i++)
+            for (int i = 1; i < n - 1; i++)
             {
-                C[i] = c[i] / (b[i] - a[i-1] * C[i - 1]);
+                C[i] = c[i] / (b[i] - a[i - 1] * C[i - 1]);
             }
 
             double[] D = new double[d.Length];
             D[0] = d[0] / b[0];
-            for(int i = 1; i < n; i++)
+            for (int i = 1; i < n; i++)
             {
-                D[i] = (d[i] - a[i-1] * D[i - 1]) / (b[i] - a[i-1] * C[i - 1]);
+                D[i] = (d[i] - a[i - 1] * D[i - 1]) / (b[i] - a[i - 1] * C[i - 1]);
             }
 
             x[n - 1] = D[n - 1];
-            for(int i = n-2; i >= 0; i--)
+            for (int i = n - 2; i >= 0; i--)
             {
                 x[i] = D[i] - C[i] * x[i + 1];
             }

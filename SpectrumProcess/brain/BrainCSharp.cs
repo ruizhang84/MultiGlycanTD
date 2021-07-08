@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace SpectrumProcess.brain
 {
@@ -11,11 +10,11 @@ namespace SpectrumProcess.brain
         protected static readonly Lazy<Brain>
             lazy = new Lazy<Brain>(() => new Brain());
         public static Brain Run { get { return lazy.Value; } }
-        protected Brain(){}
+        protected Brain() { }
 
         public Element ElementConv(ElementType type)
         {
-            switch(type)
+            switch (type)
             {
                 case ElementType.C:
                     return new C();
@@ -34,7 +33,7 @@ namespace SpectrumProcess.brain
         private double PsiFunc(Compound compound, int order)
         {
             Complex psi = 0;
-            foreach(var item in compound.Composition)
+            foreach (var item in compound.Composition)
             {
                 int num = item.Value;
                 Element element = ElementConv(item.Key);
@@ -50,7 +49,7 @@ namespace SpectrumProcess.brain
         {
             int j = coeff.Count;
             double qi = 0;
-            for(int l = 0; l < j; l++)
+            for (int l = 0; l < j; l++)
             {
                 qi += coeff[j - 1 - l] * polynom[l];
             }
@@ -61,7 +60,7 @@ namespace SpectrumProcess.brain
         {
             List<double> coeff = new List<double>();
             double q0 = 1.0;
-            foreach(var item in compound.Composition)
+            foreach (var item in compound.Composition)
             {
                 int num = item.Value;
                 Element element = ElementConv(item.Key);
@@ -72,7 +71,7 @@ namespace SpectrumProcess.brain
 
             double qi = q0;
             List<double> polynom = new List<double>();
-            for(int i = 1; i < order; i++)
+            for (int i = 1; i < order; i++)
             {
                 double psi = PsiFunc(compound, i);
                 polynom.Add(psi);
@@ -83,8 +82,8 @@ namespace SpectrumProcess.brain
             return coeff;
         }
 
-       public List<double> CenterMass(Compound compound, int order)
-       {
+        public List<double> CenterMass(Compound compound, int order)
+        {
             double[] variant = new double[order];
             Dictionary<ElementType, int> formular = compound.Composition;
 
@@ -147,13 +146,13 @@ namespace SpectrumProcess.brain
                 formular[element] += 1;
             }
             List<double> coefficient = Distribute(new Compound(formular), order);
-            for(int i = 0; i < order; i ++)
+            for (int i = 0; i < order; i++)
             {
                 variant[i] /= coefficient[i];
             }
 
             return variant.ToList();
-       }
+        }
 
 
     }

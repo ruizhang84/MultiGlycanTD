@@ -1,7 +1,6 @@
 ﻿using SpectrumProcess.brain;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SpectrumProcess.deisotoping
 {
@@ -23,7 +22,7 @@ namespace SpectrumProcess.deisotoping
 
         Element CreateElement(ElementType type)
         {
-            switch(type)
+            switch (type)
             {
                 case ElementType.C:
                     return new C();
@@ -41,12 +40,12 @@ namespace SpectrumProcess.deisotoping
 
         public Compound Fit(double mass)
         {
-            Dictionary<ElementType, int> compos 
+            Dictionary<ElementType, int> compos
                 = new Dictionary<ElementType, int>();
 
             // compute scale
             double total = 0;
-            foreach(var item in Composition())
+            foreach (var item in Composition())
             {
                 Element e = CreateElement(item.Key);
                 double num = item.Value;
@@ -60,12 +59,12 @@ namespace SpectrumProcess.deisotoping
             foreach (var item in Composition())
             {
                 Element e = CreateElement(item.Key);
-                int num = (int) Math.Floor(item.Value * scale);
+                int num = (int)Math.Floor(item.Value * scale);
                 compos[item.Key] = num;
                 total += e.Mass[e.Atomic] * num;
             }
-            int addit = (int) Math.Floor(mass - total);
-            foreach(var item in compos)
+            int addit = (int)Math.Floor(mass - total);
+            foreach (var item in compos)
             {
                 if (CreateElement(item.Key).Atomic == 1)
                 {
@@ -84,7 +83,7 @@ namespace SpectrumProcess.deisotoping
 
         public Dictionary<ElementType, double> Composition(AveragineType type)
         {
-            switch(type)
+            switch (type)
             {
                 case AveragineType.Peptide:
                     return Peptide;

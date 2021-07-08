@@ -6,9 +6,6 @@ using SpectrumData;
 using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.annotation
 {
@@ -24,7 +21,15 @@ namespace MultiGlycanTDLibrary.engine.annotation
             ParameterJson parameter)
         {
             searcher_ = searcher;
-            types = parameter.FragmentTypes;
+            types = new List<FragmentType>()
+            {
+                FragmentType.B, FragmentType.C, FragmentType.Y, FragmentType.Z,
+                FragmentType.BY, FragmentType.BZ, FragmentType.CY,
+                FragmentType.YY, FragmentType.YZ, FragmentType.ZZ,
+                FragmentType.BYY, FragmentType.BYZ, FragmentType.BZZ,
+                FragmentType.CYY, FragmentType.CYZ, FragmentType.CZZ,
+                FragmentType.YYY, FragmentType.ZZZ, FragmentType.YYZ, FragmentType.YZZ
+            };
             BuilGlycans(parameter);
         }
 
@@ -40,7 +45,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
 
         public void InitAnnotation(SearchResult result)
         {
-           
+
             List<Point<GlycanAnnotated>> points = new List<Point<GlycanAnnotated>>();
             string glycan = result.Glycan;
             foreach (FragmentType type in types)
@@ -66,7 +71,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
         {
             // init
             InitAnnotation(result);
-            
+
             List<PeakAnnotated> peakAnnotateds = new List<PeakAnnotated>();
             // search peaks
             for (int i = 0; i < peaks.Count; i++)

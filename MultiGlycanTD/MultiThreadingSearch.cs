@@ -1,21 +1,13 @@
-﻿using SpectrumProcess.algorithm;
-using MultiGlycanTDLibrary.engine.analysis;
-using MultiGlycanTDLibrary.engine.glycan;
+﻿using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.score;
 using MultiGlycanTDLibrary.engine.search;
 using MultiGlycanTDLibrary.model;
 using SpectrumData;
-using SpectrumData.Reader;
-using SpectrumData.Spectrum;
-using SpectrumProcess;
-using System;
+using SpectrumProcess.algorithm;
+using SpectrumProcess.deisotoping;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using SpectrumProcess.deisotoping;
 
 namespace MultiGlycanTD
 {
@@ -44,7 +36,7 @@ namespace MultiGlycanTD
         int minCharge = 2;
         int maxCharge = 4;   // max charge of spectrum to consider
 
-        public MultiThreadingSearch(string msPath, 
+        public MultiThreadingSearch(string msPath,
             Counter readingCounter, Counter searchCounter,
             GlycanJson glycanJson)
         {
@@ -65,10 +57,10 @@ namespace MultiGlycanTD
         }
 
         public List<SearchResult> Target()
-            { return targets; }
+        { return targets; }
 
         public List<SearchResult> Decoy()
-            { return decoys; }
+        { return decoys; }
 
         void UpdateTask(List<SearchResult> t, List<SearchResult> d)
         {
@@ -106,7 +98,7 @@ namespace MultiGlycanTD
         {
             return tandemSpectra;
         }
-       
+
 
         void GenerateTasks()
         {
@@ -150,13 +142,13 @@ namespace MultiGlycanTD
             List<SearchResult> tempDecoyResults = new List<SearchResult>();
 
             ISearch<string> searcher = new BucketSearch<string>(
-                SearchingParameters.Access.MS1ToleranceBy, 
+                SearchingParameters.Access.MS1ToleranceBy,
                 SearchingParameters.Access.MS1Tolerance);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
-          
+
 
             ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(
-                SearchingParameters.Access.MS2ToleranceBy, 
+                SearchingParameters.Access.MS2ToleranceBy,
                 SearchingParameters.Access.MSMSTolerance);
 
             Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);

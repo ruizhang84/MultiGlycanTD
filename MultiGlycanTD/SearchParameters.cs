@@ -1,10 +1,7 @@
-﻿using SpectrumProcess.algorithm;
-using MultiGlycanTDLibrary.model;
+﻿using MultiGlycanTDLibrary.model;
+using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTD
 {

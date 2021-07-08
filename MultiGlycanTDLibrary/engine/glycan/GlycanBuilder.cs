@@ -1,12 +1,9 @@
 ﻿using MultiGlycanTDLibrary.model.glycan;
-using MultiGlycanClassLibrary.util.mass;
-using System;
+using SpectrumProcess.brain;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using SpectrumProcess.brain;
 
 namespace MultiGlycanTDLibrary.engine.glycan
 {
@@ -29,7 +26,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
         public bool Permethylated { get; set; } = true;
         public bool Reduced { get; set; } = true;
         public int Order { get; set; } = 10;
-        public Derivatization Derivates { get; set; } 
+        public Derivatization Derivates { get; set; }
             = Derivatization.Underivatized;
 
         protected Dictionary<string, IGlycan> glycans_map_; // glycan id -> glycan
@@ -43,7 +40,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
 
         public GlycanBuilder(int hexNAc = 12, int hex = 12, int fuc = 5, int neuAc = 4, int neuGc = 0,
             bool complex = true, bool hybrid = false, bool highMannose = false, int order = 10,
-            bool permethylated = true,  bool reduced = true, 
+            bool permethylated = true, bool reduced = true,
             Derivatization derivatization = Derivatization.Underivatized, int thread = 4)
         {
             hexNAc_ = hexNAc;
@@ -89,15 +86,15 @@ namespace MultiGlycanTDLibrary.engine.glycan
         }
 
         public Dictionary<string, List<IGlycan>> GlycanCompositionMaps()
-        { return glycan_compound_map_;  }
+        { return glycan_compound_map_; }
 
         public Dictionary<string, List<double>> GlycanDistribMaps()
         { return distr_map_.ToDictionary(entry => entry.Key, entry => entry.Value); }
 
         public Dictionary<string, List<double>> GlycanMassMaps()
-        { return mass_map_.ToDictionary(entry => entry.Key, entry => entry.Value);  }
+        { return mass_map_.ToDictionary(entry => entry.Key, entry => entry.Value); }
 
-        public void Build() 
+        public void Build()
         {
             Queue<IGlycan> queue = new Queue<IGlycan>();
             IGlycan root;
@@ -237,7 +234,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             // reducing end
             if (Permethylated)
             {
-                if(Reduced)
+                if (Reduced)
                 {
                     formulaComposition[ElementType.C] += 3;
                     formulaComposition[ElementType.H] += 10;
@@ -253,7 +250,7 @@ namespace MultiGlycanTDLibrary.engine.glycan
             else
             // derivation
             {
-                switch(Derivates)
+                switch (Derivates)
                 {
                     case Derivatization.k2AA:
                         formulaComposition[ElementType.C] += 7;

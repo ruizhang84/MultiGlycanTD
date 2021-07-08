@@ -1,12 +1,9 @@
 ﻿using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumProcess.algorithm;
-using SpectrumProcess.deisotoping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
 {
@@ -19,7 +16,7 @@ namespace MultiGlycanTDLibrary.engine.score
 
             double lowerBound = Math.Min(p1.Min(x => x.GetMZ()), p2.Min(x => x.GetMZ()));
             double upperBound = Math.Max(p1.Max(x => x.GetMZ()), p2.Max(x => x.GetMZ()));
-            int bucketNums = (int) Math.Ceiling((upperBound - lowerBound + 1) / binWidth);
+            int bucketNums = (int)Math.Ceiling((upperBound - lowerBound + 1) / binWidth);
 
             double[] q1 = new double[bucketNums];
             double[] q2 = new double[bucketNums];

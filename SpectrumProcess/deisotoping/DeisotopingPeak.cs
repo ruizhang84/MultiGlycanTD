@@ -1,10 +1,5 @@
 ﻿using SpectrumData;
 using SpectrumData.Spectrum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess.deisotoping
 {
@@ -22,7 +17,7 @@ namespace SpectrumProcess.deisotoping
             }
         }
 
-        public DeisotopingPeak(IPeak peak):
+        public DeisotopingPeak(IPeak peak) :
             base(peak.GetMZ(), peak.GetIntensity())
         {
             charge = 0;

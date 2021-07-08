@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.model.glycan
 {
@@ -21,7 +18,7 @@ namespace MultiGlycanTDLibrary.model.glycan
 
         public void Add(IGlycan glycan)
         {
-            lock(obj)
+            lock (obj)
             {
                 glycans.Add(glycan);
             }
@@ -41,7 +38,7 @@ namespace MultiGlycanTDLibrary.model.glycan
             Stack<IGlycan> stack = new Stack<IGlycan>(glycans);
             HashSet<string> visited = new HashSet<string>();
 
-            while(stack.Count > 0)
+            while (stack.Count > 0)
             {
                 IGlycan node = stack.Pop();
                 children.Add(node);
@@ -49,7 +46,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                 foreach (IGlycan child in node.Children())
                 {
                     string id = child.ID();
-                    if(!visited.Contains(id))
+                    if (!visited.Contains(id))
                     {
                         visited.Add(id);
                         stack.Push(child);
@@ -118,7 +115,7 @@ namespace MultiGlycanTDLibrary.model.glycan
         public abstract IGlycan Clone();
 
         public virtual bool IsValid()
-        {  
+        {
             return composite[Monosaccharide.GlcNAc] >= 2
                 && composite[Monosaccharide.Man] >= 3;
         }

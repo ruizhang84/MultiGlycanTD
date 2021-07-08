@@ -3,8 +3,6 @@ using SpectrumProcess.brain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpectrumProcess.deisotoping
 {
@@ -34,7 +32,7 @@ namespace SpectrumProcess.deisotoping
         // Create a isotopic cluster: list of peak lists -> list of peak sequences
         public static List<List<int>> Combinator(List<List<int>> cluster)
         {
-            
+
             List<List<int>> results = new List<List<int>>();
             if (cluster.Count == 0)
                 return results;
@@ -122,7 +120,7 @@ namespace SpectrumProcess.deisotoping
 
                 alignedDistr.Add(distr[alignedDistrIndex]);
                 alignedIntensity.Add(isotopicPeaks[alignedIsotopicIndex]);
-                
+
                 alignedDistrIndex++;
                 alignedIsotopicIndex++;
             }
@@ -172,7 +170,7 @@ namespace SpectrumProcess.deisotoping
 
             // compute correlation
             int shift = maxIndex - maxDistrIndex;
-            return Tuple.Create(shift, Score(alignedDistr, alignedIntensity)); 
+            return Tuple.Create(shift, Score(alignedDistr, alignedIntensity));
         }
 
 

@@ -1,9 +1,4 @@
-﻿using SpectrumData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SpectrumData.Spectrum
 {
@@ -27,7 +22,7 @@ namespace SpectrumData.Spectrum
         }
 
 
-        public MS2Spectrum(ISpectrum spectrum, 
+        public MS2Spectrum(ISpectrum spectrum,
             double mz, int charge)
         {
             scanNum = spectrum.GetScanNum();

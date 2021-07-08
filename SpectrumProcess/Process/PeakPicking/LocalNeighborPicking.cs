@@ -1,9 +1,7 @@
-﻿using System;
+﻿using SpectrumData;
+using SpectrumData.Spectrum;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SpectrumData;
-using SpectrumData.Spectrum;
 
 namespace SpectrumProcess
 {

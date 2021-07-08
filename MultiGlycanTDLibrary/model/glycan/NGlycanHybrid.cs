@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MultiGlycanTDLibrary.model.glycan
 {
@@ -239,7 +235,7 @@ namespace MultiGlycanTDLibrary.model.glycan
             }
             else
             {
-                for(int i = 0; i < 2; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     if (table_[4 + i] == 0)
                     {
@@ -252,7 +248,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                     }
                 }
             }
-            
+
             return glycans;
         }
 
@@ -400,7 +396,7 @@ namespace MultiGlycanTDLibrary.model.glycan
                 if (table_[i + 8] > 0 && table_[i + 8] == table_[i + 10] && table_[i + 14] == 0 && table_[i + 16] == 0)
                 {
                     return true;
-                }    
+                }
             }
             return false;
         }

@@ -1,5 +1,4 @@
-﻿using MultiGlycanTDLibrary.engine.analysis;
-using MultiGlycanTDLibrary.engine.annotation;
+﻿using MultiGlycanTDLibrary.engine.annotation;
 using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
@@ -12,7 +11,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MultiGlycanTD
@@ -61,7 +59,7 @@ namespace MultiGlycanTD
         public static void GenerateSearchTasks(string spectrumPath,
            ConcurrentQueue<SearchTask> searchTasks,
            ConcurrentDictionary<int, ISpectrum> tandemSpectra,
-           Counter readingCounter, 
+           Counter readingCounter,
            int minPeaks, int maxCharge, int minCharge, double searchRange)
         {
             if (Path.GetExtension(spectrumPath) == ".mgf")
@@ -153,7 +151,7 @@ namespace MultiGlycanTD
         }
 
         public static void GenerateDecoySearchTasks(
-            ConcurrentQueue<SearchTask> tasks, ConcurrentQueue<SearchTask> decoyTasks, 
+            ConcurrentQueue<SearchTask> tasks, ConcurrentQueue<SearchTask> decoyTasks,
             ConcurrentDictionary<int, ISpectrum> decoyTandemSpectra, int randomSeed,
             ToleranceBy distanceType, double maxDistance, double minDistance)
         {
@@ -280,7 +278,7 @@ namespace MultiGlycanTD
             return res;
         }
         public static void Report(
-            string path, 
+            string path,
             List<SearchResult> results)
         {
             using (FileStream ostrm = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))

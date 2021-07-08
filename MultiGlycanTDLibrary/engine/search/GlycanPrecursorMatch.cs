@@ -1,11 +1,7 @@
 ﻿using MultiGlycanTDLibrary.model;
-using MultiGlycanTDLibrary.model.glycan;
 using SpectrumProcess.algorithm;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.search
 {
@@ -47,7 +43,7 @@ namespace MultiGlycanTDLibrary.engine.search
 
         public List<string> Match(double precursor, int charge, double ion = 1.0078)
         {
-            double mass = util.mass.Spectrum.To.Compute(precursor,ion, charge);
+            double mass = util.mass.Spectrum.To.Compute(precursor, ion, charge);
             return searcher_.SearchContent(mass).Distinct().ToList();
         }
     }
