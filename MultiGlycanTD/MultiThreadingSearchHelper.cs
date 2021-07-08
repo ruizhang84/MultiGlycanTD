@@ -325,6 +325,26 @@ namespace MultiGlycanTD
                     return "YZ";
                 case FragmentType.ZZ:
                     return "ZZ";
+                case FragmentType.BYY:
+                    return "BYY";
+                case FragmentType.BYZ:
+                    return "BYZ";
+                case FragmentType.BZZ:
+                    return "BZZ";
+                case FragmentType.CYY:
+                    return "CYY";
+                case FragmentType.CYZ:
+                    return "CYZ";
+                case FragmentType.CZZ:
+                    return "CZZ";
+                case FragmentType.YYY:
+                    return "YYY";
+                case FragmentType.YYZ:
+                    return "YYZ";
+                case FragmentType.YZZ:
+                    return "YZZ";
+                case FragmentType.ZZZ:
+                    return "ZZZ";
             }
             return "";
         }

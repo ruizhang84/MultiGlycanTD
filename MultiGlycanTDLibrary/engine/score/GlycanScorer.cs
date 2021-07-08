@@ -68,7 +68,7 @@ namespace MultiGlycanTDLibrary.engine.score
             return ScoreResults.SelectMany(p => p.Value).OrderBy(r => r.Scan).ToList();
         }
 
-        protected virtual void AssignScore()
+        public virtual void AssignScore()
         {
             Parallel.ForEach(SpectrumResults.Keys,
                 new ParallelOptions { MaxDegreeOfParallelism = Thread },
@@ -87,6 +87,25 @@ namespace MultiGlycanTDLibrary.engine.score
                 });
         }
 
+        protected virtual List<SearchResult> BestResultsFromGlycan(string glycan)
+        {
+            double bestScore = 0;
+            List<SearchResult> bestResults = new List<SearchResult>();
+            foreach (SearchResult result in GlycanResults[glycan])
+            {
+                if (result.Fit > bestScore)
+                {
+                    bestScore = result.Fit;
+                    bestResults.Clear();
+                }
+                if (result.Fit == bestScore)
+                {
+                    bestResults.Add(result);
+                }
+            }
+            return bestResults;
+        }
+
         protected virtual void AssignSpectrumResults()
         {
             // Assign glycan to spectrum
@@ -97,20 +116,8 @@ namespace MultiGlycanTDLibrary.engine.score
             foreach (string glycan in GlycanResults.Keys)
             {
                 // find best score
-                double bestScore = 0;
-                List<SearchResult> bestResults = new List<SearchResult>();
-                foreach (SearchResult result in GlycanResults[glycan])
-                {
-                    if (result.Fit > bestScore)
-                    {
-                        bestScore = result.Fit;
-                        bestResults.Clear();
-                    }
-                    if (result.Fit == bestScore)
-                    {
-                        bestResults.Add(result);
-                    }
-                }
+                List<SearchResult> bestResults =
+                    BestResultsFromGlycan(glycan);
                 if (bestResults.Count == 0)
                     continue;
 

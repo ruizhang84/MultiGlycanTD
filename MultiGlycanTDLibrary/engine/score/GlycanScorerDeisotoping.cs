@@ -50,7 +50,7 @@ namespace MultiGlycanTDLibrary.engine.score
             }
         }
 
-        protected override void AssignScore()
+        public override void AssignScore()
         {
             ConcurrentQueue<int> ScanQueue =
                 new ConcurrentQueue<int>(SpectrumResults.Keys);

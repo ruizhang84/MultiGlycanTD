@@ -19,19 +19,13 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SpectrumProcess.deisotoping;
+using MultiGlycanTDLibrary.engine.score;
 
 namespace NUnitTestProject
 {
     public class SpectrumAnnotationTestV3
     {
         object obj = new object();
-
-        List<FragmentType> types = new List<FragmentType>()
-        {
-            FragmentType.B, FragmentType.Y,
-            FragmentType.BY, FragmentType.YY
-        };
-
         string TypeToString(FragmentType type)
         {
             switch (type)
@@ -56,6 +50,26 @@ namespace NUnitTestProject
                     return "YZ";
                 case FragmentType.ZZ:
                     return "ZZ";
+                case FragmentType.BYY:
+                    return "BYY";
+                case FragmentType.BYZ:
+                    return "BYZ";
+                case FragmentType.BZZ:
+                    return "BZZ";
+                case FragmentType.CYY:
+                    return "CYY";
+                case FragmentType.CYZ:
+                    return "CYZ";
+                case FragmentType.CZZ:
+                    return "CZZ";
+                case FragmentType.YYY:
+                    return "YYY";
+                case FragmentType.YYZ:
+                    return "YYZ";
+                case FragmentType.YZZ:
+                    return "YZZ";
+                case FragmentType.ZZZ:
+                    return "ZZZ";
             }
             return "";
         }
@@ -105,88 +119,11 @@ namespace NUnitTestProject
             return res;
         }
 
-        List<IGlycan> FragmentsBuild(FragmentType type, IGlycan glycan)
-        {
-            switch (type)
-            {
-                case FragmentType.B:
-                case FragmentType.C:
-                    return GlycanFragmentBuilder.BionsLikeFragments(glycan);
-                case FragmentType.Y:
-                case FragmentType.Z:
-                    return GlycanFragmentBuilder.YionsLikeFragments(glycan);
-                case FragmentType.BY:
-                case FragmentType.BZ:
-                case FragmentType.CY:
-                    return GlycanFragmentBuilder.BYionsLikeFragments(glycan);
-                case FragmentType.YY:
-                case FragmentType.YZ:
-                case FragmentType.ZZ:
-                    return GlycanFragmentBuilder.YYionsLikeFragments(glycan);
-
-            }
-            return new List<IGlycan>();
-        }
-
-        double MassBuild(FragmentType type, IGlycan glycan)
-        {
-            switch (type)
-            {
-                case FragmentType.B:
-                    return GlycanIonsBuilder.Build.Bion(glycan);
-                case FragmentType.C:
-                    return GlycanIonsBuilder.Build.Cion(glycan);
-                case FragmentType.Y:
-                    return GlycanIonsBuilder.Build.Yion(glycan);
-                case FragmentType.Z:
-                    return GlycanIonsBuilder.Build.Zion(glycan);
-                case FragmentType.BY:
-                    return GlycanIonsBuilder.Build.BYion(glycan);
-                case FragmentType.BZ:
-                    return GlycanIonsBuilder.Build.BZion(glycan);
-                case FragmentType.CY:
-                    return GlycanIonsBuilder.Build.CYion(glycan);
-                case FragmentType.YY:
-                    return GlycanIonsBuilder.Build.YYion(glycan);
-                case FragmentType.YZ:
-                    return GlycanIonsBuilder.Build.YZion(glycan);
-                case FragmentType.ZZ:
-                    return GlycanIonsBuilder.Build.ZZion(glycan);
-            }
-            return 0;
-        }
-
-        void BuildMassMap(string id, IGlycan glycan, FragmentType type,
-            ref ConcurrentDictionary<double, List<GlycanAnnotated>> massMap)
-        {
-            if (glycan.IsValid())
-            {
-                List<IGlycan> bionsLikeFragments = FragmentsBuild(type, glycan);
-                foreach (IGlycan g in bionsLikeFragments)
-                {
-                    double mass = MassBuild(type, g);
-                    lock (obj)
-                    {
-                        if (!massMap.ContainsKey(mass))
-                        {
-                            massMap[mass] = new List<GlycanAnnotated>();
-                        }
-                        massMap[mass].Add(new GlycanAnnotated
-                        {
-                            Parent = id,
-                            Type = type,
-                            Glycan = g.ID()
-                        });
-                    }
-                }
-            }
-        }
-
         [Test]
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\HBS1_dextrinspkd_C18_10252018.raw";
+            string path = @"C:\Users\iruiz\Downloads\MSMS\134144_31_C18_120min_60oC_50cm.raw";
             string database = @"C:\Users\iruiz\Downloads\MSMS\database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
@@ -212,27 +149,11 @@ namespace NUnitTestProject
             // init
             string jsonStringRead = File.ReadAllText(database);
             GlycanJson glycanJson = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
+            ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(
+               ToleranceBy.Dalton, 0.5);
+            GlycanAnnotationLazy annotator = new GlycanAnnotationLazy(searcher3,
+                glycanJson.Parameters);
             CompdJson compdJson = glycanJson.Compound;
-
-            GlycanBuilder glycanBuilder = new GlycanBuilder(7, 7, 5, 4, 0,
-                true, true, true,
-                10, true, true);
-            glycanBuilder.Build();
-            var map = glycanBuilder.GlycanMaps();
-
-            GlycanIonsBuilder.Build.Permethylated = true;
-            GlycanIonsBuilder.Build.Reduced = true;
-            Glycan.To.SetPermethylation(true, true);
-
-            ConcurrentDictionary<double, List<GlycanAnnotated>> massMap
-                = new ConcurrentDictionary<double, List<GlycanAnnotated>>();
-            Parallel.ForEach(map, pair =>
-            {
-                foreach (FragmentType type in types)
-                {
-                    BuildMassMap(pair.Key, pair.Value, type, ref massMap);
-                }
-            });
 
             // search
             double searchRange = 1.0;
@@ -250,14 +171,10 @@ namespace NUnitTestProject
                 4, ToleranceBy.Dalton, 0.1);
             IGlycanSearch glycanSearch
                 = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
-
-
-            ISearch<GlycanAnnotated> searcher3 = 
-                new BucketSearch<GlycanAnnotated>(ToleranceBy.Dalton, 0.5);
+         
             SearchMetaData analyzer = new SearchMetaData();
-            GlycanAnnotation glycanAnnotation = new GlycanAnnotation(searcher3,
-                massMap.ToDictionary(entry => entry.Key, entry => entry.Value));
 
+            int targetScan = 18161;
             foreach (var scanPair in scanGroup)
             {
                 if (scanPair.Value.Count > 0)
@@ -267,6 +184,9 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
+                        if (scan != targetScan)
+                            continue;
+
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                         if (ms1Peaks.Count() == 0)
@@ -286,8 +206,53 @@ namespace NUnitTestProject
                             continue;
                         List<SearchResult> searched = glycanSearch.Search(candidates, ms2.GetPeaks(), charge, 1.0078);
                         List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
+                        List<PeakAnnotated> annotateds
+                            = new List<PeakAnnotated>();
 
-                        List<PeakAnnotated> annotateds = glycanAnnotation.Annotated(deisotoping.Process(ms2.GetPeaks(), 1.0078), charge, results);
+                        ClusterKMeans<IPeak>  cluster = new ClusterKMeans<IPeak>();
+
+                        List<Point<IPeak>> points =
+                            ms2.GetPeaks().Select(p => new Point<IPeak>(p.GetIntensity(), p)).ToList();
+                        cluster.Run(points);
+                        double minClusterIntensity = int.MaxValue;
+                        int minClusterIndex = 0;
+                        foreach (int index in cluster.Clusters.Keys)
+                        {
+                            double average =
+                                cluster.Clusters[index].Average(peaks => peaks.Content().GetIntensity());
+                            if (average < minClusterIntensity)
+                            {
+                                minClusterIntensity = average;
+                                minClusterIndex = index;
+                            }
+                        }
+
+                        foreach (SearchResult result in results)
+                        {
+                            int nTotal = result.Matches.Count;
+                            int nMatched = 0;
+                            foreach (int index in result.Matches.Keys)
+                            {
+                                int clusterIndex = cluster.Index[index];
+                                if (clusterIndex == minClusterIndex)
+                                    continue;
+                                nMatched++;
+                            }
+                            result.Coverage = nMatched * 1.0 / nTotal;
+                        }
+
+                        foreach (SearchResult result in results)
+                        {
+
+                            result.Score = GlycanScorerHelper.ComputeScore(result, ms2.GetPeaks());
+                            result.Fit = GlycanScorerHelper.ComputeFit(result, ms2.GetPeaks());
+                        }
+
+                        foreach (SearchResult result in results)
+                        {
+                            annotateds.AddRange(annotator.Annotated(ms2.GetPeaks(), result));
+                        }
+
 
                         final[scan] = annotateds;
                     }

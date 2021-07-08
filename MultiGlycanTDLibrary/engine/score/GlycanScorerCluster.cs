@@ -16,7 +16,7 @@ namespace MultiGlycanTDLibrary.engine.score
             cluster = new ClusterKMeans<IPeak>(k, maxIter, tol);
         }
 
-        protected override void AssignScore()
+        public override void AssignScore()
         {
             foreach (int scan in SpectrumResults.Keys)
             {
@@ -94,6 +94,25 @@ namespace MultiGlycanTDLibrary.engine.score
 
             }
 
+            return bestResults;
+        }
+
+        protected override List<SearchResult> BestResultsFromGlycan(string glycan)
+        {
+            double bestScore = 0;
+            List<SearchResult> bestResults = new List<SearchResult>();
+            foreach (SearchResult result in GlycanResults[glycan])
+            {
+                if (result.Fit > bestScore)
+                {
+                    bestScore = result.Fit;
+                    bestResults.Clear();
+                }
+                if (result.Fit == bestScore)
+                {
+                    bestResults.Add(result);
+                }
+            }
             return bestResults;
         }
 
