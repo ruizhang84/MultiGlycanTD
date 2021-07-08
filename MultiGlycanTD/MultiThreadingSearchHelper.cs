@@ -6,6 +6,7 @@ using SpectrumData;
 using SpectrumData.Reader;
 using SpectrumData.Spectrum;
 using SpectrumProcess;
+using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -149,6 +150,89 @@ namespace MultiGlycanTD
                     }
                     readingCounter.Add(scanGroup.Count);
                 });
+        }
+
+        public static void GenerateDecoySearchTasks(
+            ConcurrentQueue<SearchTask> tasks, ConcurrentQueue<SearchTask> decoyTasks, 
+            ConcurrentDictionary<int, ISpectrum> decoyTandemSpectra, int randomSeed,
+            ToleranceBy distanceType, double maxDistance, double minDistance)
+        {
+            // find max precursor charges
+            int maxCharge = 0;
+            foreach (SearchTask task in tasks)
+            {
+                maxCharge = Math.Max(maxCharge, task.Charge);
+            }
+
+            // split spectrum on charges
+            for (int charge = 0; charge <= maxCharge; charge++)
+            {
+                // init searcher to find all spectrum within delta < d
+                ISearch<SearchTask> searcher = new BucketSearch<SearchTask>(distanceType, maxDistance);
+                List<Point<SearchTask>> points = new List<Point<SearchTask>>();
+                foreach (SearchTask task in tasks)
+                {
+                    if (task.Charge == charge)
+                    {
+                        Point<SearchTask> point = new Point<SearchTask>(task.PrecursorMZ, task);
+                        points.Add(point);
+                    }
+                }
+                searcher.Init(points);
+
+                // init randomness
+                Random random = new Random(randomSeed);
+
+                HashSet<int> swappedScans = new HashSet<int>();
+                // precursor swap, swap any spectrums within d, set precursor mz
+                List<SearchTask> taskList =
+                    tasks.ToList().OrderBy(t => t.Spectrum.GetScanNum()).ToList();
+                foreach (SearchTask task in taskList)
+                {
+                    if (task.Charge != charge)
+                        continue;
+
+                    // avoid duplicate
+                    if (swappedScans.Contains(task.Spectrum.GetScanNum()))
+                        continue;
+
+                    List<SearchTask> candidates = searcher.SearchContent(task.PrecursorMZ)
+                        .OrderBy(t => Math.Abs(t.PrecursorMZ - task.PrecursorMZ))
+                        .ToList();
+                    foreach (SearchTask selectTask in candidates)
+                    {
+                        // avoid duplicate
+                        if (swappedScans.Contains(selectTask.Spectrum.GetScanNum()))
+                            continue;
+
+                        // distance bound by minDistance
+                        if (distanceType == ToleranceBy.PPM)
+                        {
+                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ)
+                                / task.PrecursorMZ * 1000000.0 <= minDistance)
+                                continue;
+                        }
+                        else
+                        {
+                            if (Math.Abs(selectTask.PrecursorMZ - task.PrecursorMZ) <= minDistance)
+                                continue;
+                        }
+
+                        // random picked
+                        int r = random.Next(0, 2);
+                        if (r % 2 == 0) continue;
+
+                        // swap
+                        decoyTasks.Enqueue(new SearchTask(task.Spectrum, selectTask.PrecursorMZ, charge));
+                        decoyTasks.Enqueue(new SearchTask(selectTask.Spectrum, task.PrecursorMZ, charge));
+                        swappedScans.Add(task.Spectrum.GetScanNum());
+                        swappedScans.Add(selectTask.Spectrum.GetScanNum());
+                        decoyTandemSpectra[task.Spectrum.GetScanNum()] = task.Spectrum;
+                        decoyTandemSpectra[selectTask.Spectrum.GetScanNum()] = selectTask.Spectrum;
+                        break;
+                    }
+                }
+            }
         }
 
         public static List<IPeak> FilterPeaks(List<IPeak> peaks, double target, double range)

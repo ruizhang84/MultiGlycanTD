@@ -66,20 +66,37 @@ namespace MultiGlycanTDLibrary.engine.score
         protected override List<SearchResult> BestResultsFromSpectrum(int scan)
         {
             double bestScore = 0;
-            List<SearchResult> bestResults = new List<SearchResult>();
+            List<SearchResult> tempBestResults = new List<SearchResult>();
             foreach (SearchResult result in SpectrumResults[scan])
             {
                 if (result.Coverage > bestScore)
                 {
                     bestScore = result.Coverage;
-                    bestResults.Clear();
+                    tempBestResults.Clear();
                 }
                 if (result.Coverage == bestScore)
+                {
+                    tempBestResults.Add(result);
+                }
+
+            }
+
+            bestScore = 0;
+            List<SearchResult> bestResults = new List<SearchResult>();
+            foreach (SearchResult result in tempBestResults)
+            {
+                if (result.Score > bestScore)
+                {
+                    bestScore = result.Score;
+                    bestResults.Clear();
+                }
+                if (result.Score == bestScore)
                 {
                     bestResults.Add(result);
                 }
 
             }
+
             return bestResults;
         }
 

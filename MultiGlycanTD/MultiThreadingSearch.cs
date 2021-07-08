@@ -116,9 +116,8 @@ namespace MultiGlycanTD
 
         void GenerateDecoyTasks()
         {
-            MultiThreadingSearchHelper.GenerateSearchTasks(
-                SearchingParameters.Access.DecoyFiles, decoyTasks,
-                decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
+            MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFiles,
+                decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,

@@ -24,8 +24,8 @@
         </Border>
         <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <Label Content="MS/MS Decoys Files" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Button x:Name="DecoyMSMSFileNames" Content="Open Files (*.MGF/*.Raw)" Click="DecoyMSMSFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                <Label Content="MS/MS Decoys File  " HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button x:Name="DecoyMSMSFileName" Content="Open Files (*.MGF/*.Raw)" Click="DecoyMSMSFileName_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
         </Border>
         <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="2">

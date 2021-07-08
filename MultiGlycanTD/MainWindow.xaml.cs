@@ -64,7 +64,7 @@ namespace MultiGlycanTD
             }
         }
 
-        private void DecoyMSMSFileNames_Click(object sender, RoutedEventArgs e)
+        private void DecoyMSMSFileName_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog fileNameDialog = new OpenFileDialog();
             fileNameDialog.Filter = "MGF File|*.mgf|Raw File|*.raw";
@@ -93,13 +93,13 @@ namespace MultiGlycanTD
             {
                 MessageBox.Show("Please choose a MS/MS files.");
             }
-            else if (SearchingParameters.Access.DecoyFiles.Length == 0)
-            {
-                MessageBox.Show("Please choose a MS/MS file to build decoys.");
-            }
             else if (SearchingParameters.Access.Database is null)
             {
                 MessageBox.Show("Please choose glycan serching (*.JSON) file.");
+            }
+            else if (SearchingParameters.Access.DecoyFiles.Length == 0)
+            {
+                MessageBox.Show("Please choose a decoy MS/MS file.");
             }
             else
             {
