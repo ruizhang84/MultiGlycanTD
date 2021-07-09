@@ -76,8 +76,8 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\Rui Zhang\Downloads\134144_13_C18_120min_60oC_50cm.raw";
-            string database = @"C:\Users\Rui Zhang\Downloads\database.json";
+            string path = @"C:\Users\iruiz\Downloads\MSMS\10MixGlycanStandards_C18_50cm_091520.raw";
+            string database = @"C:\Users\iruiz\Downloads\MSMS\database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -132,6 +132,8 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
+                        if (scan != 21224)
+                            continue;
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
                         if (ms1Peaks.Count() == 0)
@@ -202,7 +204,7 @@ namespace NUnitTestProject
 
 
             //write out
-            string outputPath = @"C:\Users\Rui Zhang\Downloads\search_targets_2.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\search_targets_2.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {

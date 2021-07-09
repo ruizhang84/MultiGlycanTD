@@ -19,7 +19,7 @@ namespace MultiGlycanTD
         // searching
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
-        public double Similarity { get; set; } = 0.8;
+        public double Similarity { get; set; } = 0.7;
         public double BinWidth { get; set; } = 1.0;
 
         // result
@@ -66,7 +66,7 @@ namespace MultiGlycanTD
         // searching
         public List<double> Ions { get; set; } = new List<double>()
             { MultiGlycanTDLibrary.util.mass.Spectrum.Proton };
-        public double Similarity { get; set; } = 0.8;
+        public double Similarity { get; set; } = 0.7;
         public double BinWidth { get; set; } = 1.0;
 
         //result
