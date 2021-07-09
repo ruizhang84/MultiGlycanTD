@@ -207,7 +207,6 @@ namespace MultiGlycanTDLibrary.engine.score
             // assign the result with highest score in the same spectrum
             foreach (int scan in SpectrumResults.Keys)
             {
-
                 List<SearchResult> bestResults = BestResultsFromSpectrum(scan);
                 if (bestResults.Count == 0)
                     continue;
@@ -216,16 +215,26 @@ namespace MultiGlycanTDLibrary.engine.score
                 foreach (SearchResult bestResult in bestResults)
                 {
                     if (!ScoreResults.ContainsKey(scan))
+                    {
                         ScoreResults[scan] = new List<SearchResult>();
+                        ScoreResults[scan].Add(bestResult);
+                    }
                     else
                     {
-                        // make score always highest
+                        // make sure score always highest
+                        double coverage = ScoreResults[scan].First().Coverage;
                         double score = ScoreResults[scan].First().Score;
-                        if (score < bestResult.Score)
+                        if (coverage <= bestResult.Coverage && score < bestResult.Score)
+                        {
                             ScoreResults[scan].Clear();
+                            ScoreResults[scan].Add(bestResult);
+                        }
+                        else if (coverage == bestResult.Coverage && score == bestResult.Score)
+                        {
+                            ScoreResults[scan].Add(bestResult);
+                        }
                     }
-                    ScoreResults[scan].Add(bestResult);
-
+                    
                     if (GlycanResults.ContainsKey(bestResult.Glycan))
                     {
                         GlycanResults[bestResult.Glycan]
