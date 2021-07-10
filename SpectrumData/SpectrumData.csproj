@@ -7,13 +7,13 @@
 
   <ItemGroup>
     <COMReference Include="MSFileReaderLib">
-      <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>0</VersionMinor>
       <VersionMajor>1</VersionMajor>
       <Guid>f0c5f3e3-4f2a-443e-a74d-0aabe3237494</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>true</Private>
     </COMReference>
   </ItemGroup>
 

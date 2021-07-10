@@ -132,7 +132,7 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-                        if (scan != 21224)
+                        if (scan != 15432)
                             continue;
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);

@@ -60,7 +60,7 @@ namespace MultiGlycanTD
 
             if (fileNameDialog.ShowDialog() == true)
             {
-                SearchingParameters.Access.DecoyFiles = fileNameDialog.FileName;
+                SearchingParameters.Access.DecoyFile = fileNameDialog.FileName;
             }
         }
 
@@ -85,7 +85,7 @@ namespace MultiGlycanTD
             {
                 MessageBox.Show("Please choose glycan serching (*.JSON) file.");
             }
-            else if (SearchingParameters.Access.DecoyFiles.Length == 0)
+            else if (SearchingParameters.Access.DecoyFile.Length == 0)
             {
                 MessageBox.Show("Please choose a decoy MS/MS file.");
             }
@@ -102,6 +102,16 @@ namespace MultiGlycanTD
             subWindow.Show();
         }
 
+        private void PeaksFileName_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog fileNameDialog = new OpenFileDialog();
+            fileNameDialog.Filter = "CSV File|*.csv";
+            fileNameDialog.Title = "Open a CSV (Comma delimited) File";
 
+            if (fileNameDialog.ShowDialog() == true)
+            {
+               SearchingParameters.Access.PeakFile = fileNameDialog.FileName;
+            }
+        }
     }
 }

@@ -86,11 +86,29 @@ namespace MultiGlycanTD
             }
             Task.WaitAll(searches.ToArray());
 
-            IGlycanScorer scorer = new GlycanScorerCluster(
-                SearchingParameters.Access.ThreadNums,
-                SearchingParameters.Access.Similarity,
-                SearchingParameters.Access.BinWidth,
-                K, maxIter, difference);
+            IGlycanScorer scorer;
+            if (SearchingParameters.Access.PeakFile.Length > 0)
+            {
+                Dictionary<string, List<double>> diagnosticPeaks =
+                    MultiThreadingSearchHelper.ReadGlycanDiagnosticPeaks(
+                        SearchingParameters.Access.PeakFile);
+                scorer = new GlycanScorerCluster(diagnosticPeaks,
+                    SearchingParameters.Access.MS2ToleranceBy,
+                    SearchingParameters.Access.MSMSTolerance,
+                    SearchingParameters.Access.ThreadNums,
+                    SearchingParameters.Access.Similarity,
+                    SearchingParameters.Access.BinWidth,
+                    K, maxIter, difference);
+            }
+            else
+            {
+                scorer = new GlycanScorerCluster(
+                   SearchingParameters.Access.ThreadNums,
+                   SearchingParameters.Access.Similarity,
+                   SearchingParameters.Access.BinWidth,
+                   K, maxIter, difference);
+
+            }
 
             scorer.Init(tandemSpectra, targets);
             scorer.Run();
@@ -115,7 +133,7 @@ namespace MultiGlycanTD
 
         void GenerateDecoyTasks()
         {
-            MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFiles,
+            MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFile,
                 decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
         }
 

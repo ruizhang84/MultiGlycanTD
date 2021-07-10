@@ -123,7 +123,7 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\134144_31_C18_120min_60oC_50cm.raw";
+            string path = @"C:\Users\iruiz\Downloads\MSMS\10MixGlycanStandards_C18_50cm_091520.raw";
             string database = @"C:\Users\iruiz\Downloads\MSMS\database.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
@@ -184,8 +184,8 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-                        if (scan != targetScan)
-                            continue;
+                        //if (scan != targetScan)
+                        //    continue;
 
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
@@ -277,6 +277,9 @@ namespace NUnitTestProject
                         List<PeakAnnotated> peakAnnotateds = pair.Value;
                         foreach (var pka in peakAnnotateds)
                         {
+                            if (!pka.Glycan.StartsWith("2 1 1 0 1 1 1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"))
+                                continue;
+
                             output += scan.ToString() + "," +
                                 pka.Peak.GetMZ() + "," +
                                 pka.Peak.GetIntensity() + "," +

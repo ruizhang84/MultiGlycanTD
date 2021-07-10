@@ -380,5 +380,41 @@ namespace MultiGlycanTD
                 }
             }
         }
+
+        public static Dictionary<string, List<double>> ReadGlycanDiagnosticPeaks(string path)
+        {
+            Dictionary<string, List<double>> glycanDiagnosticPeaks = 
+                new Dictionary<string, List<double>>();
+
+            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader sr = new StreamReader(fileStream))
+                {
+                    string line;
+
+                    // Read lines from the file until end of file (EOD) is reached.
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        string[] values = line.Split(',');
+                        if (values.Length == 3)
+                        {
+                            string glycan = values[1];
+                            if (double.TryParse(values[2], out double mz))
+                            {
+                                if (!glycanDiagnosticPeaks.ContainsKey(glycan))
+                                {
+                                    glycanDiagnosticPeaks[glycan] = new List<double>();
+                                }
+                                glycanDiagnosticPeaks[glycan].Add(mz);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            return glycanDiagnosticPeaks;
+        }
+
     }
 }

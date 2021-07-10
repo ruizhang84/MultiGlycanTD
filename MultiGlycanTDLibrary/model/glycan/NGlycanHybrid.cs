@@ -35,10 +35,13 @@ namespace MultiGlycanTDLibrary.model.glycan
             if (table_[8] == table_[9] && table_[10] < table_[11])
                 return false;
             if (table_[8] == table_[9] && table_[10] == table_[11]
-                && (table_[12] < table_[13] ||
-                table_[14] < table_[15] || table_[16] < table_[17]))
+                && table_[12] <= table_[13] &&
+                (table_[14] < table_[15] || table_[16] < table_[17]))
                 return false;
-
+            if (table_[8] == table_[9] && table_[10] == table_[11]
+                && table_[12] < table_[13] &&
+                (table_[14] == table_[15] || table_[16] == table_[17]))
+                return false;
             return base.IsValid();
         }
 

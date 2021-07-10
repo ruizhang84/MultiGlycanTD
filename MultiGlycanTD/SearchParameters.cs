@@ -27,8 +27,9 @@ namespace MultiGlycanTD
 
         // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
-        public string DecoyFiles { get; set; } = "";
+        public string DecoyFile { get; set; } = "";
         public GlycanJson Database { get; set; } = null;
+        public string PeakFile { get; set; } = "";
 
         SearchingParameters() { }
 
