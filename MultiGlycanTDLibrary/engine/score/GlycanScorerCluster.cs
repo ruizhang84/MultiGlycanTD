@@ -4,6 +4,7 @@ using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MultiGlycanTDLibrary.engine.score
 {
@@ -34,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.score
 
         public override void AssignScore()
         {
-            foreach (int scan in SpectrumResults.Keys)
+            foreach(int scan in SpectrumResults.Keys)
             {
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
                 List<Point<IPeak>> points =
@@ -53,6 +54,8 @@ namespace MultiGlycanTDLibrary.engine.score
                     }
                 }
 
+                if (searcher_ is not null)
+                    searcher_.Init(points);
                 foreach (SearchResult result in SpectrumResults[scan])
                 {
                     int nTotal = result.Matches.Count;
@@ -64,7 +67,22 @@ namespace MultiGlycanTDLibrary.engine.score
                             continue;
                         nMatched++;
                     }
+
+                    if (glycanDiagnosticPeak.ContainsKey(result.Glycan))
+                    {
+                        foreach (double mz in glycanDiagnosticPeak[result.Glycan])
+                        {
+                            if (searcher_.Match(mz))
+                            {
+                                nMatched++;
+                            }
+                            nTotal++;
+                        }
+                    }
+
                     result.Coverage = nMatched * 1.0 / nTotal;
+
+
                 }
 
                 foreach (SearchResult result in SpectrumResults[scan])
@@ -73,7 +91,7 @@ namespace MultiGlycanTDLibrary.engine.score
                     result.Score = GlycanScorerHelper.ComputeScore(result, peaks);
                     result.Fit = GlycanScorerHelper.ComputeFit(result, peaks);
                 }
-            }
+            };
         }
 
         protected override List<SearchResult> BestResultsFromSpectrum(int scan)
@@ -116,9 +134,6 @@ namespace MultiGlycanTDLibrary.engine.score
         protected override List<SearchResult> BestResultsFromGlycan(string glycan)
         {
             List<SearchResult> BestResultsCandid = GlycanResults[glycan];
-
-            if (glycan.StartsWith("2 1 1 0 1 1 1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"))
-                Console.WriteLine("here");
 
             if (glycanDiagnosticPeak.ContainsKey(glycan))
             {

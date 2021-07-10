@@ -26,14 +26,15 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="MS/MS Decoys File  " HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Button x:Name="DecoyMSMSFileName" Content="Open Files (*.MGF/*.Raw)" Click="DecoyMSMSFileName_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                <TextBlock x:Name="DecoyMSMSFilePath" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
         </Border>
         <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="2">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Glycan Searching Space" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Button x:Name="DatasetFileNames" Content="Open Json File (*.json)" Click="DatasetFileNames_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                <TextBlock x:Name="DatasetFilePath" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
-
         </Border>
         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="3">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="10">
@@ -44,6 +45,7 @@
             <StackPanel Orientation="Horizontal">
                 <Label Content="Common Peaks List (optional)" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Button x:Name="PeaksFileName" Content="Open Peak List File (*.csv)" Click="PeaksFileName_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
+                <TextBlock x:Name="PeaksFilePath" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
         </Border>
         <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Margin="10">

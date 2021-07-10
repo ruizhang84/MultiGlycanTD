@@ -49,6 +49,7 @@ namespace MultiGlycanTD
             {
                 string jsonStringRead = File.ReadAllText(fileNameDialog.FileName);
                 SearchingParameters.Access.Database = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
+                DatasetFilePath.Text = fileNameDialog.FileName;
             }
         }
 
@@ -61,6 +62,7 @@ namespace MultiGlycanTD
             if (fileNameDialog.ShowDialog() == true)
             {
                 SearchingParameters.Access.DecoyFile = fileNameDialog.FileName;
+                DecoyMSMSFilePath.Text = fileNameDialog.FileName;
             }
         }
 
@@ -110,7 +112,8 @@ namespace MultiGlycanTD
 
             if (fileNameDialog.ShowDialog() == true)
             {
-               SearchingParameters.Access.PeakFile = fileNameDialog.FileName;
+                SearchingParameters.Access.PeakFile = fileNameDialog.FileName;
+                PeaksFilePath.Text = fileNameDialog.FileName;
             }
         }
     }
