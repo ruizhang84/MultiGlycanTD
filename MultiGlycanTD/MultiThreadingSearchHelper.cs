@@ -48,9 +48,19 @@ namespace MultiGlycanTD
             PrecursorMZ = mz;
             Charge = charge;
         }
+
+        public SearchTask(ISpectrum spectrum, double mz, int charge, List<IPeak> peaks)
+        {
+            Spectrum = spectrum;
+            PrecursorMZ = mz;
+            Charge = charge;
+            Peaks = peaks;
+        }
+
         public ISpectrum Spectrum { get; set; }
         public double PrecursorMZ { get; set; }
         public int Charge { get; set; }
+        public List<IPeak> Peaks { get; set; } = null; // ms1 peaks
 
     }
 
@@ -140,7 +150,7 @@ namespace MultiGlycanTD
                                     continue;
                                 ms2 = process.Process(ms2);
                                 tandemSpectra[i] = new MS2Spectrum(ms2, mz, charge);
-                                SearchTask searchTask = new SearchTask(ms2, mz, charge);
+                                SearchTask searchTask = new SearchTask(ms2, mz, charge, process.Process(ms1Peaks));
                                 searchTasks.Enqueue(searchTask);
                             }
                         }

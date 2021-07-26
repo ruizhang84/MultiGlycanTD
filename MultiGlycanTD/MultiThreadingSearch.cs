@@ -139,14 +139,21 @@ namespace MultiGlycanTD
 
         void TaskLocalSearch(ref List<SearchResult> results,
             SearchTask task, GlycanPrecursorMatch precursorMatch,
+            GlycanEnvelopeMatch envelopeMatch,
             IGlycanSearch glycanSearch, SearchMetaData searchInfo)
         {
             foreach (double ion in SearchingParameters.Access.Ions)
             {
-                //precursor match
+                // precursor match
                 List<string> candidates = precursorMatch.Match(task.PrecursorMZ, task.Charge, ion);
                 if (candidates.Count > 0)
                 {
+                    // isotopic envelope
+                    if (task.Peaks != null)
+                    {
+                        candidates = envelopeMatch.Match(candidates, task.Peaks,
+                            task.PrecursorMZ, task.Charge);
+                    }
                     // spectrum search
                     List<SearchResult> searched = glycanSearch.Search(
                         candidates, task.Spectrum.GetPeaks(), task.Charge, ion);
@@ -171,6 +178,11 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.MS1Tolerance);
             GlycanPrecursorMatch precursorMatch = new GlycanPrecursorMatch(searcher, compdJson);
 
+            EnvelopeProcessor envelopeProcessor = new EnvelopeProcessor(
+                SearchingParameters.Access.MS1ToleranceBy,
+                SearchingParameters.Access.MS1Tolerance,
+                searchRange);
+            GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcessor, compdJson);
 
             ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(
                 SearchingParameters.Access.MS2ToleranceBy,
@@ -193,7 +205,7 @@ namespace MultiGlycanTD
             while (tasks.TryDequeue(out SearchTask task))
             {
                 TaskLocalSearch(ref tempResults, task,
-                    precursorMatch, glycanSearch, searchInfo);
+                    precursorMatch, envelopeMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
             }
@@ -202,7 +214,7 @@ namespace MultiGlycanTD
             while (decoyTasks.TryDequeue(out SearchTask task))
             {
                 TaskLocalSearch(ref tempDecoyResults, task,
-                    precursorMatch, glycanSearch, searchInfo);
+                    precursorMatch, envelopeMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
             }

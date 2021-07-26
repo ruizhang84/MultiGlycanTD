@@ -18,8 +18,10 @@ namespace NUnitTestProject
         {
             IGlycan glycan = new NGlycanComplex();
             SortedDictionary<Monosaccharide, int> composition = new SortedDictionary<Monosaccharide, int>();
-            composition[Monosaccharide.GlcNAc] = 2;
-            composition[Monosaccharide.Man] = 3;
+            composition[Monosaccharide.GlcNAc] = 4;
+            composition[Monosaccharide.Man] = 5;
+            composition[Monosaccharide.NeuAc] = 2;
+            composition[Monosaccharide.Fuc] = 2;
             glycan.SetComposition(composition);
 
             Glycan.To.SetPermethylation(true, true);
