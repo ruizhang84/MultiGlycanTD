@@ -1,5 +1,6 @@
 ﻿using MultiGlycanTDLibrary.model;
 using SpectrumData;
+using SpectrumProcess.algorithm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,20 @@ namespace MultiGlycanTDLibrary.engine.search
     {
         EnvelopeProcessor processor;
         Dictionary<string, List<double>> distr_map;
+        Dictionary<string, List<double>> mass_map;
         double cutoff_ = 0.8;
+        protected double tolerance_;
+        protected ToleranceBy type_;
 
         public GlycanEnvelopeMatch(EnvelopeProcessor processor,
-            CompdJson compdJson, double cutoff = 0.8)
+            CompdJson compdJson, ToleranceBy by, double tol, double cutoff = 0.8)
         {
             this.processor = processor;
             distr_map = compdJson.DistrMap;
+            mass_map = compdJson.MassMap;
             cutoff_ = cutoff;
+            type_ = by;
+            tolerance_ = tol;
         }
 
         public List<SortedDictionary<int, IPeak>> Combinator(
@@ -140,24 +147,12 @@ namespace MultiGlycanTDLibrary.engine.search
             }
         }
 
-        public double Fit(List<double> distr, SortedDictionary<int, IPeak> isotopics)
+        public double Fit(List<double> distr, int index, SortedDictionary<int, IPeak> isotopics)
         {
-            // find the max distribution
-            int maxDistrIndex = 0;
-            double maxProb = 0;
-            for (int i = 0; i < distr.Count; i++)
-            {
-                if (distr[i] > maxProb)
-                {
-                    maxProb = distr[i];
-                    maxDistrIndex = i;
-                }
-            }
-
             // find the peaks intensity and align data
             List<double> alignedDistr;
             List<IPeak> alignedPeaks;
-            AlignData(distr, isotopics, maxDistrIndex, 0,
+            AlignData(distr, isotopics, index, 0,
                 out alignedDistr, out alignedPeaks);
 
             // compute correlation
@@ -166,25 +161,63 @@ namespace MultiGlycanTDLibrary.engine.search
             return Score(alignedDistr, alignedPeaks.Select(p => p.GetIntensity()).ToList());
         }
 
+        private bool IsMatch(double expect, double observe)
+        {
+            if (type_ == ToleranceBy.PPM)
+            {
+                return Math.Abs(expect - observe) / expect * 1000000.0 < tolerance_;
+            }
+            return Math.Abs(expect - observe) < tolerance_;
+        }
+
+        private int SearchIndex(List<double> data, double expect)
+        {
+            int start = 0;
+            int end = data.Count - 1;
+
+            while (start <= end)
+            {
+                int mid = end + (start - end) / 2;
+                if (IsMatch(expect, data[mid]))
+                {
+                    return mid;
+                }
+                else if (data[mid] > expect)
+                {
+                    end = mid - 1;
+                }
+                else
+                {
+                    start = mid + 1;
+                }
+            }
+
+            return -1;
+        }
+
         public List<string> Match(List<string> precursorMatched,
-            List<IPeak> peaks, double mz, int charge)
+            List<IPeak> peaks, double mz, int charge, double ion = 1.0078)
         {
             processor.Init(peaks);
             SortedDictionary<int, List<IPeak>> cluster = processor.Cluster(mz, charge);
             if (cluster.Count == 0)
                 return new List<string>();
 
+            double mass = util.mass.Spectrum.To.Compute(mz, ion, charge);
+
             List<string> results = new List<string>();
             List<SortedDictionary<int, IPeak>> clustered = Combinator(cluster);
             foreach (string compose in precursorMatched)
             {
                 List<double> distr = distr_map[compose];
+                List<double> massList = mass_map[compose];
+                int index = SearchIndex(massList, mass);
 
                 // score by fitting the distr
                 double bestScore = -1;
                 foreach (SortedDictionary<int, IPeak> sequence in clustered)
                 {
-                    double score = Fit(distr, sequence);
+                    double score = Fit(distr, index, sequence);
                     if (score > bestScore)
                     {
                         bestScore = score;

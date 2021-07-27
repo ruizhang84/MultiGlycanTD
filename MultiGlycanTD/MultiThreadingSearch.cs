@@ -152,7 +152,7 @@ namespace MultiGlycanTD
                     if (task.Peaks != null)
                     {
                         candidates = envelopeMatch.Match(candidates, task.Peaks,
-                            task.PrecursorMZ, task.Charge);
+                            task.PrecursorMZ, task.Charge, ion);
                     }
                     // spectrum search
                     List<SearchResult> searched = glycanSearch.Search(
@@ -182,7 +182,11 @@ namespace MultiGlycanTD
                 SearchingParameters.Access.MS1ToleranceBy,
                 SearchingParameters.Access.MS1Tolerance,
                 searchRange);
-            GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(envelopeProcessor, compdJson);
+            GlycanEnvelopeMatch envelopeMatch = new GlycanEnvelopeMatch(
+                envelopeProcessor, compdJson,
+                SearchingParameters.Access.MS1ToleranceBy,
+                SearchingParameters.Access.MS1Tolerance
+                );
 
             ISearch<GlycanFragments> searcher2 = new BucketSearch<GlycanFragments>(
                 SearchingParameters.Access.MS2ToleranceBy,
