@@ -14,12 +14,12 @@ namespace MultiGlycanTDLibrary.engine.search
         EnvelopeProcessor processor;
         Dictionary<string, List<double>> distr_map;
         Dictionary<string, List<double>> mass_map;
-        double cutoff_ = 0.8;
+        double cutoff_ = 0.9;
         protected double tolerance_;
         protected ToleranceBy type_;
 
         public GlycanEnvelopeMatch(EnvelopeProcessor processor,
-            CompdJson compdJson, ToleranceBy by, double tol, double cutoff = 0.8)
+            CompdJson compdJson, ToleranceBy by, double tol, double cutoff = 0.9)
         {
             this.processor = processor;
             distr_map = compdJson.DistrMap;

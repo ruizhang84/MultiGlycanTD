@@ -10,9 +10,9 @@ namespace MultiGlycanTDLibrary.engine.score
 {
     public class GlycanScorerCluster : GlycanScorer, IGlycanScorer
     {
-        ClusterKMeans<IPeak> cluster;
-        Dictionary<string, List<double>> glycanDiagnosticPeak; 
-        ISearch<IPeak> searcher_;
+        protected ClusterKMeans<IPeak> cluster;
+        protected Dictionary<string, List<double>> glycanDiagnosticPeak;
+        protected ISearch<IPeak> searcher_;
 
         public GlycanScorerCluster(int thread = 4, double similar = 0.9,
             double binWidth = 1.0, int k = 4,
@@ -33,61 +33,65 @@ namespace MultiGlycanTDLibrary.engine.score
             searcher_ = new BucketSearch<IPeak>(by, tolerance);
         }
 
+        protected void ComputeCoverageScore(int scan)
+        {
+            List<IPeak> peaks = Spectra[scan].GetPeaks();
+            List<Point<IPeak>> points =
+                peaks.Select(p => new Point<IPeak>(p.GetIntensity(), p)).ToList();
+            cluster.Run(points);
+            double minClusterIntensity = int.MaxValue;
+            int minClusterIndex = 0;
+            foreach (int index in cluster.Clusters.Keys)
+            {
+                double average =
+                    cluster.Clusters[index].Average(peaks => peaks.Content().GetIntensity());
+                if (average < minClusterIntensity)
+                {
+                    minClusterIntensity = average;
+                    minClusterIndex = index;
+                }
+            }
+
+            if (searcher_ is not null)
+                searcher_.Init(points);
+            foreach (SearchResult result in SpectrumResults[scan])
+            {
+                int nTotal = result.Matches.Count;
+                int nMatched = 0;
+                foreach (int index in result.Matches.Keys)
+                {
+                    int clusterIndex = cluster.Index[index];
+                    if (clusterIndex == minClusterIndex)
+                        continue;
+                    nMatched++;
+                }
+
+                if (glycanDiagnosticPeak.ContainsKey(result.Glycan))
+                {
+                    foreach (double mz in glycanDiagnosticPeak[result.Glycan])
+                    {
+                        if (searcher_.Match(mz))
+                        {
+                            nMatched++;
+                        }
+                        nTotal++;
+                    }
+                }
+
+                result.Coverage = nMatched * 1.0 / nTotal;
+
+            }
+        }
+
         public override void AssignScore()
         {
             foreach(int scan in SpectrumResults.Keys)
             {
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
-                List<Point<IPeak>> points =
-                    peaks.Select(p => new Point<IPeak>(p.GetIntensity(), p)).ToList();
-                cluster.Run(points);
-                double minClusterIntensity = int.MaxValue;
-                int minClusterIndex = 0;
-                foreach (int index in cluster.Clusters.Keys)
-                {
-                    double average =
-                        cluster.Clusters[index].Average(peaks => peaks.Content().GetIntensity());
-                    if (average < minClusterIntensity)
-                    {
-                        minClusterIntensity = average;
-                        minClusterIndex = index;
-                    }
-                }
-
-                if (searcher_ is not null)
-                    searcher_.Init(points);
-                foreach (SearchResult result in SpectrumResults[scan])
-                {
-                    int nTotal = result.Matches.Count;
-                    int nMatched = 0;
-                    foreach (int index in result.Matches.Keys)
-                    {
-                        int clusterIndex = cluster.Index[index];
-                        if (clusterIndex == minClusterIndex)
-                            continue;
-                        nMatched++;
-                    }
-
-                    if (glycanDiagnosticPeak.ContainsKey(result.Glycan))
-                    {
-                        foreach (double mz in glycanDiagnosticPeak[result.Glycan])
-                        {
-                            if (searcher_.Match(mz))
-                            {
-                                nMatched++;
-                            }
-                            nTotal++;
-                        }
-                    }
-
-                    result.Coverage = nMatched * 1.0 / nTotal;
-
-
-                }
+                ComputeCoverageScore(scan);
 
                 foreach (SearchResult result in SpectrumResults[scan])
                 {
-
                     result.Score = GlycanScorerHelper.ComputeScore(result, peaks);
                     result.Fit = GlycanScorerHelper.ComputeFit(result, peaks);
                 }

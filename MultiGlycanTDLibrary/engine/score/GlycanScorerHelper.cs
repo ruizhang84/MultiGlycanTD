@@ -97,7 +97,7 @@ namespace MultiGlycanTDLibrary.engine.score
             return result.Matches
                 .Select(r => r.Value)
                 .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
-        }
+        }     
 
     }
 }
