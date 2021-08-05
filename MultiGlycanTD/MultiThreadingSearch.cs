@@ -152,8 +152,6 @@ namespace MultiGlycanTD
                     // isotopic envelope
                     if (task.Peaks != null)
                     {
-                        if (task.Spectrum.GetScanNum() == 820)
-                            System.Console.WriteLine("here");
                         candidates = envelopeMatch.Match(candidates, task.Peaks,
                             task.PrecursorMZ, task.Charge, ion);
                     }

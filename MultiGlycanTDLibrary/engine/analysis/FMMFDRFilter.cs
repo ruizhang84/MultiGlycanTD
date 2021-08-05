@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MultiGlycanTDLibrary.engine.analysis
 {
-    public class FMMFDRFilter
+    public class FMMFDRFilter : IFilter
     {
         double fdr_;
         double cutoff_;
