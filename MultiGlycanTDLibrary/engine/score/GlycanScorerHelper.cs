@@ -46,15 +46,6 @@ namespace MultiGlycanTDLibrary.engine.score
             return numerator / denominator;
         }
 
-        public static double Difference(double expect, double obs, ToleranceBy by)
-        {
-            if (by == ToleranceBy.PPM)
-            {
-                return util.mass.Spectrum.To.ComputePPM(expect, obs);
-            }
-            return Math.Abs(expect - obs);
-        }
-
         public static double ComputeScore(
             SearchResult result, double sum)
         {
@@ -80,7 +71,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 PeakMatch match = result.Matches[index];
                 score += Math.Sqrt(match.Peak.GetIntensity());
             }
-
             return score / sum;
         }
 

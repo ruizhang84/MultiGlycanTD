@@ -14,7 +14,7 @@ namespace MultiGlycanTDLibrary.engine.search
         EnvelopeProcessor processor;
         Dictionary<string, List<double>> distr_map;
         Dictionary<string, List<double>> mass_map;
-        double cutoff_ = 0.9;
+        double cutoff_ = 0.8;
         protected double tolerance_;
         protected ToleranceBy type_;
 
@@ -105,12 +105,27 @@ namespace MultiGlycanTDLibrary.engine.search
             return norminator / Math.Sqrt(denominator1 * denominator2);
         }
 
+        private bool ConverDistr(List<double> distr, SortedDictionary<int, IPeak> isotopics,
+            int distrIndex, int isotopicIndex)
+        {
+            int extend = 0;
+            foreach(int index in isotopics.Keys)
+            {
+                if (index < isotopicIndex)
+                    extend++;
+            }
+            return extend <= distrIndex;
+        }
         private void AlignData(List<double> distr, SortedDictionary<int, IPeak> isotopics,
             int distrIndex, int isotopicIndex,
             out List<double> alignedDistr, out List<IPeak> alignedPeaks)
         {
             alignedDistr = new List<double>();
             alignedPeaks = new List<IPeak>();
+
+            // distribution should cover isotopic cluster
+            if (!ConverDistr(distr, isotopics, distrIndex, isotopicIndex))
+                return;
 
             int alignedDistrIndex = distrIndex;
             int alignedIsotopicIndex = isotopicIndex;

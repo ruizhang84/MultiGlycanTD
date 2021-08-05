@@ -7,6 +7,7 @@ using SpectrumProcess.algorithm;
 using SpectrumProcess.deisotoping;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MultiGlycanTD
@@ -134,7 +135,7 @@ namespace MultiGlycanTD
         void GenerateDecoyTasks()
         {
             MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFile,
-                decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
+                    decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,
@@ -151,6 +152,8 @@ namespace MultiGlycanTD
                     // isotopic envelope
                     if (task.Peaks != null)
                     {
+                        if (task.Spectrum.GetScanNum() == 820)
+                            System.Console.WriteLine("here");
                         candidates = envelopeMatch.Match(candidates, task.Peaks,
                             task.PrecursorMZ, task.Charge, ion);
                     }
