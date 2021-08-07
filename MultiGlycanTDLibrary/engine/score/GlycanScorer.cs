@@ -74,15 +74,11 @@ namespace MultiGlycanTDLibrary.engine.score
                 new ParallelOptions { MaxDegreeOfParallelism = Thread },
                 scan =>
                 {
-                    ISpectrum spectrum = Spectra[scan];
-
-                    double sum = spectrum.GetPeaks().Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-                    double sum2 = spectrum.GetPeaks()
-                        .Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
+                    List<IPeak> peaks = Spectra[scan].GetPeaks();
                     foreach (SearchResult result in SpectrumResults[scan])
                     {
-                        result.Score = GlycanScorerHelper.ComputeScore(result, sum);
-                        result.Fit = GlycanScorerHelper.ComputeFit(result, sum2);
+                        result.Score = GlycanScorerHelper.ComputeScore(result, peaks);
+                        result.Fit = GlycanScorerHelper.ComputeFit(result, peaks);
                     }
                 });
         }

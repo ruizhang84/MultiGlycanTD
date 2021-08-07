@@ -46,22 +46,7 @@ namespace MultiGlycanTDLibrary.engine.score
             return numerator / denominator;
         }
 
-        public static double ComputeScore(
-            SearchResult result, double sum)
-        {
-            double score = 0;
-
-            foreach (int index in result.Matches.Keys)
-            {
-                PeakMatch match = result.Matches[index];
-                score += Math.Sqrt(match.Peak.GetIntensity());
-            }
-
-            return score / sum;
-        }
-
-        public static double ComputeScore(
-           SearchResult result, List<IPeak> peaks)
+        public static double ComputeScore(SearchResult result, List<IPeak> peaks)
         {
             double score = 0;
             double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
@@ -74,37 +59,13 @@ namespace MultiGlycanTDLibrary.engine.score
             return score / (sum - score);
         }
 
-        public static double ComputeFit(
-            SearchResult result, List<Tuple<int, IPeak>> peaks)
-        {
-            double score = 0;
-            double sum = peaks.Select(p => Math.Sqrt(p.Item2.GetIntensity())).Sum();
-
-            HashSet<int> majorIndex = new HashSet<int>(peaks.Select(p => p.Item1));
-            foreach (int index in result.Matches.Keys)
-            {
-                if (!majorIndex.Contains(index))
-                    continue;
-                PeakMatch match = result.Matches[index];
-                score += Math.Sqrt(match.Peak.GetIntensity());
-            }
-            return score / (sum - score);
-        }
-
         public static double ComputeFit(SearchResult result, List<IPeak> peaks)
         {
             double sum = peaks.Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
             return result.Matches
                 .Select(r => r.Value)
                 .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
-        }
-
-        public static double ComputeFit(SearchResult result, double sum)
-        {
-            return result.Matches
-                .Select(r => r.Value)
-                .Select(m => m.Peak.GetIntensity() * m.Peak.GetIntensity()).Sum() / sum;
-        }     
+        } 
 
     }
 }
