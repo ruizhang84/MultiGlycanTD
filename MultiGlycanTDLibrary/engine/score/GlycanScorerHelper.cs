@@ -61,6 +61,20 @@ namespace MultiGlycanTDLibrary.engine.score
         }
 
         public static double ComputeScore(
+           SearchResult result, List<IPeak> peaks)
+        {
+            double score = 0;
+            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
+
+            foreach (int index in result.Matches.Keys)
+            {
+                PeakMatch match = result.Matches[index];
+                score += Math.Sqrt(match.Peak.GetIntensity());
+            }
+            return score / (sum - score);
+        }
+
+        public static double ComputeFit(
             SearchResult result, List<Tuple<int, IPeak>> peaks)
         {
             double score = 0;
@@ -71,20 +85,6 @@ namespace MultiGlycanTDLibrary.engine.score
             {
                 if (!majorIndex.Contains(index))
                     continue;
-                PeakMatch match = result.Matches[index];
-                score += Math.Sqrt(match.Peak.GetIntensity());
-            }
-            return score / (sum - score);
-        }
-
-        public static double ComputeScore(
-           SearchResult result, List<IPeak> peaks)
-        {
-            double score = 0;
-            double sum = peaks.Select(p => Math.Sqrt(p.GetIntensity())).Sum();
-
-            foreach (int index in result.Matches.Keys)
-            {
                 PeakMatch match = result.Matches[index];
                 score += Math.Sqrt(match.Peak.GetIntensity());
             }
