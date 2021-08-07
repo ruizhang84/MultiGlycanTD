@@ -56,7 +56,7 @@ namespace MultiGlycanTDLibrary.engine.score
                 PeakMatch match = result.Matches[index];
                 score += Math.Sqrt(match.Peak.GetIntensity());
             }
-            return score / (sum - score);
+            return score / sum;
         }
 
         public static double ComputeFit(SearchResult result, List<IPeak> peaks)

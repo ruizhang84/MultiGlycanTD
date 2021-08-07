@@ -295,7 +295,7 @@ namespace MultiGlycanTD
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))
                 {
-                    writer.WriteLine("scan,retention,glycan,struct,precursor_mz,score,coverage,fit");
+                    writer.WriteLine("scan,retention,glycan,struct,precursor_mz,score");
                     foreach (SearchResult r in results)
                     {
                         string output = r.Scan.ToString() + ","
@@ -303,9 +303,7 @@ namespace MultiGlycanTD
                             + r.Composition + ","
                             + r.Glycan + ","
                             + r.PrecursorMZ.ToString() + ","
-                            + r.Score.ToString() + ","
-                            + r.Coverage.ToString() + ","
-                            + r.Fit.ToString() + ","
+                            + r.Score.ToString()
                             ;
                         writer.WriteLine(output);
                     }
