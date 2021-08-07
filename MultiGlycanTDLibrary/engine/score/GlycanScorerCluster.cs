@@ -33,7 +33,7 @@ namespace MultiGlycanTDLibrary.engine.score
             searcher_ = new BucketSearch<IPeak>(by, tolerance);
         }
 
-        protected List<Tuple<int, IPeak>> ComputeCoverageScore(int scan)
+        protected void ComputeCoverageScore(int scan)
         {
             List<IPeak> peaks = Spectra[scan].GetPeaks();
             List<Point<IPeak>> points =
@@ -50,15 +50,6 @@ namespace MultiGlycanTDLibrary.engine.score
                     minClusterIntensity = average;
                     minClusterIndex = index;
                 }
-            }
-
-            List<Tuple<int, IPeak>> majorPeaks = new List<Tuple<int, IPeak>>();
-            for (int i = 0; i < peaks.Count; i++)
-            {
-                int clusterIndex = cluster.Index[i];
-                if (clusterIndex == minClusterIndex)
-                    continue;
-                majorPeaks.Add(Tuple.Create(i, peaks[i]));
             }
 
             if (searcher_ is not null)
@@ -90,7 +81,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 result.Coverage = nMatched * 1.0 / nTotal;
 
             }
-            return majorPeaks;
         }
 
         public override void AssignScore()
@@ -98,12 +88,12 @@ namespace MultiGlycanTDLibrary.engine.score
             foreach(int scan in SpectrumResults.Keys)
             {
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
-                List<Tuple<int, IPeak>> majorPeaks = ComputeCoverageScore(scan);
+                ComputeCoverageScore(scan);
 
                 foreach (SearchResult result in SpectrumResults[scan])
                 {
                     result.Score = GlycanScorerHelper.ComputeScore(result, peaks);
-                    result.Fit = GlycanScorerHelper.ComputeFit(result, majorPeaks);
+                    result.Fit = GlycanScorerHelper.ComputeFit(result, peaks);
                 }
             };
         }

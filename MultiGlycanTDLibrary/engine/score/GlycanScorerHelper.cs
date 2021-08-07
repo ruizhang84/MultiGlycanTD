@@ -59,23 +59,6 @@ namespace MultiGlycanTDLibrary.engine.score
             return score / (sum - score);
         }
 
-        public static double ComputeFit(
-            SearchResult result, List<Tuple<int, IPeak>> peaks)
-        {
-            double score = 0;
-            double sum = peaks.Select(p => Math.Sqrt(p.Item2.GetIntensity())).Sum();
-
-            HashSet<int> majorIndex = new HashSet<int>(peaks.Select(p => p.Item1));
-            foreach (int index in result.Matches.Keys)
-            {
-                if (!majorIndex.Contains(index))
-                    continue;
-                PeakMatch match = result.Matches[index];
-                score += Math.Sqrt(match.Peak.GetIntensity());
-            }
-            return score / (sum - score);
-        }
-
         public static double ComputeFit(SearchResult result, List<IPeak> peaks)
         {
             double sum = peaks.Select(p => p.GetIntensity() * p.GetIntensity()).Sum();
