@@ -343,7 +343,10 @@ namespace GlycanCalculator
                 ComplexInclude = complexInclude,
                 HybridInclude = hybridInclude,
                 HighMannoseInclude = highMannoseInclude,
-                FragmentTypes = types
+                FragmentTypes = types,
+                Derivatization = derivatization,
+                Reduced = reduced,
+                Permethylated = permethylated
             };
 
             GlycanJson glycanJson = new GlycanJson()

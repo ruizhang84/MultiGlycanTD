@@ -14,8 +14,8 @@ namespace MultiGlycanTDLibrary.model
         public bool HybridInclude { get; set; }
         public bool HighMannoseInclude { get; set; }
         public List<FragmentType> FragmentTypes { get; set; }
-        public Derivatization derivatization { get; set; }
-        public bool permethylated { get; set; }
-        public bool reduced { get; set; }
+        public Derivatization Derivatization { get; set; }
+        public bool Permethylated { get; set; }
+        public bool Reduced { get; set; }
     }
 }

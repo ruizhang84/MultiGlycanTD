@@ -42,16 +42,16 @@ namespace MultiGlycanTDLibrary.engine.annotation
                 parameter.HighMannoseInclude);
             glycanBuilder.Build();
             glycanMaps = glycanBuilder.GlycanMaps();
-            if (parameter.permethylated)
+            if (parameter.Permethylated)
             {
                 GlycanIonsBuilder.Build.Permethylated = true;
-                Glycan.To.SetPermethylation(true, parameter.reduced);
+                Glycan.To.SetPermethylation(true, parameter.Reduced);
             }
             else
             {
                 GlycanIonsBuilder.Build.Permethylated = false;
-                Glycan.To.SetPermethylation(false, parameter.reduced);
-                switch (parameter.derivatization)
+                Glycan.To.SetPermethylation(false, parameter.Reduced);
+                switch (parameter.Derivatization)
                 {
                     case Derivatization.k2AA:
                         GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AA;
