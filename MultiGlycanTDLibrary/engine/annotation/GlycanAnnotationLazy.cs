@@ -1,4 +1,5 @@
-﻿using MultiGlycanTDLibrary.engine.glycan;
+﻿using MultiGlycanClassLibrary.util.mass;
+using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using MultiGlycanTDLibrary.model;
 using MultiGlycanTDLibrary.model.glycan;
@@ -41,6 +42,31 @@ namespace MultiGlycanTDLibrary.engine.annotation
                 parameter.HighMannoseInclude);
             glycanBuilder.Build();
             glycanMaps = glycanBuilder.GlycanMaps();
+            if (parameter.permethylated)
+            {
+                GlycanIonsBuilder.Build.Permethylated = true;
+                Glycan.To.SetPermethylation(true, parameter.reduced);
+            }
+            else
+            {
+                GlycanIonsBuilder.Build.Permethylated = false;
+                Glycan.To.SetPermethylation(false, parameter.reduced);
+                switch (parameter.derivatization)
+                {
+                    case Derivatization.k2AA:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AA;
+                        Glycan.To.Derivatization = Glycan.k2AA;
+                        break;
+                    case Derivatization.k2AB:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.k2AB;
+                        Glycan.To.Derivatization = Glycan.k2AB;
+                        break;
+                    default:
+                        GlycanIonsBuilder.Build.Derivatization = GlycanIonsBuilder.kWater;
+                        Glycan.To.Derivatization = Glycan.kWater;
+                        break;
+                }
+            }
         }
 
         public void InitAnnotation(SearchResult result)
@@ -48,10 +74,12 @@ namespace MultiGlycanTDLibrary.engine.annotation
 
             List<Point<GlycanAnnotated>> points = new List<Point<GlycanAnnotated>>();
             string glycan = result.Glycan;
+            List<double> temp = new();
             foreach (FragmentType type in types)
             {
                 List<IGlycan> ionsLikeFragments = GlycanIonsBuilder.Build
                     .FragmentsBuild(glycanMaps[glycan], type);
+
                 foreach (IGlycan g in ionsLikeFragments)
                 {
                     double mass = GlycanIonsBuilder.Build.ComputeIonMass(g, type);
@@ -62,6 +90,7 @@ namespace MultiGlycanTDLibrary.engine.annotation
                         Glycan = g.ID()
                     };
                     points.Add(new Point<GlycanAnnotated>(mass, annoated));
+                    temp.Add(mass);
                 }
             }
             searcher_.Init(points);

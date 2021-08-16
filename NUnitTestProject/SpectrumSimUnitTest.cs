@@ -26,8 +26,11 @@ namespace NUnitTestProject
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
-            ISpectrum A = reader.GetSpectrum(18512);
-            ISpectrum B = reader.GetSpectrum(18746);
+            ISpectrum A = reader.GetSpectrum(18181);
+
+            path = @"C:\Users\iruiz\Downloads\MSMS\134144_13_C18_120min_60oC_50cm.raw";
+            reader.Init(path);
+            ISpectrum B = reader.GetSpectrum(19934);
 
             Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 1.0));
                    

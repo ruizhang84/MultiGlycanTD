@@ -1,5 +1,6 @@
 ﻿using MultiGlycanTDLibrary.engine.analysis;
 using MultiGlycanTDLibrary.engine.annotation;
+using MultiGlycanTDLibrary.engine.glycan;
 using MultiGlycanTDLibrary.engine.search;
 using SpectrumData;
 using SpectrumData.Spectrum;

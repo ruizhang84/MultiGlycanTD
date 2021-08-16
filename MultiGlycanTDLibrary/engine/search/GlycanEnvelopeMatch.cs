@@ -14,7 +14,7 @@ namespace MultiGlycanTDLibrary.engine.search
         EnvelopeProcessor processor;
         Dictionary<string, List<double>> distr_map;
         Dictionary<string, List<double>> mass_map;
-        double cutoff_ = 0.8;
+        double cutoff_ = 0.9;
         protected double tolerance_;
         protected ToleranceBy type_;
 
