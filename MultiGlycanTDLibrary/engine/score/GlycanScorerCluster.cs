@@ -56,7 +56,15 @@ namespace MultiGlycanTDLibrary.engine.score
                 searcher_.Init(points);
             foreach (SearchResult result in SpectrumResults[scan])
             {
-                int nTotal = result.Matches.Count;
+                int nTotal = 0;
+                for (int index = 0; index < peaks.Count; index++)
+                {
+                    int clusterIndex = cluster.Index[index];
+                    if (clusterIndex == minClusterIndex)
+                        continue;
+                    nTotal++;
+                }
+
                 int nMatched = 0;
                 foreach (int index in result.Matches.Keys)
                 {
@@ -87,6 +95,8 @@ namespace MultiGlycanTDLibrary.engine.score
         {
             foreach(int scan in SpectrumResults.Keys)
             {
+                if (scan == 15900)
+                    System.Console.WriteLine("here");
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
                 ComputeCoverageScore(scan);
 
