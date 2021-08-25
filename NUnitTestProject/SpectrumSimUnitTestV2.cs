@@ -22,17 +22,31 @@ namespace NUnitTestProject
         public void CosTestV2()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\data_analysis\glycan_sample\Fetuin_1ug_01_C18_50cm_091620.mgf";
-            string path2 = @"C:\Users\iruiz\Downloads\MSMS\data_analysis\glycan_sample\Fetuin_1ug_02_C18_50cm_091620.mgf";
-            ISpectrumReader reader = new MGFSpectrumReader();
+            string path = @"C:\Users\iruiz\Downloads\MultiGlycanTD\data\glycan_standard3.mgf";
+            string output = @"C:\Users\iruiz\Downloads\MultiGlycanTD\data\glycan_standard3.csv";
+            MGFSpectrumReader reader = new MGFSpectrumReader();
             reader.Init(path);
-            ISpectrum A = reader.GetSpectrum(8160);
 
-            reader.Init(path2);
-            ISpectrum B = reader.GetSpectrum(7988);
+            using (FileStream ostrm = new FileStream(output, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                using (StreamWriter writer = new StreamWriter(ostrm))
+                {
+                    writer.WriteLine("scan1,scan2,cosine");
+                    foreach (int i in reader.GetSpectrum().Keys)
+                    {
+                        foreach (int j in reader.GetSpectrum().Keys)
+                        {
+                            if (i == j) continue;
+                            ISpectrum A = reader.GetSpectrum(i);
+                            ISpectrum B = reader.GetSpectrum(j);
+                            double cosine = GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 1.0);
+                            writer.WriteLine(i.ToString() + "," + j.ToString() + "," + cosine.ToString());
+                        }
+                    }
 
-            Console.WriteLine(GlycanScorerHelper.CosineSim(A.GetPeaks(), B.GetPeaks(), 1.0));
-                   
+                }
+            }
+
             Assert.Pass();
         }
 

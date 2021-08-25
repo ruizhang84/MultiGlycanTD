@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FiniteMixtureModel\FiniteMixtureModel.csproj" />
     <ProjectReference Include="..\SpectrumData\SpectrumData.csproj" />
     <ProjectReference Include="..\SpectrumProcess\SpectrumProcess.csproj" />
   </ItemGroup>

@@ -71,7 +71,6 @@ namespace MultiGlycanTDLibrary.engine.annotation
 
         public void InitAnnotation(SearchResult result)
         {
-
             List<Point<GlycanAnnotated>> points = new List<Point<GlycanAnnotated>>();
             string glycan = result.Glycan;
             List<double> temp = new();
