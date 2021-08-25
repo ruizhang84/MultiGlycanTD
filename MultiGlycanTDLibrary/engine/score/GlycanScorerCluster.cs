@@ -95,8 +95,6 @@ namespace MultiGlycanTDLibrary.engine.score
         {
             foreach(int scan in SpectrumResults.Keys)
             {
-                if (scan == 15900)
-                    System.Console.WriteLine("here");
                 List<IPeak> peaks = Spectra[scan].GetPeaks();
                 ComputeCoverageScore(scan);
 
