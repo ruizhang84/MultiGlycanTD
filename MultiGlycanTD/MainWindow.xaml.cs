@@ -104,17 +104,17 @@ namespace MultiGlycanTD
             subWindow.Show();
         }
 
-        private void PeaksFileName_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog fileNameDialog = new OpenFileDialog();
-            fileNameDialog.Filter = "CSV File|*.csv";
-            fileNameDialog.Title = "Open a CSV (Comma delimited) File";
+        //private void PeaksFileName_Click(object sender, RoutedEventArgs e)
+        //{
+        //    OpenFileDialog fileNameDialog = new OpenFileDialog();
+        //    fileNameDialog.Filter = "CSV File|*.csv";
+        //    fileNameDialog.Title = "Open a CSV (Comma delimited) File";
 
-            if (fileNameDialog.ShowDialog() == true)
-            {
-                SearchingParameters.Access.PeakFile = fileNameDialog.FileName;
-                PeaksFilePath.Text = fileNameDialog.FileName;
-            }
-        }
+        //    if (fileNameDialog.ShowDialog() == true)
+        //    {
+        //        SearchingParameters.Access.PeakFile = fileNameDialog.FileName;
+        //        PeaksFilePath.Text = fileNameDialog.FileName;
+        //    }
+        //}
     }
 }

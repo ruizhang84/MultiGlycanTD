@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiGlycanTD"
         mc:Ignorable="d"
-        Title="MultiGlycanTD" Height="320" Width="800">
+        Title="MultiGlycanTD" Height="280" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,13 +41,13 @@
                 <ListBox Name="lbFiles" Height="100" Width="700" MouseDoubleClick="DeselectFiles_Click"/>
             </StackPanel>
         </Border>
-        <Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="4">
+        <!--<Border  Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Grid.Row="4">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Common Peaks List (optional)" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Button x:Name="PeaksFileName" Content="Open Peak List File (*.csv)" Click="PeaksFileName_Click" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
                 <TextBlock x:Name="PeaksFilePath" VerticalAlignment="Center" Padding="5, 1, 5, 1"/>
             </StackPanel>
-        </Border>
+        </Border>-->
         <Border HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="5" Margin="10">
             <StackPanel Orientation="Horizontal" Margin="0, 0, 20, 0">
                 <Button x:Name="Search"  Content="Search" HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="75" Click="Search_Click" Margin="10"/>
