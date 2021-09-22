@@ -69,7 +69,6 @@ namespace MultiGlycanTD
         public static void GenerateSearchTasks(string spectrumPath,
            ConcurrentQueue<SearchTask> searchTasks,
            ConcurrentDictionary<int, ISpectrum> tandemSpectra,
-           ConcurrentBag<double> intensityBag,
            Counter readingCounter,
            int minPeaks, int maxCharge, int minCharge, double searchRange)
         {
@@ -156,7 +155,6 @@ namespace MultiGlycanTD
                                 tandemSpectra[i] = new MS2Spectrum(ms2, mz, charge);
                                 SearchTask searchTask = new SearchTask(ms2, mz, charge, process.Process(ms1Peaks));
                                 searchTasks.Enqueue(searchTask);
-                                intensityBag.Add(ms2.GetPeaks().Max(p => p.GetIntensity()));
                             }
                         }
 
@@ -208,20 +206,6 @@ namespace MultiGlycanTD
                 res.Add(peaks[middle++]);
             }
             return res;
-        }
-
-        // https://stackoverflow.com/questions/8137391/percentile-calculation
-        public static double Percentile(IEnumerable<double> data, double percentile)
-        {
-            var elements = data.ToArray();
-            Array.Sort(elements);
-            double realIndex = percentile * (elements.Length - 1);
-            int index = (int)realIndex;
-            double frac = realIndex - index;
-            if (index + 1 < elements.Length)
-                return elements[index] * (1 - frac) + elements[index + 1] * frac;
-            else
-                return elements[index];
         }
 
         public static void Report(

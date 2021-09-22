@@ -58,11 +58,8 @@ namespace MultiGlycanTD
             decoyTasks = new ConcurrentQueue<SearchTask>();
             tandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
             decoyTandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
-            intensityBag = new ConcurrentBag<double>();
             GenerateTasks();
             GenerateDecoyTasks();
-            noise = MultiThreadingSearchHelper.Percentile(
-                intensityBag, SearchingParameters.Access.Quantile);
             taskSize = tasks.Count + decoyTasks.Count;
         }
 
@@ -117,25 +114,20 @@ namespace MultiGlycanTD
         void GenerateTasks()
         {
             MultiThreadingSearchHelper.GenerateSearchTasks(msPath, tasks, 
-                tandemSpectra, intensityBag, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
+                tandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void GenerateDecoyTasks()
         {
-            ConcurrentBag<double> voidBag = new ConcurrentBag<double>();
             MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFile,
-                    decoyTasks, decoyTandemSpectra, voidBag, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
+                    decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,
             SearchTask task, GlycanPrecursorMatch precursorMatch,
             GlycanEnvelopeMatch envelopeMatch, IGlycanSearch glycanSearch, 
-            SearchMetaData searchInfo, double minIntensity = 0)
+            SearchMetaData searchInfo)
         {
-
-            if (task.Spectrum.GetPeaks().Max(p => p.GetIntensity()) < minIntensity)
-                return;
-
             foreach (double ion in SearchingParameters.Access.Ions)
             {
                 // precursor match
@@ -156,12 +148,7 @@ namespace MultiGlycanTD
                     {
                         searchInfo.Commit(searched, task.PrecursorMZ, task.Charge,
                             task.Spectrum.GetScanNum(), task.Spectrum.GetRetention());
-                        foreach (SearchResult result in searched)
-                        {
-                            if (result.Matches.Max(p => p.Value.Peak.GetIntensity()) < minIntensity)
-                                continue;
-                            results.Add(result);
-                        }
+                        results.AddRange(searched);
                     }
                 }
             }
@@ -208,7 +195,7 @@ namespace MultiGlycanTD
             while (tasks.TryDequeue(out SearchTask task))
             {
                 TaskLocalSearch(ref tempResults, task,
-                    precursorMatch, envelopeMatch, glycanSearch, searchInfo, noise);
+                    precursorMatch, envelopeMatch, glycanSearch, searchInfo);
 
                 searchCounter.Add(taskSize);
             }
