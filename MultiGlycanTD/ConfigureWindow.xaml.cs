@@ -43,7 +43,6 @@ namespace MultiGlycanTD
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
 
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
-            Quantile.Text = (SearchingParameters.Access.Quantile * 100).ToString();
             Similarity.Text = SearchingParameters.Access.Similarity.ToString();
             BinWidth.Text = SearchingParameters.Access.BinWidth.ToString();
         }
@@ -152,15 +151,6 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Filter level is invalid!");
-                return false;
-            }
-            if (double.TryParse(Quantile.Text, out double percent) && percent >= 0 && percent <= 100)
-            {
-                ConfigureParameters.Access.Quantile = percent * 0.01;
-            }
-            else
-            {
-                MessageBox.Show("Quantile level is invalid!");
                 return false;
             }
             return true;

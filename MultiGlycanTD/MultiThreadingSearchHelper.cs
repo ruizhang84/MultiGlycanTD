@@ -68,7 +68,6 @@ namespace MultiGlycanTD
     {
         public static void GenerateSearchTasks(string spectrumPath,
            ConcurrentQueue<SearchTask> searchTasks,
-           ConcurrentBag<double> peakIntensity,
            ConcurrentDictionary<int, ISpectrum> tandemSpectra,
            Counter readingCounter,
            int minPeaks, int maxCharge, int minCharge, double searchRange)
