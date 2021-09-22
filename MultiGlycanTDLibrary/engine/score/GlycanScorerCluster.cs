@@ -11,26 +11,12 @@ namespace MultiGlycanTDLibrary.engine.score
     public class GlycanScorerCluster : GlycanScorer, IGlycanScorer
     {
         protected ClusterKMeans<IPeak> cluster;
-        protected Dictionary<string, List<double>> glycanDiagnosticPeak;
-        protected ISearch<IPeak> searcher_;
 
         public GlycanScorerCluster(int thread = 4, double similar = 0.9,
             double binWidth = 1.0, int k = 4,
             int maxIter = 1000, double tol = 0.01 ) : base(thread, similar, binWidth)
         {
             cluster = new ClusterKMeans<IPeak>(k, maxIter, tol);
-            glycanDiagnosticPeak = new Dictionary<string, List<double>>();
-        }
-
-        public GlycanScorerCluster(Dictionary<string, List<double>> diagnosticPeaks,
-            ToleranceBy by, double tolerance,
-            int thread = 4, double similar = 0.9,
-            double binWidth = 1.0, int k = 4,
-            int maxIter = 1000, double tol = 0.01) : base(thread, similar, binWidth)
-        {
-            cluster = new ClusterKMeans<IPeak>(k, maxIter, tol);
-            glycanDiagnosticPeak = diagnosticPeaks;
-            searcher_ = new BucketSearch<IPeak>(by, tolerance);
         }
 
         protected void ComputeCoverageScore(int scan)
@@ -52,8 +38,6 @@ namespace MultiGlycanTDLibrary.engine.score
                 }
             }
 
-            if (searcher_ is not null)
-                searcher_.Init(points);
             foreach (SearchResult result in SpectrumResults[scan])
             {
                 int nTotal = 0;
@@ -74,20 +58,7 @@ namespace MultiGlycanTDLibrary.engine.score
                     nMatched++;
                 }
 
-                if (glycanDiagnosticPeak.ContainsKey(result.Glycan))
-                {
-                    foreach (double mz in glycanDiagnosticPeak[result.Glycan])
-                    {
-                        if (searcher_.Match(mz))
-                        {
-                            nMatched++;
-                        }
-                        nTotal++;
-                    }
-                }
-
                 result.Coverage = nMatched * 1.0 / nTotal;
-
             }
         }
 
@@ -146,30 +117,6 @@ namespace MultiGlycanTDLibrary.engine.score
         protected override List<SearchResult> BestResultsFromGlycan(string glycan)
         {
             List<SearchResult> BestResultsCandid = GlycanResults[glycan];
-
-            if (glycanDiagnosticPeak.ContainsKey(glycan))
-            {
-                BestResultsCandid = new List<SearchResult>();
-
-                foreach (SearchResult result in GlycanResults[glycan])
-                {
-                    List<Point<IPeak>> points = result.Matches
-                        .Values.Select(p => new Point<IPeak>(p.Peak.GetMZ(), p.Peak)).ToList();
-                    searcher_.Init(points);
-                    foreach (double mz in glycanDiagnosticPeak[glycan])
-                    {
-                        if (searcher_.Match(mz))
-                        {
-                            BestResultsCandid.Add(result);
-                            break;
-                        }
-                    }
-                }
-
-                if (BestResultsCandid.Count == 0)
-                    BestResultsCandid = GlycanResults[glycan];
-
-            }
 
             double bestScore = 0;
             List<SearchResult> bestResults = new List<SearchResult>();

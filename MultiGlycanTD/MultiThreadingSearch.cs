@@ -88,28 +88,11 @@ namespace MultiGlycanTD
             Task.WaitAll(searches.ToArray());
 
             IGlycanScorer scorer;
-            if (SearchingParameters.Access.PeakFile.Length > 0)
-            {
-                Dictionary<string, List<double>> diagnosticPeaks =
-                    MultiThreadingSearchHelper.ReadGlycanDiagnosticPeaks(
-                        SearchingParameters.Access.PeakFile);
-                scorer = new GlycanScorerCluster(diagnosticPeaks,
-                    SearchingParameters.Access.MS2ToleranceBy,
-                    SearchingParameters.Access.MSMSTolerance,
-                    SearchingParameters.Access.ThreadNums,
-                    SearchingParameters.Access.Similarity,
-                    SearchingParameters.Access.BinWidth,
-                    K, maxIter, difference);
-            }
-            else
-            {
-                scorer = new GlycanScorerCluster(
-                   SearchingParameters.Access.ThreadNums,
-                   SearchingParameters.Access.Similarity,
-                   SearchingParameters.Access.BinWidth,
-                   K, maxIter, difference);
-
-            }
+            scorer = new GlycanScorerCluster(
+                SearchingParameters.Access.ThreadNums,
+                SearchingParameters.Access.Similarity,
+                SearchingParameters.Access.BinWidth,
+                K, maxIter, difference);
 
             scorer.Init(tandemSpectra, targets);
             scorer.Run();
