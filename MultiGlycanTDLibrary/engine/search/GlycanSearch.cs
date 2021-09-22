@@ -13,7 +13,6 @@ namespace MultiGlycanTDLibrary.engine.search
     {
         protected ISearch<GlycanFragments> searcher_;
         protected Dictionary<string, List<string>> id_map_;
-        //protected readonly int maxCharge = 3; // it is not likely a higher charge for fragments.
         protected readonly int minMatches = 5; // it is not likely only match a few peaks.
 
         public GlycanSearch(
@@ -113,7 +112,7 @@ namespace MultiGlycanTDLibrary.engine.search
         }
 
         public virtual List<SearchResult> Search(List<string> candidates, List<IPeak> peaks,
-            int maxChargeToConsider, double ion = 1.0078)
+            int precursorCharge, double ion = 1.0078)
         {
             // process composition, id -> compos
             Dictionary<string, string> glycanCandid = new Dictionary<string, string>();
@@ -130,7 +129,8 @@ namespace MultiGlycanTDLibrary.engine.search
                 = new Dictionary<string, SearchResult>();
             for (int i = 0; i < peaks.Count; i++)
             {
-                for (int charge = 1; charge <= maxChargeToConsider; charge++)
+                int maxCharge = precursorCharge > 3 ? precursorCharge - 1 : precursorCharge;
+                for (int charge = 1; charge <= maxCharge; charge++)
                 {
                     SearchPeaks(i, peaks, ion, charge, glycanCandid, results);
                 }

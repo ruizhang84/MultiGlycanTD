@@ -44,6 +44,7 @@ namespace MultiGlycanTD
             MaxCharge.Text = SearchingParameters.Access.MaxCharge.ToString();
 
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
+            Coverage.Text = (SearchingParameters.Access.Coverage * 100).ToString();
             Similarity.Text = SearchingParameters.Access.Similarity.ToString();
             BinWidth.Text = SearchingParameters.Access.BinWidth.ToString();
         }
@@ -161,6 +162,15 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Filter level is invalid!");
+                return false;
+            }
+            if (double.TryParse(Coverage.Text, out double portion) && portion >= 0 && portion <= 100)
+            {
+                ConfigureParameters.Access.Coverage = portion * 0.01;
+            }
+            else
+            {
+                MessageBox.Show("The coverage is invalid!");
                 return false;
             }
             return true;
