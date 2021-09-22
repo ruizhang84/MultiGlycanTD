@@ -49,7 +49,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
                 else
                 {
-                    int maxCharge = precursorCharge > 3 ? 3 : precursorCharge;
+                    int maxCharge = precursorCharge > 3 ? precursorCharge - 1 : precursorCharge;
                     for (int charge = 1; charge <= maxCharge; charge++)
                     {
                         SearchPeaks(i, deisotopingPeaks, ion, charge, glycanCandid, results);

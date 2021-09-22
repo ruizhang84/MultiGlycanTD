@@ -33,10 +33,9 @@ namespace NUnitTestProject
 
             // process peaks
             Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
-            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
-                4, ToleranceBy.Dalton, 0.1);
+            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,ToleranceBy.Dalton, 0.1);
 
-            List<IPeak> peaks = deisotoping.Process(ms2.GetPeaks(), 1.0078);
+            List<IPeak> peaks = deisotoping.Process(ms2.GetPeaks(), 3, 1.0078);
             using (FileStream ostrm = new FileStream(output, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(ostrm))

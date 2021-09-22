@@ -167,8 +167,7 @@ namespace NUnitTestProject
                 new BucketSearch<Dictionary<FragmentType, List<string>>>(ToleranceBy.Dalton, 0.5);
             
             Averagine averagine = new Averagine(AveragineType.PermethylatedGlycan);
-            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
-                4, ToleranceBy.Dalton, 0.1);
+            AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine, ToleranceBy.Dalton, 0.1);
             IGlycanSearch glycanSearch
                 = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
          

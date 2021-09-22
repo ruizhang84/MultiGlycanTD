@@ -25,6 +25,7 @@ namespace MultiGlycanTD
 
         // result
         public double FDR { get; set; } = 0.01;
+        public double Quantile { get; set; } = 0.25;
 
         // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
@@ -44,6 +45,7 @@ namespace MultiGlycanTD
             Similarity = ConfigureParameters.Access.Similarity;
             BinWidth = ConfigureParameters.Access.BinWidth;
             FDR = ConfigureParameters.Access.FDR;
+            Quantile = ConfigureParameters.Access.Quantile;
             Ions = ConfigureParameters.Access.Ions;
         }
 
@@ -74,6 +76,7 @@ namespace MultiGlycanTD
 
         //result
         public double FDR { get; set; } = 0.01;
+        public double Quantile { get; set; } = 0.25;
 
         protected static readonly Lazy<ConfigureParameters>
             lazy = new Lazy<ConfigureParameters>(() => new ConfigureParameters());

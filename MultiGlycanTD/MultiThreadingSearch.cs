@@ -39,6 +39,9 @@ namespace MultiGlycanTD
         int K = 4;
         int maxIter = 1000;
         double difference = 0.01;
+        // noise
+        ConcurrentBag<double> intensityBag;
+        double noise = 0;
 
         public MultiThreadingSearch(string msPath,
             Counter readingCounter, Counter searchCounter,
@@ -55,8 +58,11 @@ namespace MultiGlycanTD
             decoyTasks = new ConcurrentQueue<SearchTask>();
             tandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
             decoyTandemSpectra = new ConcurrentDictionary<int, ISpectrum>();
+            intensityBag = new ConcurrentBag<double>();
             GenerateTasks();
             GenerateDecoyTasks();
+            noise = MultiThreadingSearchHelper.Percentile(
+                intensityBag, SearchingParameters.Access.Quantile);
             taskSize = tasks.Count + decoyTasks.Count;
         }
 
@@ -110,21 +116,26 @@ namespace MultiGlycanTD
 
         void GenerateTasks()
         {
-            MultiThreadingSearchHelper.GenerateSearchTasks(msPath, tasks,
-                tandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
+            MultiThreadingSearchHelper.GenerateSearchTasks(msPath, tasks, 
+                tandemSpectra, intensityBag, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void GenerateDecoyTasks()
         {
+            ConcurrentBag<double> voidBag = new ConcurrentBag<double>();
             MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFile,
-                    decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
+                    decoyTasks, decoyTandemSpectra, voidBag, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,
             SearchTask task, GlycanPrecursorMatch precursorMatch,
-            GlycanEnvelopeMatch envelopeMatch,
-            IGlycanSearch glycanSearch, SearchMetaData searchInfo)
+            GlycanEnvelopeMatch envelopeMatch, IGlycanSearch glycanSearch, 
+            SearchMetaData searchInfo, double minIntensity = 0)
         {
+
+            if (task.Spectrum.GetPeaks().Max(p => p.GetIntensity()) < minIntensity)
+                return;
+
             foreach (double ion in SearchingParameters.Access.Ions)
             {
                 // precursor match
@@ -132,9 +143,9 @@ namespace MultiGlycanTD
                 if (candidates.Count > 0)
                 {
                     // isotopic envelope
-                    if (task.Peaks != null)
+                    if (task.MSPeaks != null)
                     {
-                        candidates = envelopeMatch.Match(candidates, task.Peaks,
+                        candidates = envelopeMatch.Match(candidates, task.MSPeaks,
                             task.PrecursorMZ, task.Charge, ion);
                     }
                     // spectrum search
@@ -145,7 +156,12 @@ namespace MultiGlycanTD
                     {
                         searchInfo.Commit(searched, task.PrecursorMZ, task.Charge,
                             task.Spectrum.GetScanNum(), task.Spectrum.GetRetention());
-                        results.AddRange(searched);
+                        foreach (SearchResult result in searched)
+                        {
+                            if (result.Matches.Max(p => p.Value.Peak.GetIntensity()) < minIntensity)
+                                continue;
+                            results.Add(result);
+                        }
                     }
                 }
             }
@@ -192,7 +208,7 @@ namespace MultiGlycanTD
             while (tasks.TryDequeue(out SearchTask task))
             {
                 TaskLocalSearch(ref tempResults, task,
-                    precursorMatch, envelopeMatch, glycanSearch, searchInfo);
+                    precursorMatch, envelopeMatch, glycanSearch, searchInfo, noise);
 
                 searchCounter.Add(taskSize);
             }
