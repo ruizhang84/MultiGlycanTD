@@ -79,18 +79,18 @@ namespace MultiGlycanTD
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_targets.csv");
             MultiThreadingSearchHelper.Report(targetpath, targets.Where(r => r.Score > 0).ToList());
-            string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
-            MultiThreadingSearchHelper.Report(decoyPath, decoys.Where(r => r.Score > 0).ToList());
+            //string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+            //    System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
+            //MultiThreadingSearchHelper.Report(decoyPath, decoys.Where(r => r.Score > 0).ToList());
 
             // quantile
-            IFilter filter = new QuantileFilter(SearchingParameters.Access.Quantile);
+            IFilter filter = new FDRFilter(SearchingParameters.Access.FDR);
             filter.set_data(targets, decoys);
             filter.Init();
             List<SearchResult> results = filter.Filter();
-            string qPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_top.csv");
-            MultiThreadingSearchHelper.Report(qPath, results);
+            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
+            MultiThreadingSearchHelper.Report(path, results);
 
             //Annotation
             Dictionary<int, List<PeakAnnotated>> annotations =
@@ -105,29 +105,6 @@ namespace MultiGlycanTD
                 }
             }
             string annotatedPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-               System.IO.Path.GetFileNameWithoutExtension(msPath) + "_top_annotated.csv");
-            MultiThreadingSearchHelper.AnnotationReport(annotatedPath, annotations);
-
-            filter = new FDRFilter(SearchingParameters.Access.FDR);
-            filter.set_data(targets, decoys);
-            filter.Init();
-            results = filter.Filter();
-            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_filtered.csv");
-            MultiThreadingSearchHelper.Report(path, results);
-
-            //Annotation
-            annotations = new Dictionary<int, List<PeakAnnotated>>();
-            foreach (SearchResult result in results)
-            {
-                MS2Spectrum spectrum = spectra[result.Scan] as MS2Spectrum;
-                annotations[result.Scan] = new List<PeakAnnotated>();
-                foreach (double ion in SearchingParameters.Access.Ions)
-                {
-                    annotations[result.Scan].AddRange(annotator.Annotated(spectrum.GetPeaks(), result));
-                }
-            }
-            annotatedPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_annotated.csv");
             MultiThreadingSearchHelper.AnnotationReport(annotatedPath, annotations);
 
