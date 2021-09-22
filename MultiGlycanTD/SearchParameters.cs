@@ -15,6 +15,7 @@ namespace MultiGlycanTD
 
         // performance
         public int ThreadNums { get; set; } = 4;
+        public int MaxCharge { get; set; } = 4;
 
         // searching
         public List<double> Ions { get; set; } = new List<double>()
@@ -24,7 +25,6 @@ namespace MultiGlycanTD
 
         // result
         public double FDR { get; set; } = 0.01;
-        //public double Quantile { get; set; } = 0.25;
 
         // file
         public List<string> MSMSFiles { get; set; } = new List<string>();
@@ -40,10 +40,10 @@ namespace MultiGlycanTD
             MS1ToleranceBy = ConfigureParameters.Access.MS1ToleranceBy;
             MS2ToleranceBy = ConfigureParameters.Access.MS2ToleranceBy;
             ThreadNums = ConfigureParameters.Access.ThreadNums;
+            MaxCharge = ConfigureParameters.Access.MaxCharge;
             Similarity = ConfigureParameters.Access.Similarity;
             BinWidth = ConfigureParameters.Access.BinWidth;
             FDR = ConfigureParameters.Access.FDR;
-            //Quantile = ConfigureParameters.Access.Quantile;
             Ions = ConfigureParameters.Access.Ions;
         }
 
@@ -64,6 +64,7 @@ namespace MultiGlycanTD
 
         //Performance
         public int ThreadNums { get; set; } = 4;
+        public int MaxCharge { get; set; } = 4;
 
         // searching
         public List<double> Ions { get; set; } = new List<double>()
@@ -73,7 +74,6 @@ namespace MultiGlycanTD
 
         //result
         public double FDR { get; set; } = 0.01;
-        //public double Quantile { get; set; } = 0.25;
 
         protected static readonly Lazy<ConfigureParameters>
             lazy = new Lazy<ConfigureParameters>(() => new ConfigureParameters());

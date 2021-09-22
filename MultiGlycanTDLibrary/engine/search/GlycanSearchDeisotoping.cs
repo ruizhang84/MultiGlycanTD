@@ -35,7 +35,7 @@ namespace MultiGlycanTDLibrary.engine.search
                 }
             }
             // deisotoping
-            List<IPeak> deisotopingPeaks = deisotoping_.Process(peaks, ion);
+            List<IPeak> deisotopingPeaks = deisotoping_.Process(peaks, precursorCharge, ion);
 
             // search peaks glycan_id->peak_index
             Dictionary<string, SearchResult> results
@@ -43,13 +43,14 @@ namespace MultiGlycanTDLibrary.engine.search
             for (int i = 0; i < deisotopingPeaks.Count; i++)
             {
                 DeisotopingPeak peak = deisotopingPeaks[i] as DeisotopingPeak;
-                if (peak.ChargeAssigned())
+                if (peak.ChargeAssigned() && peak.Charge <= precursorCharge)
                 {
                     SearchPeaks(i, deisotopingPeaks, ion, peak.Charge, glycanCandid, results);
                 }
                 else
                 {
-                    for (int charge = 1; charge <= Math.Min(maxCharge, precursorCharge); charge++)
+                    int maxCharge = precursorCharge > 3 ? 3 : precursorCharge;
+                    for (int charge = 1; charge <= maxCharge; charge++)
                     {
                         SearchPeaks(i, deisotopingPeaks, ion, charge, glycanCandid, results);
                     }

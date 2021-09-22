@@ -35,7 +35,6 @@ namespace MultiGlycanTD
         // for glycan or very few peaks for fragments.
         int minPeaks = 30;   // sequencable spectrum with min num peaks
         int minCharge = 2;
-        int maxCharge = 4;   // max charge of spectrum to consider
         // cluster
         int K = 4;
         int maxIter = 1000;
@@ -112,13 +111,13 @@ namespace MultiGlycanTD
         void GenerateTasks()
         {
             MultiThreadingSearchHelper.GenerateSearchTasks(msPath, tasks,
-                tandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
+                tandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void GenerateDecoyTasks()
         {
             MultiThreadingSearchHelper.GenerateSearchTasks(SearchingParameters.Access.DecoyFile,
-                    decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, maxCharge, minCharge, searchRange);
+                    decoyTasks, decoyTandemSpectra, readingCounter, minPeaks, SearchingParameters.Access.MaxCharge, minCharge, searchRange);
         }
 
         void TaskLocalSearch(ref List<SearchResult> results,
@@ -182,7 +181,7 @@ namespace MultiGlycanTD
                 averagine = new Averagine(AveragineType.Glycan);
             }
             AveragineDeisotoping deisotoping = new AveragineDeisotoping(averagine,
-                maxCharge, ToleranceBy.Dalton, 0.1);
+                ToleranceBy.Dalton, 0.1);
             IGlycanSearch glycanSearch
                 = new GlycanSearchDeisotoping(searcher2, glycanJson, deisotoping);
             //IGlycanSearch glycanSearch

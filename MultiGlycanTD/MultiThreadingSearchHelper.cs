@@ -86,6 +86,9 @@ namespace MultiGlycanTD
                         continue;
 
                     tandemSpectra[scan] = spectrum;
+                    if (spectrum.PrecursorCharge() > maxCharge)
+                        continue;
+
                     SearchTask searchTask = new SearchTask(spectrum,
                         spectrum.PrecursorMZ(), spectrum.PrecursorCharge());
                     searchTasks.Enqueue(searchTask);

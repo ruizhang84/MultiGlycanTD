@@ -41,6 +41,7 @@ namespace MultiGlycanTD
             }
 
             ThreadNums.Text = SearchingParameters.Access.ThreadNums.ToString();
+            MaxCharge.Text = SearchingParameters.Access.MaxCharge.ToString();
 
             FDR.Text = (SearchingParameters.Access.FDR * 100.0).ToString();
             Similarity.Text = SearchingParameters.Access.Similarity.ToString();
@@ -77,6 +78,15 @@ namespace MultiGlycanTD
             else
             {
                 MessageBox.Show("Thread value is invalid!");
+                return false;
+            }
+            if (int.TryParse(MaxCharge.Text, out int charge))
+            {
+                ConfigureParameters.Access.MaxCharge = charge;
+            }
+            else
+            {
+                MessageBox.Show("Max charge value is invalid!");
                 return false;
             }
             if (double.TryParse(Similarity.Text, out double sim) && sim >= 0 && sim <= 1.0)

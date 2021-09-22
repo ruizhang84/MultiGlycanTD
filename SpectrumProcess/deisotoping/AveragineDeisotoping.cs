@@ -10,16 +10,14 @@ namespace SpectrumProcess.deisotoping
     {
         ISearch<int> searcher;
         Averagine averagine;
-        int maxCharge;
         int maxExtend = 7;
         double cutoff = 0.8;
 
-        public AveragineDeisotoping(Averagine averagine,
-            int maxCharge = 4, ToleranceBy by = ToleranceBy.Dalton,
+        public AveragineDeisotoping(Averagine averagine, 
+            ToleranceBy by = ToleranceBy.Dalton,
             double tol = 0.1)
         {
             searcher = new BucketSearch<int>(by, tol);
-            this.maxCharge = maxCharge;
             this.averagine = averagine;
         }
 
@@ -46,7 +44,7 @@ namespace SpectrumProcess.deisotoping
             return cluster;
         }
 
-        public List<IPeak> Process(List<IPeak> peaks, double ion)
+        public List<IPeak> Process(List<IPeak> peaks, int maxCharge, double ion)
         {
             // init search
             List<Point<int>> points = new List<Point<int>>();

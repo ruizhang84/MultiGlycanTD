@@ -55,6 +55,8 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Number of Threads"/>
                         <TextBox Name="ThreadNums" Text="4" VerticalAlignment="Center" FontSize="12" Width="40"/>
+                        <Label Content="Max Charges" />
+                        <TextBox Name="MaxCharge" Text="3" VerticalAlignment="Center" FontSize="12" Width="40"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
