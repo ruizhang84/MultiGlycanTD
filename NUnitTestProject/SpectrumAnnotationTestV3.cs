@@ -151,8 +151,8 @@ namespace NUnitTestProject
             GlycanJson glycanJson = JsonSerializer.Deserialize<GlycanJson>(jsonStringRead);
             ISearch<GlycanAnnotated> searcher3 = new BucketSearch<GlycanAnnotated>(
                ToleranceBy.Dalton, 0.5);
-            GlycanAnnotationLazy annotator = new GlycanAnnotationLazy(searcher3,
-                glycanJson.Parameters);
+            GlycanAnnotationSearcher glycanAnnotationSearcher = new GlycanAnnotationSearcher(searcher3, glycanJson.Parameters);
+            GlycanAnnotationLazy annotator = new GlycanAnnotationLazy(glycanAnnotationSearcher);
             CompdJson compdJson = glycanJson.Compound;
 
             // search

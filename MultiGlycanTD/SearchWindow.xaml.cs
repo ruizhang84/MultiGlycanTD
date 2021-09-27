@@ -62,26 +62,27 @@ namespace MultiGlycanTD
                        SearchingParameters.Access.Database);
                 search.Run();
                 UpdateSignal("Analyzing...");
-                ConcurrentDictionary<int, ISpectrum> spectra = search.MSMSSpectra();
-                Analyze(file, spectra, search.Target(), search.Decoy(), annotatedSearcher);
+
+                Analyze(file, search, annotatedSearcher);
             }
 
             UpdateSignal("Done");
             return Task.CompletedTask;
         }
 
-        private void Analyze(string msPath,
-            ConcurrentDictionary<int, ISpectrum> spectra,
-            List<SearchResult> targets, List<SearchResult> decoys,
+        private void Analyze(string msPath, MultiThreadingSearch search,
             GlycanAnnotationSearcher annotatedSearcher)
         {
+            // obtain results
+            ConcurrentDictionary<int, ISpectrum> spectra = search.MSMSSpectra();
+            ConcurrentDictionary<int, ISpectrum> decoySpectra = search.DecoySpectra();
+            List<SearchResult> targets = search.Target();
+            List<SearchResult> decoys = search.Decoy();
 
             string targetpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
                 System.IO.Path.GetFileNameWithoutExtension(msPath) + "_targets.csv");
             MultiThreadingSearchHelper.Report(targetpath, targets.Where(r => r.Score > 0).ToList());
-            //string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
-            //    System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
-            //MultiThreadingSearchHelper.Report(decoyPath, decoys.Where(r => r.Score > 0).ToList());
+
 
             // FDR estimate
             CoverageValidator validator = 
@@ -92,8 +93,19 @@ namespace MultiGlycanTD
                 if (validator.Valid(spectra[result.Scan].GetPeaks(), result))
                     validTargets.Add(result);
             }
+            List<SearchResult> validDecoys = new List<SearchResult>();
+            foreach (SearchResult result in decoys)
+            {
+                if (validator.Valid(decoySpectra[result.Scan].GetPeaks(), result))
+                    validDecoys.Add(result);
+            }
+
+            string decoyPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),
+                System.IO.Path.GetFileNameWithoutExtension(msPath) + "_decoys.csv");
+            MultiThreadingSearchHelper.Report(decoyPath, validDecoys.Where(r => r.Score > 0).ToList());
+
             IFilter filter = new FDRFilter(SearchingParameters.Access.FDR);
-            filter.set_data(validTargets, decoys);
+            filter.set_data(validTargets, validDecoys);
             filter.Init();
             List<SearchResult> results = filter.Filter();
             string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(msPath),

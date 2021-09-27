@@ -110,6 +110,10 @@ namespace MultiGlycanTD
             return tandemSpectra;
         }
 
+        public ConcurrentDictionary<int, ISpectrum> DecoySpectra()
+        {
+            return decoyTandemSpectra;
+        }
 
         void GenerateTasks()
         {

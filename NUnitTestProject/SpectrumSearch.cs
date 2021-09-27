@@ -76,8 +76,8 @@ namespace NUnitTestProject
         public void SearchSpectrum()
         {
             // read spectrum
-            string path = @"C:\Users\iruiz\Downloads\MSMS\10MixGlycanStandards_C18_50cm_091520.raw";
-            string database = @"C:\Users\iruiz\Downloads\MSMS\database.json";
+            string path = @"C:\Users\iruiz\Downloads\MultiGlycanTD\data\Serum_dextrinspiked_C18_10162018_2.raw";
+            string database = @"C:\Users\iruiz\Downloads\MultiGlycanTD\data\database_309.json";
             ThermoRawSpectrumReader reader = new ThermoRawSpectrumReader();
             reader.Init(path);
 
@@ -131,7 +131,7 @@ namespace NUnitTestProject
 
                     foreach (int scan in scanPair.Value)
                     {
-                        if (scan != 15432)
+                        if (scan != 2813)
                             continue;
                         double mz = reader.GetPrecursorMass(scan, reader.GetMSnOrder(scan));
                         List<IPeak> ms1Peaks = FilterPeaks(ms1.GetPeaks(), mz, searchRange);
@@ -149,7 +149,11 @@ namespace NUnitTestProject
 
                         List<string> candidates = precursorMatch.Match(mz, charge);
                         if (candidates.Count == 0)
-                            continue;
+                        {
+                            candidates.Add("GlcNAc-4 Man-3 Gal-1 Fuc-1 NeuAc-1 ");
+                            //continue;
+                        }
+
                         List<SearchResult> searched = glycanSearch.Search(candidates, ms2.GetPeaks(), charge, 1.0078);
                         List<SearchResult> results = analyzer.Commit(searched, mz, charge, scan, ms2.GetRetention());
 
@@ -203,7 +207,7 @@ namespace NUnitTestProject
 
 
             //write out
-            string outputPath = @"C:\Users\iruiz\Downloads\MSMS\search_targets_2.csv";
+            string outputPath = @"C:\Users\iruiz\Downloads\MultiGlycanTD\data\search_targets_2.csv";
             //MultiGlycanClassLibrary.util.mass.Glycan.To.SetPermethylation(true, true);
             using (FileStream ostrm = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
